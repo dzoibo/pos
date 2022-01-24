@@ -1,0 +1,7 @@
+{
+  "name": "Pos-App",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
