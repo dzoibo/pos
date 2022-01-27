@@ -1,20 +1,47 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Login</ion-title>
   </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
-</ion-content>
+  
+</ion-header> 
+  
+<ion-content class="padding"  fullscreen id="container"> 
+    <ion-grid>
+      <ion-row class="ion-justify-content-center">
+        <ion-col fixed="true" size="12" size-md="6">
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmitForm()"  id="form-container" >
+            <div id="LoginError" class="ion-text-center">
+               {{LoginError}}
+            </div>
+            <div >
+              <ion-list >  
+                <ion-item>  
+                  <ion-label position="floating">Username:</ion-label>  
+                  <ion-input type="text"  id="loginName" formControlName="Name" inputId="loginNames"  ></ion-input>
+                </ion-item>
+                <div id='idNameError' class="ion-padding" [ngClass]="NameError === 'Enter Username' ? 'placeHolderClass' : 'inutileClass'">
+                  {{NameError}}
+                </div>
+                
+                <ion-item>  
+                  <ion-label position="floating">Password:</ion-label>  
+                  <ion-input type="password" id="loginPassword" formControlName="Password"   ></ion-input> 
+                </ion-item>
+                <div class="ion-padding" id='idPasswordError' [ngClass]="PasswordError === 'Enter password' ? 'placeHolderClass' : 'inutileClass'">
+                  {{PasswordError}}
+                </div>   
+              </ion-list>  
+                    
+              <div >  
+                <ion-button ion-button large class="ion-no-margin"  type="submit" id="loginSubmit" color="primary" expand="full">Sign In</ion-button>  
+              </div>
+            </div>
+          </form>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    
+</ion-content>  
