@@ -14,7 +14,7 @@ export class AuthService {
           () => {
               this.isAuth = true;
               resolve(true);
-          }, 2000
+          }, 1
           );
       }
       );

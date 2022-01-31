@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { HomePage } from './home.page';
-
+import { GuardAvoidService } from '../service/guard-avoid.service';
+import { AuthGuardService } from '../service/auth-guard.service';
 import { HomePageRoutingModule } from './home-routing.module';
 
 
@@ -13,8 +14,12 @@ import { HomePageRoutingModule } from './home-routing.module';
     FormsModule,
     IonicModule,
     HomePageRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
-  declarations: [HomePage]
+  declarations: [HomePage],
+  providers: [
+    AuthGuardService,
+    GuardAvoidService,
+  ],
 })
 export class HomePageModule {}

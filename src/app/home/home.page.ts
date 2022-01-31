@@ -1,5 +1,5 @@
 import { Component,OnInit,OnDestroy } from '@angular/core';
-import { AppModule } from '../app.module';
+import { AuthService } from '../service/auth.service';
 import { FormBuilder, FormGroup,Validators } from '@angular/forms';
 import{ User} from '../Models';
 import { Router } from '@angular/router';
@@ -16,13 +16,19 @@ export class HomePage {
   LoginError=" ";
   loginForm:FormGroup;
   Bartender!:User;
-  constructor(private formBuilder:FormBuilder,private router:Router) {
+  authStatus:boolean;
+  showPassword:boolean=false;
+;  constructor(private formBuilder:FormBuilder,private router:Router, private authService:AuthService) {
     this.Bartender=new User('Barabas','User420'); 
   }
   ngOnInit(){
-    this.initForm();
+      this.initForm();
+      this.authStatus=this.authService.isAuth;  
   }
-
+  public onPasswordToggle(): void {
+    this.showPassword = !this.showPassword;
+  }
+  
   initForm() {
     this.loginForm = this.formBuilder.group({
       Name: ['',Validators.required],
@@ -63,8 +69,16 @@ export class HomePage {
         return
       }
       else{
-        if(formValue['Name']===this.Bartender.userName || formValue['Passeword']===this.Bartender.userPassword){
-          this.router.navigate(['Order']); 
+        if(formValue['Name']===this.Bartender.userName && formValue['Password']===this.Bartender.userPassword){
+          this.authService.signIn().then(
+            () => {
+              console.log('Sign in successful!');
+              this.authStatus = this.authService.isAuth;
+              this.initForm()
+      console.log(this.authService.isAuth);
+      this.router.navigate(['Order']);
+            }
+          ); 
         }
         else{
           this.LoginError='Invalid Password or Username';
@@ -73,5 +87,6 @@ export class HomePage {
       }
       
     }
+    
 
 }

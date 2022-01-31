@@ -5,10 +5,13 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './order.component.html',
   styleUrls: ['./order.component.scss'],
 })
-export class OrderComponent implements OnInit {
 
+export class OrderComponent implements OnInit {
+currentLink:string;
   constructor() { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.currentLink='/Order';
+  }
 
 }

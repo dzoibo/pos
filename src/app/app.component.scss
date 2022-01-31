@@ -1,0 +1,45 @@
+ion-icon {
+    color: #000000;
+    font-size: 25px;
+    margin-right: 10px;
+  }
+ion-title{
+    ion-icon:first-of-type {
+    font-size: 50px;
+  }
+  
+}
+
+#signOut{
+    position:absolute;
+    color:black;
+    top:0;
+    font-size:xx-large;
+    right: 0px;
+    cursor:pointer;
+    padding: 0;
+}
+
+.menu-items{
+  margin:0px;
+  ion-icon{
+    color:#86979f
+  }
+
+  .active{
+    border-left:5px solid;
+    color:#628cff;
+    padding-left: 15px;
+    span{
+      color:#628cff;;
+    }
+    :hover{
+      color: #628cff !important;
+    }
+    ion-icon{
+      color:#628cff;
+    }
+  }
+
+  
+}
