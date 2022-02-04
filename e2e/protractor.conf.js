@@ -15,6 +15,7 @@ exports.config = {
   capabilities: {
     browserName: 'chrome'
   },
+  chromeOnly: true,
   directConnect: true,
   SELENIUM_PROMISE_MANAGER: false,
   baseUrl: 'http://localhost:4200/',

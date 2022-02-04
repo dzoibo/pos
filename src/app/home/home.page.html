@@ -1,12 +1,4 @@
-<ion-header >
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
-    </ion-buttons>
-    <ion-title>Login</ion-title>
-  </ion-toolbar>
 
-</ion-header> 
   
 <!--
 <ion-content class="padding"  fullscreen id="container"> 
@@ -53,13 +45,12 @@
     <ion-row class="ion-justify-content-center">
       <ion-col class="ion-align-self-center" size-md="6" size-lg="5" size-xs="12">
         <form [formGroup]="loginForm" (ngSubmit)="onSubmitForm()"   >
-          <div id="LoginError" class="ion-text-center">
-             {{LoginError}}
-          </div>
+          
+          
           <div  class="login-logo">
-            <strong>
-              Login
-            </strong>          
+            <h2 class="ion-text-center main-header8">
+              <ion-text color="white" style="color: white;">LOGIN</ion-text>
+            </h2>        
           </div>
 
           <ion-list class="margin-top-25 ion-margin margin-0-28">
@@ -69,8 +60,11 @@
               </ion-label>
               <ion-input placeholder="Username" type="text"  id="loginName" formControlName="Name" ></ion-input>
             </ion-item>
-            <div id='idNameError' class="ion-padding" [ngClass]="NameError === 'Enter Username' ? 'placeHolderClass' : 'inutileClass'">
+            <div id='idNameError'   [ngClass]="NameError === 'Enter Username' ? 'placeHolderClass' : 'inutileClass'">
               {{NameError}}
+            </div>
+            <div   id="loginError"  class="placeHolderClass ">
+              {{LoginError}}
             </div>
 
             <ion-item class="roundedInput8px margin-bottom-20">
@@ -78,20 +72,19 @@
                 <ion-icon color="medium" name="lock-closed-outline"></ion-icon>
               </ion-label>
 
-              <ion-input placeholder="Password" id="loginPassword" formControlName="Password" [type]="showPassword ? 'text' : 'password'" clearOnEdit="false">
+              <ion-input placeholder="Password"  id="loginPassword" formControlName="Password" [type]="showPassword ? 'text' : 'password'" clearOnEdit="false">
               </ion-input>
               <div (click)="onPasswordToggle()" ion-button fill="clear" size="small">
                 <ion-icon slot="icon-only" color="medium" [name]="showPassword ? 'eye-off' : 'eye'"></ion-icon>
               </div>
             </ion-item>
-            <div class="ion-padding" id='idPasswordError' [ngClass]="PasswordError === 'Enter password' ? 'placeHolderClass' : 'inutileClass'">
+            <ion-text  id='idPasswordError'   [ngClass]="PasswordError === 'Enter password' ? 'placeHolderClass' : 'inutileClass'">
               {{PasswordError}}
-            </div>   
+            </ion-text>   
        
             <ion-text color="slightgray">
-              <p class="ion-text-right main-header8">Forgot password?</p>
             </ion-text>
-            <ion-button mode="ios" class="ion-margin-top" type="submit" id="loginSubmit" color="primary" expand="block">Login</ion-button>
+            <ion-button mode="ios" class="aliceblue " type="submit" id="loginSubmit"  style="color:white"   expand="block">LOGIN</ion-button>
           </ion-list>
         </form>
       </ion-col>

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { FormsModule,ReactiveFormsModule } from '@angular/forms';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { SwiperModule } from 'swiper/angular';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
@@ -15,13 +16,15 @@ import { QuickOrderComponent } from './quick-order/quick-order.component';
 import { HomePage } from './home/home.page';
 import { GuardAvoidService } from './service/guard-avoid.service';
 import { SigninOnePage } from './signin-one/signin-one.page';
+import { PlaceComponent } from './place/place.component';
 
 
 
 const appRoutes: Routes = [
-{ path: 'Order', canActivate: [AuthGuardService],  component: OrderComponent },
-{ path: "QuickOrder", canActivate: [AuthGuardService],  component: QuickOrderComponent},
+{ path: 'Order',  component: OrderComponent },
+{ path: "QuickOrder",   component: QuickOrderComponent},
 { path: "home", canActivate: [GuardAvoidService], component: OrderComponent },
+{ path: "Place", /*canActivate: [GuardAvoidService], */  component: PlaceComponent },
 { path: "signUp",  component: SigninOnePage },
 { path: "**", redirectTo:'Order' },
 ];
@@ -29,6 +32,7 @@ const appRoutes: Routes = [
   declarations: [
     AppComponent,
     OrderComponent,
+    PlaceComponent
     
   ],
   entryComponents: [],  
@@ -39,6 +43,7 @@ const appRoutes: Routes = [
     FormsModule,
     ReactiveFormsModule,
     SwiperModule,
+    ScrollingModule,
     RouterModule.forRoot(appRoutes),
   ],
   providers: [

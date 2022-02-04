@@ -31,8 +31,8 @@ export class HomePage {
   
   initForm() {
     this.loginForm = this.formBuilder.group({
-      Name: ['',Validators.required],
-      Password: ['',Validators.required],
+      Name: [''],
+      Password: [''],
     });
   }
 

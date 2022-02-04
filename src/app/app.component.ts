@@ -19,11 +19,18 @@ export class AppComponent {
     this.authService.signOut();
     this.status=this.authService.isAuth;
     this.router.navigate(['/home']);
+    this.closeMenu();
     console.log('deconnecté');
   }
 
   setItem(item:string){
     this.currentLink=item;
     console.log('Activer',item)
+  }
+
+  closeMenu(){
+    var closeBT= document.getElementById('CloseMenu');
+    closeBT.click();
+    console.log('fermer');
   }
 }

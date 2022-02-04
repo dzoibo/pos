@@ -2,8 +2,19 @@
 *{
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
+:host {
+    ion-item {
+        --border-color: white; // default underline color
+        --highlight-color-invalid: transparent; // invalid underline color
+        --highlight-color-valid: transparent; // valid underline color
+    }
+}
 .placeHolderClass{
   color:red;
+  font-family: Arial;
+  margin-bottom: 10px;
 }
 #LoginError{
   height: 60px;
@@ -11,6 +22,10 @@
   text-align: center;
   font-weight: bold;
 }
+#loginSubmit{
+  margin-top: 32px;
+}
+
 
 
 $white-color: #fff;
@@ -25,7 +40,6 @@ ion-content{
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
-  background-color: white;
  }
 
 ion-col{
@@ -41,6 +55,7 @@ ion-list {
   padding: 20px 0;
   min-height: 100px;
   text-align: center;
+  color: white;
 }
 
 .login-logo  {
@@ -71,12 +86,15 @@ ion-row {
 ion-col {
   min-width: 450px;
     padding: 30px !important;
-    border: 1px solid dodgerblue; //1px solid #488aff;
     border-radius: 8px;
+    
+  background-color: rgba(0, 0, 0, 0.11);
 }
 .list-width{
   width: 450px !important;
-  
+}
+#loginError{
+  --margin-bottom: 16px;
 }
 
 

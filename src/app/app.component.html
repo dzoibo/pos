@@ -1,25 +1,28 @@
 <ion-app>
-  <ion-menu side="start" menuId="custom" contentId="main_menu" >
+  <ion-menu  side="start" menuId="custom" contentId="main_menu" >
     <ion-header class="ion-no-padding ion-no-margin">
-      <ion-toolbar class="ion-no-padding ion-no-margin" >
-        <ion-title class="ion-justify-content-end ion-no-padding ion-margin">
+      <ion-toolbar class="ion-no-padding ion-no-margin " >
+        <ion-title class="ion-justify-content-end ion-no-padding ion-margin-horizontal ">
           <div>
             <ion-icon  name="person"></ion-icon><br>
-            Username
           </div> 
           <div>
-            <ion-icon name="log-out-sharp" id="signOut" ></ion-icon>
+            <ion-icon name="log-out-sharp" id="signOut" (click)="signOut() " ></ion-icon>
           </div>
           
         </ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-no-padding">
-      <ion-list class="menu-items" lines="none">
-        <ion-item  [routerLink]="['/QuickOrder']" [ngClass]="currentLink==='quickOrder'? 'active' : 'inactive'" (click)="setItem('quickOrder')"> <ion-icon name="newspaper-sharp"></ion-icon> <span>Orders</span></ion-item>
-        <ion-item [routerLink]="['/QuickOrder']" [ngClass]="currentLink==='settings'? 'active' : 'inactive'" (click)="setItem('settings')"><ion-icon name="settings"></ion-icon> <span>Settings</span> </ion-item>
-      </ion-list>
+      <ion-list class="menu-items" lines="none" (click)="closeMenu()">
+        <ion-item  [routerLink]="['/Order']" [ngClass]="currentLink==='quickOrder'? 'active' : 'inactive'" (click)="setItem('quickOrder')"> <ion-icon name="newspaper-sharp"></ion-icon> <span>Orders</span></ion-item>
+        <ion-item [routerLink]="['/Place']" [ngClass]="currentLink==='Place'? 'active' : 'inactive'" (click)="setItem('Place')"><ion-icon name="location-sharp"></ion-icon> <span>Places</span> </ion-item>
+        <ion-item [routerLink]="['/QuickOrder']" [ngClass]="currentLink==='QuickOrder'? 'active' : 'inactive'" (click)="setItem('QuickOrder')"><ion-icon name="settings"></ion-icon> <span>Settings</span> </ion-item>
+        </ion-list>
     </ion-content>
+    <ion-menu-toggle id="CloseMenu">
+      <ion-item >  </ion-item>
+      </ion-menu-toggle>
   </ion-menu>
   <ion-router-outlet id="main_menu"> </ion-router-outlet>
 </ion-app>

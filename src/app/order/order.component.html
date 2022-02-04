@@ -1,9 +1,78 @@
-<ion-header class="primary">
+<ion-header >
   <ion-toolbar>
     <ion-menu-button slot="start"></ion-menu-button>
     <ion-title>Orders</ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content>
+<ion-content class="ion-padding">
+
+  <div class="global_container" id="global_container" >
+    <div class="filters" >
+      <ion-grid>
+        <ion-row class="ion-justify-content-between " >
+          <ion-col size-md="3" size-lg="3" size-xs="5" > 
+            <div class="dropdown" >
+             <ion-label>Place </ion-label>
+              <select class="select" name="filterPlace" [(ngModel)]="table" (change)= "filter()">
+                <option value="all">All</option>
+                <option value="Table1">Table1</option>
+                <option value="Table2">Table2</option>
+                <option value="Table3">Table3</option>
+              </select>
+            </div>
+          </ion-col>
+          
+          <ion-col size-md="3" size-lg="3" size-xs="5" offset="2">
+              <div  class="dropdown">
+                <ion-label class="ion-padding">Statut</ion-label>
+                <select class="select" name="statut" [(ngModel)]="statut" (change)= "filter()">
+                  <option value="any">Any</option>
+                  <option value="Open">Open</option>
+                  <option value="Close">Close</option>
+                  <option value="Delivered">Delivered</option>
+                  <option value="Collected">Collected</option>
+                </select>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
   
+    <div class="orderList"   >
+        <ion-list style="background-color:white"  >
+          <ion-item lines="none" *ngFor="let order of showOrders; let i =index" class="ion-no-padding">
+            <ion-grid  >
+              <ion-row class="ion-justify-content-bettween " >
+                <ion-col size="6" class="ion-text-start"> 
+                 <div class="orderName"> <strong></strong> Order {{order.orderId}}</div> 
+                </ion-col>
+                <ion-col size="6"  class="ion-text-end" >
+                   <div class="orderTotal"> {{order.orderTotal}}</div> 
+                </ion-col>
+              </ion-row>
+              
+              <ion-row class="ion-justify-content-between">
+                <ion-col size="6" class="ion-text-start"> 
+                  <p>
+                    <ion-icon name="location-sharp"></ion-icon> {{order.orderTable}}
+                  </p>
+                </ion-col>
+                <ion-col size="6"  class="ion-text-end">
+                    <div [class]="'status'+order.orderStatus">{{order.orderStatus}}</div>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-item>
+        </ion-list>
+        <ion-fab vertical="bottom" horizontal="end"  class="ion-no-margin">
+          <ion-fab-button>
+            <ion-icon name="add"></ion-icon>
+          </ion-fab-button>
+        </ion-fab>
+    </div>
+   
+  </div>
+
+ 
+
 </ion-content>

@@ -1,0 +1,54 @@
+<ion-header >
+  <ion-toolbar >
+    <ion-menu-button slot="start"></ion-menu-button>
+    <ion-title>Places</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+<div class="global_container">
+  <div class="floorList">
+    <div  *ngFor="let place of Place">
+      <div class="floor">
+        <div class="title">
+          <ion-icon (click)="setShowDetail(place.floor)" *ngIf="place.showDetail===false" name="chevron-down"></ion-icon>
+          <ion-icon (click)="setShowDetail(place.floor)" *ngIf="place.showDetail===true" name="chevron-up"></ion-icon>
+           <span> {{place.floor}}</span>
+        </div>
+         </div>
+      <div class="tableList">
+        <ion-list *ngIf="place.Table.length>0 && place.showDetail===true"   style="background-color:white" >
+          <ion-item  *ngFor="let table of place.Table" lines="none" >
+            <ion-grid  class="ion-no-margin" >
+              <ion-row class="ion-justify-content-bettween ion-no-padding ion-no-margin " >
+                <ion-col size="6" class="ion-text-start ion-no-padding ion-no-margin "> 
+                 <div class="orderName">{{table.Name}}</div> 
+                </ion-col>
+                <ion-col size="6"  class="ion-text-end ion-no-padding ion-no-margin">
+                   <span class="tableTotal">{{table.Total}}</span>
+                </ion-col>
+              </ion-row>
+              <ion-row class="ion-justify-content-between ion-no-padding ion-no-margin">
+                <ion-col size="6" class="ion-text-start ion-no-padding ion-no-margin"> {{table.Order.length}} Order
+                </ion-col>
+                <ion-col size="6"  class="ion-text-end ion-no-padding ion-no-margin">
+                    
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-item>
+          
+          
+        </ion-list>
+      </div>
+    </div>
+  </div>
+  <ion-fab vertical="bottom" horizontal="end"  class="ion-margin">
+    <ion-fab-button >
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</div>
+  
+
+
+</ion-content>
