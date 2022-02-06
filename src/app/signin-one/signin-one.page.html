@@ -6,9 +6,12 @@
       </ion-buttons>
     </ion-toolbar>
   </ion-header>
+  
+ 
   <ion-grid>
 
     <ion-row class="ion-justify-content-center">
+      
       <ion-col class="ion-align-self-center" size-md="6" size-lg="5" size-xs="12">
 
         <div class="login-logo">
@@ -54,11 +57,23 @@
           </ion-text>
         </ion-list>
 
+        <ion-list>
+          
+        <ion-item>
+        <ion-button id="side-button">All</ion-button>
+        <ion-popover trigger="side-button">
+          <ng-template>
+            <ion-list>
+              <ion-item>
+                drfg
+              </ion-item>
+            </ion-list>
+          </ng-template>
+        </ion-popover>
+        </ion-item>
+        </ion-list>
+
       </ion-col>
     </ion-row>
   </ion-grid>
-
-
-
-
 </ion-content>

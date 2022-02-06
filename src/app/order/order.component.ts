@@ -24,6 +24,14 @@ export class OrderComponent implements OnInit {
     this.table="all";
 
   }
+  setfilter(param:number,value:string){
+   if(param===1){
+     this.table=value
+   }else{
+     this.statut=value
+   }
+   this.filter();
+  }
   filter(){
      // with don't put the floor in  this funtion because floor is provided when  we access to the page so the filter is only for the place and the statut
     this.showOrders=[];
@@ -51,6 +59,26 @@ export class OrderComponent implements OnInit {
     }
 
   }
+
+   getColor(statut){
+     switch (statut) {
+       case 'Open':
+          return 'danger';
+         break;
+         case 'Closed':
+          return 'success'
+         break;
+         case 'New':
+          return 'primary'
+         break;
+         case 'Started':
+          return 'warning'
+         break;
+     
+       default: return 'medium'
+         break;
+     }
+   }
 
     
 }

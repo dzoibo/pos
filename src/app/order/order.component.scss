@@ -13,10 +13,15 @@ p{
 }
 ion-label{
     font-family: Arial, Helvetica, sans-serif;
-    padding: 5px;
+    padding: 7px;
+}
+.pop_btn{
+    width: 100px !important;
+}
+
+.pop_list{
 }
 .select{
-
     width: 100%;
     outline:none;
     height: 30px;
@@ -43,36 +48,41 @@ ion-label{
     }
 }
 
-.orderStatus{
-    width: 100px;
-    padding-top: 5px;
-    height: 40px;
-    margin-bottom: 10px;
-    position: absolute;
-    right: 5px;
-    text-align: center;
-}
 
-.statusOpen{
-    @extend .orderStatus;
-    background-color: yellow;
+
+.success{
+    background-color: rgb(102,211,111,0.4);
+    color: rgb(102,211,111);
+    :hover{
+        background-color: rgb(102,211,111,0.4);
+        color: rgb(102,211,111);  
+    }
 }
-.statuClosed{
-    @extend .orderStatus;
-    background-color: green;
+.medium{
+    background-color: rgb(146, 148, 156,0.4);
+    color:black
 }
-.statusDelivered{
-    @extend .orderStatus;
-    background-color: skyblue;
+.danger{
+    background-color: rgba(235, 68, 90,0.4); 
+    color: rgb(235, 68, 90);
 }
-.statusCollected{
-    @extend .orderStatus;
-    background-color: rgb(172, 8, 8);
+.warning{ 
+    background-color: rgba(255, 196,9,0.3);
+    color:rgba(255, 196,9, 1);
 }
+.primary{
+    
+    background-color: rgba(56, 128, 255,0.4);
+    color: rgb(56, 128, 255);
+}
+/*.list_to_hover :hover{
+          background-color: #f2f2f2;
+          cursor:pointer;
+      }*/
 .orderTotal{
-    color: #337ab7 !important;
-    --color: #337ab7 !important;
+    color: #2dd36f !important;
     font-weight: bold !important;
+    margin-right: -1px;
 
 }
 .orderName{
@@ -84,8 +94,17 @@ ion-label{
 .dropdown{
     position:relative;
     display: flex;
-    ion-icon{
-        font-size: x-large;
+    ion-item{
+        --inner-padding-end: 0 !important;
+        --ion-background-color: red;}
+       ion-list,ion-grid {
+           border:2px solid red
+    }  
+}
+ion-popover{
+    ion-containt{
+        
+    border:3px solid red;
     }
 }
 
@@ -108,6 +127,7 @@ ion-label{
     border-radius: 6px;
     margin: 5px;
     padding-bottom: 5px;
+    
     }
 }
 .filters{

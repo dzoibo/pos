@@ -12,7 +12,7 @@ export class OrderService {
             orderTable:"Table1",
             orderFloor:"Floor1",
         orderTotal:600,
-        orderStatus:"Delivered"},
+        orderStatus:"Started"},
 
         {orderId:2,
 
@@ -26,12 +26,12 @@ export class OrderService {
                 orderTable:"Table3",
                 orderFloor:"Floor1",
             orderTotal:600,
-            orderStatus:"Collected"},
+            orderStatus:"On hold"},
             {orderId:1,
                   orderTable:"Table2",
                   orderFloor:"Floor1",
               orderTotal:700,
-              orderStatus:"Open"},
+              orderStatus:"New"},
     ]
   }
 
