@@ -1,0 +1,101 @@
+.global_container{
+    background-color: #f5f5f5;
+    border-radius: 0px 0px 5px 5px;
+    width: 50%;
+    position: relative;
+    margin:auto;
+    
+}
+.title{
+    background-color: #d3d3d3;
+    border-bottom: 1px solid black;
+    height: 51px;
+    font-weight: bold;
+}
+.catalogTitle,.detailsTitle{
+  @extend .title; 
+  span{
+    margin-top: 8px;
+    display: inline-block;
+}
+ion-icon:first-of-type{
+    float: left;
+    margin: auto;
+    cursor: pointer;
+    font-size: xx-large;
+} 
+}
+  
+.catalogContaint{
+    background-color: white;
+    img{
+        display: block;
+        margin:auto;
+        height: 58px;
+    }
+    button:{
+
+        margin:auto;
+    }
+} 
+#table_location{
+    margin-left: 7px;
+    color: rgb(102,211,111);
+}
+#searchbar{
+    padding-bottom: 20px !important;
+}
+
+
+.orderList{
+    padding-bottom: 88px;
+    margin-top:5px;
+    height: 78vh;
+    overflow: auto;
+    background: #ffffff;
+    color: #495057;
+    box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
+    border-radius: 0px 0px 6px 6px;
+    ion-list,ion-grid {
+        --background: white; 
+    }
+    ion-item{
+        --inner-padding-end: 0 !important;
+       --background: white;
+    box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
+    border-radius: 6px;
+    margin: 5px;
+    padding-bottom: 5px;
+    
+    }
+}
+
+@media (max-device-height: 680px) { 
+    .orderList{
+        height: 78vh;}
+        .global_container{
+            width: 100%;
+            margin:auto;
+        }
+}
+
+@media (min-device-height: 680px) and (max-device-height: 750px) { 
+    .orderList{
+        height: 79vh;
+    }
+    .global_container{
+        width: 100%;
+        margin:auto;
+    }
+}
+@media (min-device-height: 750px) and (max-device-height: 950px) { 
+    .orderList{
+        height: 79vh;}
+}
+@media (max-device-width: 500px) and (min-device-height: 800px) { 
+    .global_container{
+        width: 100%;
+    }
+    .orderList{
+        height: 82vh;}
+}

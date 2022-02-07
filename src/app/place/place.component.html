@@ -18,6 +18,14 @@
       <div class="tableList">
         <ion-list *ngIf="place.Table.length>0 && place.showDetail===true"   style="background-color:white" >
           <ion-item  *ngFor="let table of place.Table" lines="none" >
+              <ion-label >
+                <h3>{{table.Name}}</h3>
+                <p>{{table.Order.length}} Order{{table.Total}}</p>
+              </ion-label>
+              
+              <ion-label slot="end">
+                <p class="ion-text-right Total" > </p>
+              </ion-label>
             <ion-grid  class="ion-no-margin" >
               <ion-row class="ion-justify-content-bettween ion-no-padding ion-no-margin " >
                 <ion-col size="6" class="ion-text-start ion-no-padding ion-no-margin "> 
@@ -36,9 +44,8 @@
               </ion-row>
             </ion-grid>
           </ion-item>
-          
-          
         </ion-list>
+        
       </div>
     </div>
   </div>

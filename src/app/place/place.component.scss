@@ -81,7 +81,6 @@ ion-label{
     font-weight: bold;
     display: flex;
     align-items: center;
-    justify-content: space-be;
     span{
         margin-top: 8px;
         display: inline-block;
@@ -90,6 +89,7 @@ ion-label{
         float: left;
         margin: auto;
         cursor: pointer;
+        font-size: xx-large;
     }
 }
 

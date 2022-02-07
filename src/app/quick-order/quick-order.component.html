@@ -1,12 +1,129 @@
 <ion-header>
-
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
- <ion-slides [options]="catslideOpts">
-    <ion-slide >
-      <ion-label>x</ion-label>
-    </ion-slide>
-  </ion-slides>
+  <div class="global_container">
+    <div>
+      <div class="catalogTitle">
+        <ion-grid>
+          <ion-row class="ion-justify-content-between " >
+            <ion-col size-md="3" size-lg="3" size-xs="5" class="ion-text-start" > 
+              <ion-icon name="chevron-down-outline"></ion-icon>
+              <span>Catalog</span> 
+            </ion-col>
+            <ion-col size-md="7" size-lg="7" size-xs="5" class="ion-no-padding"  > 
+              <ion-searchbar id="searchbar"  class="ion-no-padding ion-no-margin"></ion-searchbar>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+      <div class="catalogContaint" >
+        <ion-grid>
+          <ion-row class="ion-justify-content-between " >
+            <ion-col size-md="3" size-lg="3" size-xs="3" class="ion-text-start" > 
+              <ion-button expand="full" color="light">Beers</ion-button>
+            </ion-col>
+            <ion-col size-md="4" size-lg="4" size-xs="4" class="ion-text-center"> 
+              <ion-button expand="full" color="light">Juice & water</ion-button>
+            </ion-col>
+            <ion-col size-md="3" size-lg="3" size-xs="3" > 
+              <ion-button expand="full" color="light">wine</ion-button>
+            </ion-col>
+            <ion-col size-md="2" size-lg="1" size-xs="2" class="ion-text-bottom"> 
+              <img src="../../assets/fleche.png">
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <!--
+          <ion-slides [options]="catslideOpts">
+          <ion-slide >
+             <ion-label>x</ion-label>
+          </ion-slide>
+        </ion-slides>
+        -->
+        
+      </div> 
+      <div class="Orderdetails">
+        <div class="detailsTitle">
+          <ion-grid>
+            <ion-row class="ion-justify-content-between " >
+              <ion-col size-md="3" size-lg="3" size-xs="5" class="ion-text-start" > 
+                <ion-icon name="chevron-down-outline"></ion-icon>
+                <span>Order:xxxxx</span> 
+              </ion-col>
+              <ion-col size-md="" size-lg="1" size-xs="3"offset="2" class="ion-text-end" > 
+                <ion-icon name="location-outline" id="table_location"></ion-icon>
+                <span > Table</span>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div>
+        <div> 
+          <ion-list>
+            <ion-item>
+              <ion-grid>
+                <ion-row class="ion-justify-content-between " >
+                  <ion-col size-md="1" size-lg="1" size-xs="1" class="ion-text-start" >
+                    <ion-icon name="trash-outline"></ion-icon>
+                  </ion-col>
+                  <ion-col size-md="5" size-lg="4" size-xs="6" class="ion-text-center" >
+                    <ion-icon name="trash-outline"></ion-icon>
+                  </ion-col>
+                  <ion-col size-md="1" size-lg="1" size-xs="1" class="ion-text-center" >
+                    3000
+                  </ion-col>
+                  <ion-col size-md="3" size-lg="2" size-xs="5" class="ion-text-end" >
+                    <ion-button size="xx-small">-</ion-button>
+                    2
+                    <ion-button size="xx-small">+</ion-button>
+                    
+                    
+                  </ion-col>
+                  
+                </ion-row>
+              </ion-grid>
+            </ion-item>
+          </ion-list>
+        </div>
+        <div>
+          <ion-grid>
+            <ion-row class="ion-justify-content-between " >
+              <ion-col size-md="5" size-lg="4" size-xs="6" offset="1" class="ion-text-start" >
+                Total
+              </ion-col>
+              <ion-col size-md="2" size-lg="2" size-xs="2"  class="ion-text-start" >
+                675
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div>
+      </div>  
+    </div>
+    <div>
+      <ion-grid>
+        <ion-row class="ion-justify-content-between " >
+          <ion-col size="4"  >
+            <img src="../src/assets/download.png" alt="">
+          </ion-col>
+          <ion-col size="4"  >
+            <img src="../src/assets/download.png" alt="">
+          </ion-col>
+          <ion-col size="4"  >
+            <img src="../src/assets/download.png" alt="">
+          </ion-col>
+          <ion-col size="3"  >
+            <ion-button>
+              <ion-icon slot="icon-only" name="ellipsis-horizontal-outline"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+  </div>
 </ion-content>
 
