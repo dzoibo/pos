@@ -2,14 +2,17 @@
 *{
   font-family: Arial, Helvetica, sans-serif;
 }
-
+ion-item {
+  --highlight-height: 0px;
+}
 
 :host {
     ion-item {
         --border-color: white; // default underline color
-        --highlight-color-invalid: transparent; // invalid underline color
-        --highlight-color-valid: transparent; // valid underline color
-    }
+        --highlight-color-invalid: red; // invalid underline color
+        --highlight-color-valid: var(--ion-color-success); 
+        
+      }
 }
 .placeHolderClass{
   color:red;

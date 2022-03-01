@@ -1,129 +1,135 @@
-<ion-header>
+
+<ion-header #header>
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
-    </ion-buttons>
+    <ion-menu-button id="btMenu" slot="start"></ion-menu-button>
+    <ion-title>Cashier</ion-title>
   </ion-toolbar>
 </ion-header>
+<ion-content class="ion-padding" >
 
-<ion-content>
-  <div class="global_container">
-    <div>
-      <div class="catalogTitle">
+  <div class="global_container" id="global_container" >
+    <div id="catalog_Section" >
+      <div class="catalogTitle" id="catalogTitle">
         <ion-grid>
           <ion-row class="ion-justify-content-between " >
-            <ion-col size-md="3" size-lg="3" size-xs="5" class="ion-text-start" > 
-              <ion-icon name="chevron-down-outline"></ion-icon>
-              <span>Catalog</span> 
+            <ion-col id="titleCol" size-md="5" size-lg="3" size-xs="5" class="ion-text-start" > 
+              <ion-icon id="hide1" name="chevron-up" (click)="hideOrShow(1,'hide')" *ngIf="hide1===true" ></ion-icon>
+              <ion-icon id="hide2" name="chevron-down" (click)="hideOrShow(1,'show')" *ngIf="hide1===false"></ion-icon>
+              <ion-label>Catalog</ion-label> 
             </ion-col>
-            <ion-col size-md="7" size-lg="7" size-xs="5" class="ion-no-padding"  > 
-              <ion-searchbar id="searchbar"  class="ion-no-padding ion-no-margin"></ion-searchbar>
+            <ion-col size-md="4" size-lg="3" size-xs="5" class="ion-no-padding ion-text-end"  > 
+              <ion-searchbar id="searchbar" (ionChange)="doSearch()" class="ion-no-padding ion-no-margin" [(ngModel)]="searchValue"></ion-searchbar>
             </ion-col>
           </ion-row>
         </ion-grid>
       </div>
-      <div class="catalogContaint" >
-        <ion-grid>
-          <ion-row class="ion-justify-content-between " >
-            <ion-col size-md="3" size-lg="3" size-xs="3" class="ion-text-start" > 
-              <ion-button expand="full" color="light">Beers</ion-button>
-            </ion-col>
-            <ion-col size-md="4" size-lg="4" size-xs="4" class="ion-text-center"> 
-              <ion-button expand="full" color="light">Juice & water</ion-button>
-            </ion-col>
-            <ion-col size-md="3" size-lg="3" size-xs="3" > 
-              <ion-button expand="full" color="light">wine</ion-button>
-            </ion-col>
-            <ion-col size-md="2" size-lg="1" size-xs="2" class="ion-text-bottom"> 
-              <img src="../../assets/fleche.png">
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-        <!--
-          <ion-slides [options]="catslideOpts">
-          <ion-slide >
-             <ion-label>x</ion-label>
+      <div class="catalogContaint" *ngIf="hide1===true" >
+        <div class="outer">
+          <img (click)="setCatalog('remove')" *ngIf="CatalogToDisplay.id>1 "  src="../../assets/Prev.png"/>
+          <ion-button class="ion-padding" *ngFor="let choice of CatalogToDisplay.choice" expand="full" [id]="'bt'+(choice.id)"  style="color:black" [color]="choiceColor(choice.id)" (click)="showDrink(choice.id)" >{{ truncate(choice.name,9)|titlecase}}</ion-button>
+          
+          <img id="next" (click)="setCatalog('add')" *ngIf="CatalogTemplate.length>CatalogToDisplay.id" src="../../assets/Next.png"/>
+        </div>
+        <div  *ngIf="noBeer.length>1" id="noBeer">
+          {{noBeer}}
+        </div>
+        <ion-slides *ngIf="template.length>0" class="slides ion-padding-bottom" pager="true" [options]="slideOpts">
+         
+          <ion-slide class="ion-padding-bottom" *ngFor="let slide of template">
+            <ion-grid>
+              <ion-row class="ion-justify-content-between " >
+                <ion-col   size-xs="3" size-lg="2.4" size-md="2.4" class="ion-text-center" *ngFor="let drink of slide.items ; let i= index"  > 
+                  <div *ngIf="drink.id>=0">
+                    <div class="card" (click)="addDrink(drink)" >
+                      <div [id]="'image'+i">
+                        <ion-img [src]="drink.image"></ion-img>
+                      </div>
+                        {{drink.model|uppercase}}
+                    </div>
+                    <ion-badge [id]="'badge'+i" color="success" class="Qte">{{getQuantity(drink.id)}}</ion-badge>
+                  </div>
+                  <div *ngIf="0>drink.id">
+                  </div>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
           </ion-slide>
         </ion-slides>
-        -->
-        
       </div> 
-      <div class="Orderdetails">
-        <div class="detailsTitle">
-          <ion-grid>
-            <ion-row class="ion-justify-content-between " >
-              <ion-col size-md="3" size-lg="3" size-xs="5" class="ion-text-start" > 
-                <ion-icon name="chevron-down-outline"></ion-icon>
-                <span>Order:xxxxx</span> 
-              </ion-col>
-              <ion-col size-md="" size-lg="1" size-xs="3"offset="2" class="ion-text-end" > 
-                <ion-icon name="location-outline" id="table_location"></ion-icon>
-                <span > Table</span>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-        </div>
-        <div> 
-          <ion-list>
-            <ion-item>
-              <ion-grid>
-                <ion-row class="ion-justify-content-between " >
-                  <ion-col size-md="1" size-lg="1" size-xs="1" class="ion-text-start" >
-                    <ion-icon name="trash-outline"></ion-icon>
-                  </ion-col>
-                  <ion-col size-md="5" size-lg="4" size-xs="6" class="ion-text-center" >
-                    <ion-icon name="trash-outline"></ion-icon>
-                  </ion-col>
-                  <ion-col size-md="1" size-lg="1" size-xs="1" class="ion-text-center" >
-                    3000
-                  </ion-col>
-                  <ion-col size-md="3" size-lg="2" size-xs="5" class="ion-text-end" >
-                    <ion-button size="xx-small">-</ion-button>
-                    2
-                    <ion-button size="xx-small">+</ion-button>
-                    
-                    
-                  </ion-col>
-                  
-                </ion-row>
-              </ion-grid>
-            </ion-item>
-          </ion-list>
-        </div>
-        <div>
-          <ion-grid>
-            <ion-row class="ion-justify-content-between " >
-              <ion-col size-md="5" size-lg="4" size-xs="6" offset="1" class="ion-text-start" >
-                Total
-              </ion-col>
-              <ion-col size-md="2" size-lg="2" size-xs="2"  class="ion-text-start" >
-                675
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-        </div>
-      </div>  
     </div>
-    <div>
-      <ion-grid>
+    <div class="detailsTitle" id="detailsTitle">
+      <ion-grid >
         <ion-row class="ion-justify-content-between " >
-          <ion-col size="4"  >
-            <img src="../src/assets/download.png" alt="">
+          <ion-col id="'Order'+Order.orderId" size-md="5" size-lg="3" size-xs="5" class="ion-text-start" > 
+            <ion-label>Order{{Order.orderId}}</ion-label> 
           </ion-col>
-          <ion-col size="4"  >
-            <img src="../src/assets/download.png" alt="">
-          </ion-col>
-          <ion-col size="4"  >
-            <img src="../src/assets/download.png" alt="">
-          </ion-col>
-          <ion-col size="3"  >
-            <ion-button>
-              <ion-icon slot="icon-only" name="ellipsis-horizontal-outline"></ion-icon>
-            </ion-button>
+          <ion-col  size-md="4"  size-lg="2.5" size-xs="4" class="ion-text-end colLocation" c> 
+            <div id="location">
+              <div></div>
+              <ion-icon color="success" name="location-outline" id="table_location"></ion-icon>
+              <ion-label > {{Order.orderTable}}</ion-label>
+            </div>
+            
           </ion-col>
         </ion-row>
       </ion-grid>
     </div>
+    <div class="Orderdetails">
+       
+      <div class="OrderList"  >
+        
+        <ion-list style="background-color: #ffffff;" >
+          <ion-item  class="ion-no-padding ion-no-margin" *ngFor="let drink of Order.orderDetails;let i= index">
+            <ion-label class="listDetails ion-no-margin" [id]="'orderItem'+i"  >
+              <ion-label [id]="'trash'+i" class="detailIcon">
+                <ion-icon  size="medium" name="trash-outline" (click)="deleteDrink(drink)"></ion-icon>
+              </ion-label>
+              <ion-label class="detailName">
+                {{drink.name}} <br>
+                <ion-label class="ion-text-left" style="font-size: 0.8em">{{drink.name}}</ion-label>
+              </ion-label>
+              <ion-label class="detailPrice">
+                {{drink.price*drink.Quantity}}
+              </ion-label>
+              <ion-label class="detailButton" >
+                <ion-button [id]="'btRemove'+i" [disabled]="checkDisable(drink)" [color]="checkQuantity(drink)" size="xx-small" (click)="decreaseQuantity(drink.id)"><ion-label>-</ion-label></ion-button>
+               <ion-button [id]="'number'+i"  class="qteDrink" color="dark" fill="clear">{{drink.Quantity}}</ion-button>
+                <ion-button [id]="'btAdd'+i" size="xx-small" (click)="increaseQuantity(drink.id)" ><ion-label>+</ion-label></ion-button>
+              </ion-label>
+            </ion-label>
+          </ion-item>
+         </ion-list>
+      </div>
+      <ion-footer id="totalSection">
+        <ion-grid>
+          <ion-row class="ion-justify-content-between " >
+            <ion-col size="4" class="ion-no-padding"  class="ion-text-start" > 
+              <ion-label class="ion-no-padding " class="Total">
+                Total 
+                <ion-label class="totalPrice" id="totalPrice">
+                  <br>
+                  {{getTotal()}}
+                </ion-label>
+              </ion-label>
+            </ion-col>
+            <ion-col class="ion-no-padding" size="3" offset="3" > 
+              <ion-button  expand="full" (click)="pay()" [disabled]="Order.orderTotal===0">
+                <ion-text >Pay</ion-text>
+              </ion-button>
+            </ion-col>
+            <ion-col size="2" class="ion-no-padding" >
+              <ion-button expand="full" >
+                <ion-icon name="ellipsis-vertical"></ion-icon>
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-footer>
+    </div> 
+    
+    
   </div>
-</ion-content>
 
+ 
+ 
+</ion-content>

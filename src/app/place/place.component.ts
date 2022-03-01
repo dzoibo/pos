@@ -43,7 +43,6 @@ export class PlaceComponent implements OnInit {
 
   ngOnInit() {
     this.initTable();
-    console.log(this.Place);
   }
   initTable(){
     for(const order of this.Orders){
@@ -53,13 +52,22 @@ export class PlaceComponent implements OnInit {
           if(myIndex>=0){// it means that the table already have another order so we just add the new order to the list
             element.Table[myIndex].Order.push(order.orderId);
           }else{// we add the table with his new order
-            var newTable={Name:order.orderTable,Order:[order.orderId],Total:500};
+            var newTable={Name:order.orderTable,Order:[order.orderId],Total:500,Statut:'free'};
             element.Table.push(newTable);
           }
         
         }
       }) 
     }
+    
+  }
+  getColor(statut){
+    if(statut==='free'){
+      return 'success';
+    }else{
+      return 'danger'
+    }
+
     
   }
   setShowDetail(floorName){

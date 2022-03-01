@@ -1,20 +1,37 @@
 ion-icon {
     color: #000000;
     font-size: 25px;
-    margin-right: 10px;
   }
-ion-title{
-    ion-icon:first-of-type {
-    font-size: 50px;
+  .header{
+    margin-bottom: 15px;
+    border-bottom:1px solid gray
+  }
+ion-avatar{
+  height: 60px;
+  width: 60px;
+  text-align: center;
+  border-radius:50%;
+  border:1px solid black;
+  padding:0px;
+  margin-bottom:-15px;
+  ion-icon{
+   font-size: 50px;
   }
   
+  ion-image{
+    height:50px;
+    width: 50px;
+  }
 }
-
+ion-label{
+  margin-top:0px;
+}
 #signOut{
     position:absolute;
     color:black;
-    top:0;
-    font-size:xx-large;
+    top:50%;
+    transform: translateY(-50%);
+    font-size:50px;
     right: 0px;
     cursor:pointer;
     padding: 0;
@@ -22,9 +39,6 @@ ion-title{
 
 .menu-items{
   margin:0px;
-  ion-icon{
-    color:#86979f
-  }
 
   .active{
     border-left:5px solid;

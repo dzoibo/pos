@@ -1,27 +1,28 @@
 <ion-app>
-  <ion-menu  side="start" menuId="custom" contentId="main_menu" >
-    <ion-header class="ion-no-padding ion-no-margin">
-      <ion-toolbar class="ion-no-padding ion-no-margin " >
-        <ion-title class="ion-justify-content-end ion-no-padding ion-margin-horizontal ">
+  <ion-menu style="overflow-y:hidden ;" side="start" menuId="custom" contentId="main_menu" >
+    
+    <ion-content class="ion-no-padding">
+        <ion-item lines="none" class="header"  >
           <div>
-            <ion-icon  name="person"></ion-icon><br>
-          </div> 
+            <ion-avatar id="userAvatar" slot="start">
+              <ion-icon  name="person"></ion-icon><br>
+            </ion-avatar><br>
+            <ion-label id="userMenuName">Barabas</ion-label>
+          </div>
+          
           <div>
             <ion-icon name="log-out-sharp" id="signOut" (click)="signOut() " ></ion-icon>
           </div>
-          
-        </ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content class="ion-no-padding">
-      <ion-list class="menu-items" lines="none" (click)="closeMenu()">
-        <ion-item  [routerLink]="['/Order']" [ngClass]="currentLink==='quickOrder'? 'active' : 'inactive'" (click)="setItem('quickOrder')"> <ion-icon name="newspaper-sharp"></ion-icon> <span>Orders</span></ion-item>
-        <ion-item [routerLink]="['/Place']" [ngClass]="currentLink==='Place'? 'active' : 'inactive'" (click)="setItem('Place')"><ion-icon name="location-sharp"></ion-icon> <span>Places</span> </ion-item>
-        <ion-item [routerLink]="['/QuickOrder']" [ngClass]="currentLink==='QuickOrder'? 'active' : 'inactive'" (click)="setItem('QuickOrder')"><ion-icon name="settings"></ion-icon> <span>Settings</span> </ion-item>
-        </ion-list>
+        </ion-item>
+        
+      <ion-list class="menu-items" lines="none"  (click)="closeMenu()">
+        <ion-item id="orderMenu" detail='false' [routerLink]="['/Order']" [ngClass]="currentLink==='quickOrder'? 'active' : 'inactive'" (click)="setItem('quickOrder')"> <ion-icon name="newspaper-sharp"></ion-icon> <span>Orders</span></ion-item>
+        <ion-item id="placeMenu" detail='false'[routerLink]="['/Place']" [ngClass]="currentLink==='Place'? 'active' : 'inactive'" (click)="setItem('Place')"><ion-icon name="location-sharp"></ion-icon> <span>Places</span> </ion-item>
+        <ion-item id="cashierMenu" detail='false' [routerLink]="['/QuickOrder']" [ngClass]="currentLink==='QuickOrder'? 'active' : 'inactive'" (click)="setItem('QuickOrder')"><ion-icon name="list"></ion-icon><span>Cashier</span> </ion-item>
+      </ion-list>
     </ion-content>
     <ion-menu-toggle id="CloseMenu">
-      <ion-item >  </ion-item>
+      <ion-item > </ion-item>
       </ion-menu-toggle>
   </ion-menu>
   <ion-router-outlet id="main_menu"> </ion-router-outlet>

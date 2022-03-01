@@ -6,6 +6,11 @@
     margin:auto;
     
 }
+#noOrder{
+    height: 500px;
+    padding: 20px;
+    text-align: center;
+}
 p{
     color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.4);
     line-height: 1.4 !important;
@@ -19,8 +24,7 @@ ion-label{
     width: 100px !important;
 }
 
-.pop_list{
-}
+
 .select{
     width: 100%;
     outline:none;
@@ -110,8 +114,7 @@ ion-popover{
 
 .orderList{
     padding-bottom: 88px;
-    margin-top:5px;
-    height: 78vh;
+    height: calc(100vh - 134px);// we have remove only the heigh of the header and the filter div 
     overflow: auto;
     background: #ffffff;
     color: #495057;
@@ -120,48 +123,49 @@ ion-popover{
     ion-list,ion-grid {
         --background: white; 
     }
+    
     ion-item{
         --inner-padding-end: 0 !important;
        --background: white;
     box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
     border-radius: 6px;
-    margin: 5px;
-    padding-bottom: 5px;
+    margin: 7px;
+    padding: 5px;
     
     }
+    ion-label:first-of-type{
+        opacity: 0;
+    }
+    ion-label{
+        padding: 0px;
+        margin:0px;
+        padding-bottom: -5px;
+    }
+}
+
+ion-item:hover,ion-grid:hover{
+    background-color:#f2f2f2;
+    cursor:pointer;
 }
 .filters{
+    display:flex;
+    padding-right: 4.5px;
+    justify-content: space-between;
+    :hover{
+        background-color: #d3d3d3; 
+        cursor: auto;
+    }
     background-color: #d3d3d3;
     border-bottom: 1px solid black;
     margin-top:5px;
+   
 }
 
-@media (max-device-height: 680px) { 
-    .orderList{
-        height: 78vh;}
+@media (max-width: 500px) { 
+    
         .global_container{
             width: 100%;
-            margin:auto;
         }
 }
 
-@media (min-device-height: 680px) and (max-device-height: 750px) { 
-    .orderList{
-        height: 79vh;
-    }
-    .global_container{
-        width: 100%;
-        margin:auto;
-    }
-}
-@media (min-device-height: 750px) and (max-device-height: 950px) { 
-    .orderList{
-        height: 79vh;}
-}
-@media (max-device-width: 500px) and (min-device-height: 800px) { 
-    .global_container{
-        width: 100%;
-    }
-    .orderList{
-        height: 82vh;}
-}
+

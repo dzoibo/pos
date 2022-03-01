@@ -30,6 +30,8 @@ export class AppComponent {
 
   closeMenu(){
     var closeBT= document.getElementById('CloseMenu');
+    //alert('yo');
+    
     closeBT.click();
     console.log('fermer');
   }

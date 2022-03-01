@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "Pos-App",
+	"webDir": "www",
+	"bundledWebRuntime": false
+}

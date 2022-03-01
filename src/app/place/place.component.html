@@ -1,59 +1,42 @@
 <ion-header >
   <ion-toolbar >
-    <ion-menu-button slot="start"></ion-menu-button>
+    <ion-menu-button id="btMenu" slot="start"></ion-menu-button>
     <ion-title>Places</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding">
 <div class="global_container">
   <div class="floorList">
-    <div  *ngFor="let place of Place">
-      <div class="floor">
+    <div  *ngFor="let place of Place; let i=index">
+      <div class="floor" [id]="'floor'+i">
         <div class="title">
-          <ion-icon (click)="setShowDetail(place.floor)" *ngIf="place.showDetail===false" name="chevron-down"></ion-icon>
-          <ion-icon (click)="setShowDetail(place.floor)" *ngIf="place.showDetail===true" name="chevron-up"></ion-icon>
+          <ion-icon id="iconHide" (click)="setShowDetail(place.floor)" *ngIf="place.showDetail===false" name="chevron-down"></ion-icon>
+          <ion-icon id="iconShow" (click)="setShowDetail(place.floor)" *ngIf="place.showDetail===true" name="chevron-up"></ion-icon>
            <span> {{place.floor}}</span>
         </div>
          </div>
-      <div class="tableList">
-        <ion-list *ngIf="place.Table.length>0 && place.showDetail===true"   style="background-color:white" >
-          <ion-item  *ngFor="let table of place.Table" lines="none" >
-              <ion-label >
-                <h3>{{table.Name}}</h3>
-                <p>{{table.Order.length}} Order{{table.Total}}</p>
-              </ion-label>
-              
-              <ion-label slot="end">
-                <p class="ion-text-right Total" > </p>
-              </ion-label>
-            <ion-grid  class="ion-no-margin" >
-              <ion-row class="ion-justify-content-bettween ion-no-padding ion-no-margin " >
-                <ion-col size="6" class="ion-text-start ion-no-padding ion-no-margin "> 
-                 <div class="orderName">{{table.Name}}</div> 
-                </ion-col>
-                <ion-col size="6"  class="ion-text-end ion-no-padding ion-no-margin">
-                   <span class="tableTotal">{{table.Total}}</span>
-                </ion-col>
-              </ion-row>
-              <ion-row class="ion-justify-content-between ion-no-padding ion-no-margin">
-                <ion-col size="6" class="ion-text-start ion-no-padding ion-no-margin"> {{table.Order.length}} Order
-                </ion-col>
-                <ion-col size="6"  class="ion-text-end ion-no-padding ion-no-margin">
-                    
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-          </ion-item>
-        </ion-list>
-        
+         <div class="orderList"    >
+          <ion-list style="background-color:white" class="list_to_hover"  *ngIf="place.Table.length>0 && place.showDetail===true">
+            <ion-item  class="list_to_hover ion-padding"  *ngFor="let table of place.Table" lines="none" class="ion-no-padding" > 
+            <div class="itemDiv">
+              <div class="orderName" [id]="'table_'+table.Name">  {{table.Name}}</div> 
+              <div class="badge" [id]="'badge_'+table.Name">
+                <ion-badge style="width:80px" [class]='getColor(table.Statut)'  >
+                  {{table.Statut}}
+                </ion-badge>
+              </div>
+            </div>   
+            </ion-item>
+          </ion-list>
+          
+          <ion-fab vertical="bottom" horizontal="end"  >
+            <ion-fab-button>
+              <ion-icon name="add"></ion-icon>
+            </ion-fab-button>
+          </ion-fab>
       </div>
     </div>
   </div>
-  <ion-fab vertical="bottom" horizontal="end"  class="ion-margin">
-    <ion-fab-button >
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
 </div>
   
 

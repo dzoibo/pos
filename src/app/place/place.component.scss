@@ -5,11 +5,24 @@
     position: relative;
     margin:auto;   
 }
-
-ion-label{
-    font-family: Arial, Helvetica, sans-serif;
-    padding: 5px;
+.success{
+    background-color: rgb(102,211,111,0.4);
+    color: rgb(102,211,111);
+    :hover{
+        background-color: rgb(102,211,111,0.4);
+        color: rgb(102,211,111);  
+    }
 }
+.medium{
+    background-color: rgb(146, 148, 156,0.4);
+    color:black
+}
+.danger{
+    background-color: rgba(235, 68, 90,0.4); 
+    color: rgb(235, 68, 90);
+}
+
+
 .select{
 
     width: 100%;
@@ -39,41 +52,7 @@ ion-label{
 }
 
 
-.tableTotal{
-    color: #337ab7 !important;
-    --color: #337ab7 !important;
-    font-weight: bold !important;
 
-}  
-
-.floorList{
-    background-color: white;
-    border-radius: 6px;
-
-    .tableList{
-        background: #ffffff;
-        color: #495057;
-        box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
-        border-radius: 6px;
-        ion-list,ion-grid {
-            --background: white; 
-        }
-        ion-item{
-           --background: white;
-        box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
-        border-radius: 6px;
-        margin: 5px;
-        padding-bottom: 5px;
-        
-    margin:5px 5px 0px 5px;
-        }
-    }
-    
-    padding-bottom: 88px;
-    height: calc(78vh + 51px);
-    overflow: auto;
-   
-}
 .floor{
     background-color: #d3d3d3;
     border-bottom: 1px solid black;
@@ -93,32 +72,57 @@ ion-label{
     }
 }
 
-@media (max-device-height: 680px) { 
-    .floorList{
-        height: calc(78vh + 51px) ;}
-        .global_container{
-            width: 100%;
-            margin:auto;
+.floorList{
+    padding-bottom: 88px;
+    height: calc(100vh - 88px);// we have remove only the heigh of the header and the filter div 
+    overflow: auto;
+    background: #ffffff;
+    color: #495057;
+    box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
+    border-radius: 0px 0px 6px 6px;
+    ion-list {
+        --background: white; 
+    }
+    ion-item{
+        --inner-padding-end: 0 !important;
+       --background: white;
+    box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
+    border-radius: 6px;
+    margin: 7px;
+    .itemDiv{
+    /*    &:hover{
+            background:#f2f2f2;  
+            cursor:pointer;
+        } */
+        padding: 5px;
+        padding-top: 15px;
+        width: 100%;
+        height: 100%;
+        display:flex;
+        justify-content: space-between;
+        position: relative;
+        .orderName{
+            font-weight: strong;
         }
+        .badge{
+            width: 100px;
+            text-align: right;
+        }
+        
+    }
+    
+    }
 }
 
-@media (min-device-height: 680px) and (max-device-height: 750px) { 
-    .floorList{
-        height: calc(79vh + 51px);
-    }
+@media  (max-width: 750px) { 
+    
     .global_container{
         width: 100%;
         margin:auto;
     }
 }
-@media (min-device-height: 750px) and (max-device-height: 950px) { 
-    .floorList{
-        height: calc(79vh + 51px)}
-}
-@media (max-device-width: 500px) and (min-device-height: 800px) { 
+@media  (min-width: 768px) and (max-width: 900px) {
     .global_container{
-        width: 100%;
+        width: 75%;
     }
-    .floorList{
-        height: calc(82vh + 51px)}
 }

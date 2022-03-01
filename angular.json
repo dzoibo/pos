@@ -31,8 +31,11 @@
                 "output": "./svg"
               }
             ],
-            "styles": ["src/theme/variables.scss", "src/global.scss"],
-            "scripts": [],
+            "styles": ["src/theme/variables.scss", "src/global.scss","node_modules/bootstrap/dist/css/bootstrap.min.css",
+             
+              "node_modules/intl-tel-input/build/css/intlTelInput.css"
+            ],
+            "scripts": ["node_modules/intl-tel-input/build/js/intlTelInput.min.js"],
             "aot": false,
             "vendorChunk": true,
             "extractLicenses": false,
@@ -80,7 +83,7 @@
               "browserTarget": "app:build:production"
             },
             "ci": {
-              "progress": false
+              "progress":false
             }
           }
         },

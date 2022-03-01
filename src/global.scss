@@ -28,10 +28,7 @@
 @import '~swiper/scss';
 @import '~@ionic/angular/css/ionic-swiper';
 .styledInput {
-    --border-color: #eee;
-    --border-width: 1px;
     --box-shadow: 0px #eee;
-    --highlight-height: 0;
     --background: #f8f9fa;
     
     margin-bottom: 5px;
@@ -41,4 +38,3 @@
     @extend .styledInput;
     --border-radius: 8px;
   }
-

@@ -32,9 +32,10 @@ export class AppPage {
     browser.wait(EC.elementToBeClickable(elm), 3000);
     return elm.click();
   }
-  getelm(name:string): any {
+  getelm(name:string) {
     return element(by.id(name)).isPresent();
   }
+
   getText(name:string){
     const elm = element(by.name(name));
     return elm.getText();
@@ -46,8 +47,21 @@ export class AppPage {
   }
   
   clearElm(name:string){
+    var EC=ExpectedConditions;
+    
     var elm=element(by.name(name));
+    browser.wait(EC.elementToBeClickable(elm), 3000);
     elm.clear();
+  }
+  clearId(name:string){
+    var EC=ExpectedConditions;
+    var elm=element(by.id(name));
+    browser.wait(EC.elementToBeClickable(elm), 3000);
+    elm.clear();
+  }
+  sendkeyId(name:string,key:string){
+    var elm=element(by.id(name));
+    return elm.sendKeys(key);
   }
 
   ClickElm(name:string){
@@ -60,6 +74,20 @@ export class AppPage {
   ClickType(type:string){
     var EC=ExpectedConditions;
     const elm = element(by.css("button[type=submit]"));
+    browser.wait(EC.elementToBeClickable(elm), 3000);
+    return elm.click();
+  }
+  getColorId(id:string){
+    var elm=element(by.id(id));
+    var color:string="red";
+    elm.getCssValue('background-color').then(function(bgColor) {
+      color=bgColor;
+    });
+    return color;
+  }
+  ClickBycss(selector){
+    var EC=ExpectedConditions;
+    const elm=element(by.css(selector));
     browser.wait(EC.elementToBeClickable(elm), 3000);
     return elm.click();
   }

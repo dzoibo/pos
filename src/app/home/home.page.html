@@ -80,7 +80,10 @@
             </ion-item>
             <ion-text  id='idPasswordError'   [ngClass]="PasswordError === 'Enter password' ? 'placeHolderClass' : 'inutileClass'">
               {{PasswordError}}
-            </ion-text>   
+            </ion-text>
+            <div   id="loginError"  class="placeHolderClass ">
+              {{LoginError}}
+            </div>   
        
             <ion-text color="slightgray">
             </ion-text>
