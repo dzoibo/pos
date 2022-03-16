@@ -75,7 +75,7 @@ describe('new App', () => {
     /*
 
     MENU VIEW 
-  Scenario: display menu
+    Scenario: display menu
     Given the user launch the app 
     when click on the menu button
     Then the user avatar and user name are displayed  with the all router link and the log out icon  */

@@ -1,29 +1,53 @@
 <ion-app>
-  <ion-menu style="overflow-y:hidden ;" side="start" menuId="custom" contentId="main_menu" >
-    
-    <ion-content class="ion-no-padding">
-        <ion-item lines="none" class="header"  >
-          <div>
-            <ion-avatar id="userAvatar" slot="start">
-              <ion-icon  name="person"></ion-icon><br>
-            </ion-avatar><br>
-            <ion-label id="userMenuName">Barabas</ion-label>
-          </div>
-          
-          <div>
-            <ion-icon name="log-out-sharp" id="signOut" (click)="signOut() " ></ion-icon>
-          </div>
-        </ion-item>
+  <ion-menu side="end" side="start" menuId="custom" contentId="main_menu">
+    <ion-label id="menuHeader">
+      <ion-avatar  class="ion-margin" id="userAvatar" slot="start">
+        <ion-icon *ngIf="User.userImage===''"  name="person"></ion-icon>
+        <img *ngIf="User.userImage!==''" [src]="User.userImage" >
+      </ion-avatar>
+      <ion-label>
+        <div>
+          <ion-text>
+            {{User.userName}}
+          </ion-text>
+          <ion-text>{{User.userParner}}</ion-text>
+        </div>
         
-      <ion-list class="menu-items" lines="none"  (click)="closeMenu()">
-        <ion-item id="orderMenu" detail='false' [routerLink]="['/Order']" [ngClass]="currentLink==='quickOrder'? 'active' : 'inactive'" (click)="setItem('quickOrder')"> <ion-icon name="newspaper-sharp"></ion-icon> <span>Orders</span></ion-item>
-        <ion-item id="placeMenu" detail='false'[routerLink]="['/Place']" [ngClass]="currentLink==='Place'? 'active' : 'inactive'" (click)="setItem('Place')"><ion-icon name="location-sharp"></ion-icon> <span>Places</span> </ion-item>
-        <ion-item id="cashierMenu" detail='false' [routerLink]="['/QuickOrder']" [ngClass]="currentLink==='QuickOrder'? 'active' : 'inactive'" (click)="setItem('QuickOrder')"><ion-icon name="list"></ion-icon><span>Cashier</span> </ion-item>
+      </ion-label>
+    </ion-label>
+    <ion-content>
+      <ion-list class="ion-no-border">
+       <div  [ngClass]="currentLink==='Orders'? 'active' : 'inactive'" (click)="setItem('Orders')" id="OrderLink">
+         <ion-item lines="none"><ion-icon name="pricetags-outline"></ion-icon></ion-item> 
+         <ion-item class="items">Orders</ion-item>
+       </div>
+       <div [ngClass]="currentLink==='Cashier'? 'active' : 'inactive'" (click)="setItem('Cashier')" id="CashierLink">
+        <ion-item lines="none"><ion-icon name="cash-outline"></ion-icon></ion-item> 
+        <ion-item class="items">Cashier</ion-item>
+       </div> 
+       <div [ngClass]="currentLink==='Catalog'? 'active' : 'inactive'" (click)="setItem('Catalog')" id="CatalogLink" >
+        <ion-item lines="none"><ion-icon name="grid-outline"></ion-icon></ion-item> 
+        <ion-item class="items">Catalog</ion-item>
+       </div>
+       <div [ngClass]="currentLink==='Setting'? 'active' : 'inactive'" (click)="setItem('Setting')" id="SettingLink">
+        <ion-item lines="none"><ion-icon name="settings-outline"></ion-icon></ion-item> 
+        <ion-item class="items">Setting</ion-item>
+       </div>
+       <div [ngClass]="currentLink==='About'? 'active' : 'inactive'" (click)="setItem('About')" id="AboutLink">
+        <ion-item lines="none"><ion-icon name="information-outline"></ion-icon></ion-item> 
+        <ion-item class="items">About</ion-item>
+       </div>  
       </ion-list>
     </ion-content>
-    <ion-menu-toggle id="CloseMenu">
-      <ion-item > </ion-item>
-      </ion-menu-toggle>
+    <ion-footer class="ion-no-border">
+      <ion-label id="signOut" (click)="signOut()">
+      <ion-text>LOGOUT</ion-text>
+      <ion-icon name="log-out-outline"></ion-icon>
+    </ion-label>
+    </ion-footer>
+    
+    <ion-menu-toggle id="CloseMenu" >
+    </ion-menu-toggle>
   </ion-menu>
   <ion-router-outlet id="main_menu"> </ion-router-outlet>
 </ion-app>

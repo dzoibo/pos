@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { AuthService } from './service/auth.service';
+import { OrdersService } from './service/order.service';
 import { Router } from '@angular/router';
+import { MenuController } from '@ionic/angular';
+import { User } from './Models';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-root',
@@ -11,28 +15,31 @@ import { Router } from '@angular/router';
 export class AppComponent {
   currentLink:string;
   status:boolean;
-  constructor(private authService:AuthService, private router:Router) {}
+  User=new User;
+  constructor(public menuCtrl: MenuController,private cookieService:CookieService, private authService:AuthService, private router:Router,private orderService:OrdersService) {
+  }
   ngOnInit(){
     this.status=this.authService.isAuth;
+    this.currentLink='Cashier';
+    this.User=this.authService.User;
   }
-  signOut(){
+   async signOut(){
     this.authService.signOut();
     this.status=this.authService.isAuth;
+    await  this.closeMenu()
     this.router.navigate(['/home']);
-    this.closeMenu();
-    console.log('deconnecté');
+    localStorage.clear();
+    this.cookieService.deleteAll();
   }
 
   setItem(item:string){
     this.currentLink=item;
-    console.log('Activer',item)
+    setTimeout(() => {
+      this.closeMenu()
+    }, 300);
   }
 
-  closeMenu(){
-    var closeBT= document.getElementById('CloseMenu');
-    //alert('yo');
-    
-    closeBT.click();
-    console.log('fermer');
+  async closeMenu(){
+    await this.menuCtrl.close();
   }
 }

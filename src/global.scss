@@ -27,14 +27,18 @@
 
 @import '~swiper/scss';
 @import '~@ionic/angular/css/ionic-swiper';
-.styledInput {
-    --box-shadow: 0px #eee;
-    --background: #f8f9fa;
-    
-    margin-bottom: 5px;
-   }
-  
-   .roundedInput8px {
-    @extend .styledInput;
-    --border-radius: 8px;
-  }
+ //font imported on google font
+ @import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+ion-content,ion-footer,ion-toolbar{
+  --background:#FFFFFF;
+  position:relative;
+}
+
+ion-icon{
+  color:#666666;
+}
+ion-title{
+  color:black;
+}

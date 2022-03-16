@@ -1,286 +1,405 @@
 import { Injectable } from '@angular/core';
 import { promise } from 'protractor';
-import { Order,Catalog } from '../Models';
+import { Order,Catalog,User } from '../Models';
+import { LoginService,CatalogService,OrderService } from 'poslibrary';
+import { url } from 'inspector';
+
 
 @Injectable({
   providedIn: 'root'
 })
-export class OrderService {
-  Orders:Order[];
+export class OrdersService {
+  Orders: Order[] ;
   Catalog:Catalog[];
   result:string;
   
-  constructor() { 
-    this.Orders=[
+   constructor(private loginService:LoginService,private catalogService:CatalogService,private orderService:OrderService) { 
+  /*  this.Orders=[
             {
-              orderId:1,
-              orderTable:"Table1",
-              orderFloor:"Floor1",
-              orderTotal:0,
-              orderStatus:"Started",
-              orderDetails:[]},
-
+              OrderId: "1",
+              OrderLocationName: "Table1",
+              OrderLocationLevelName: "Floor1",
+              OrderTotalAmount: 0,
+              OrderStatus:"Started",
+              Created: null,
+              OrderItems:[],
+              OrderLocationId:0
+            },
             {
-              orderId:2,
-              orderTable:"Table2",
-              orderFloor:"Floor1",
-              orderTotal:0,
-              orderStatus:"Open",
-              orderDetails:[]},
+              OrderId: "2",
+              OrderLocationName: "Table2",
+              OrderLocationLevelName: "Floor1",
+              OrderTotalAmount: 0,
+              OrderStatus:"Open",
+              Created: null,
+              OrderItems:[],
+              OrderLocationId:0
+            },
+            {
+              OrderId: "3",
+              OrderLocationName: "Table3",
+              OrderLocationLevelName: "Floor1",
+              OrderTotalAmount: 0,
+              OrderStatus:"On hold",
+              Created: null,
+              OrderItems:[],
+              OrderLocationId:0 
+            },
+            {
+              OrderId: "4",
+              OrderLocationName: "Table2",
+              OrderLocationLevelName: "Floor1",
+              OrderTotalAmount: 0,
+              OrderStatus:"New",
+              Created: null,
+              OrderItems:[],
+              OrderLocationId:0
+            },
+            {
+              OrderId: "5",
+              OrderLocationName: "Table2",
+              OrderLocationLevelName: "Floor1",
+              OrderTotalAmount: 0,
+              OrderStatus:"Closed",
+              Created: null,
+              OrderItems:[],
+              OrderLocationId:0
+            }
+    ]*/ 
 
+/* this.Catalog=[
+    { 
+      CatalogId:1,
+      CatalogImage:'',
+      CatalogName:"beer",
+      CatalogDescription:"",
+      CatalogItems:[
           {
-            orderId:3,
-            orderTable:"Table3",
-            orderFloor:"Floor1",
-            orderTotal:0,
-            orderStatus:"On hold",
-            orderDetails:[]},
-          {
-            orderId:4,
-            orderTable:"Table2",
-            orderFloor:"Floor1",
-            orderTotal:0,
-            orderStatus:"New",
-            orderDetails:[]
+            ItemId:1,
+            ItemDescription:'beer with malt and guiness',
+            ItemName:'Guiness',
+            ItemPrice:750,
+            ItemImage:"../../assets/guiness.png",
+            ItemModels:"GM",
+            ItemProvider:''
           },
           {
-            orderId:5,
-            orderTable:"Table2",
-            orderFloor:"Floor1",
-            orderTotal:0,
-            orderStatus:"Closed",
-            orderDetails:[]}
-    ]
+            ItemId:2,
+            ItemDescription:'beer with malt and guiness',
+            ItemName:'Malta',
+            ItemPrice:750,
+            ItemImage:"../../assets/malta.png",
+            ItemModels:"PM",
+            ItemProvider:''
+          },
+          {
+            ItemId:3,
+            ItemDescription:'beer with malt and guiness',
+            ItemName:'33 Export',
+            ItemPrice:750,
+            ItemImage:"../../assets/33.png",
+            ItemModels:"GM",
+            ItemProvider:''
+          },
+          {
+            ItemId:4,
+            ItemDescription:'beer with malt and guiness',
+            ItemName:'Guiness',
+            ItemPrice:750,
+            ItemImage:"../../assets/guiness.png",
+            ItemModels:"PM",
+            ItemProvider:''
+          },
+          {
+            ItemId:5,
+            ItemDescription:'beer with malt and guiness',
+            ItemName:'Guiness',
+            ItemPrice:750,
+            ItemImage:"../../assets/guiness.png",
+            ItemModels:"GM",
+            ItemProvider:''
+          },
+          {
+            ItemId:6,
+            ItemDescription:'beer with malt and guiness',
+            ItemName:'Malta',
+            ItemPrice:750,
+            ItemImage:"../../assets/malta.png",
+            ItemModels:"PM",
+            ItemProvider:''
+          },
+          {
+            ItemId:7,
+            ItemDescription:'beer with malt and guiness',
+            ItemName:'33 Export',
+            ItemPrice:750,
+            ItemImage:"../../assets/33.png",
+            ItemModels:"GM",
+            ItemProvider:''
+          },
+          {
+            ItemId:8,
+            ItemDescription:'beer with malt and guiness',
+            ItemName:'Guiness',
+            ItemPrice:750,
+            ItemImage:"../../assets/guiness.png",
+            ItemModels:"PM",
+            ItemProvider:''
+          },
+          {
+            ItemId:9,
+            ItemDescription:'beer with malt and guiness',
+            ItemName:'Guiness',
+            ItemPrice:750,
+            ItemImage:"../../assets/guiness.png",
+            ItemModels:"GM",
+            ItemProvider:''
+          },
+          {
+            ItemId:10,
+            ItemDescription:'beer with malt and guiness',
+            ItemName:'Malta',
+            ItemPrice:750,
+            ItemImage:"../../assets/malta.png",
+            ItemModels:"PM",
+            ItemProvider:''
+          },
+          {
+            ItemId:11,
+            ItemDescription:'beer with malt and guiness',
+            ItemName:'33 Export',
+            ItemPrice:750,
+            ItemImage:"../../assets/33.png",
+            ItemModels:"GM",
+            ItemProvider:''
+          },
+          {
+            ItemId:12,
+            ItemDescription:'beer with malt and guiness',
+            ItemName:'Guiness',
+            ItemPrice:750,
+            ItemImage:"../../assets/guiness.png",
+            ItemModels:"PM",
+            ItemProvider:''
+          },
+          {
+            ItemId:13,
+            ItemDescription:'beer with malt and guiness',
+            ItemName:'33 Export',
+            ItemPrice:750,
+            ItemImage:"../../assets/33.png",
+            ItemModels:"GM",
+            ItemProvider:''
+          },
+          {
+            ItemId:14,
+            ItemDescription:'beer with malt and guiness',
+            ItemName:'Guiness',
+            ItemPrice:750,
+            ItemImage:"../../assets/guiness.png",
+            ItemModels:"PM",
+            ItemProvider:''
+          },
+          {
+            ItemId:15,
+            ItemDescription:'beer with malt and guiness',
+            ItemName:'Guiness',
+            ItemPrice:750,
+            ItemImage:"../../assets/guiness.png",
+            ItemModels:"GM",
+            ItemProvider:''
+          },
+          {
+            ItemId:16,
+            ItemDescription:'beer with malt and guiness',
+            ItemName:'Malta',
+            ItemPrice:750,
+            ItemImage:"../../assets/malta.png",
+            ItemModels:"PM",
+            ItemProvider:''
+          },
+          {
+            ItemId:17,
+            ItemDescription:'beer with malt and guiness',
+            ItemName:'33 Export',
+            ItemPrice:750,
+            ItemImage:"../../assets/33.png",
+            ItemModels:"GM",
+            ItemProvider:''
+          }
+        ]
+    },
+    {
+      CatalogId:2,
+      CatalogImage:'',
+      CatalogName:"Juice&Water",
+      CatalogDescription:"",
+      CatalogItems:[
+        {
+          ItemId:5,
+            ItemDescription:'beer with malt and guiness',
+          ItemName:'Mango',
+          ItemPrice:750,
+          ItemImage:"../../assets/Malta Modelo.png",
+          ItemModels:"GM",
+          ItemProvider:''
+        },
+        {
+          ItemId:6,
+          ItemDescription:'beer with malt and guiness',
+          ItemName:'Pineapple',
+          ItemPrice:750,
+          ItemImage:"../../assets/guiness.png",
+          ItemModels:"PM",
+          ItemProvider:''
+        },
+        {
+          ItemId:7,
+          ItemDescription:'beer with malt and guiness',
+          ItemName:'OrangeJuice',
+          ItemPrice:750,
+          ItemImage:"../../assets/33.png",
+          ItemModels:"GM",
+          ItemProvider:''
+        },
+        {
+          ItemId:8,
+          ItemDescription:'beer with malt and guiness',
+          ItemName:'Supermont',
+          ItemPrice:750,
+          ItemImage:"../../assets/guiness.png",
+          ItemModels:"PM",
+          ItemProvider:''
+        }
+      ]
+    },
 
-  this.Catalog=[
     {
-      id:1,
-      name:"beer",
-      drink:[
+      CatalogId:3,
+      CatalogImage:'',
+      CatalogName:"wine",
+      CatalogDescription:"",
+      CatalogItems:[
         {
-          id:1,
-          name:'Guiness',
-          price:750,
-          image:"../../assets/guiness.png",
-          model:"GM"
+          ItemId:9,
+          ItemDescription:'beer with malt and guiness',
+          ItemName:'Almeshnauer',
+          ItemPrice:750,
+          ItemImage:"../../assets/guiness.png",
+          ItemModels:"GM",
+          ItemProvider:''
+        },
+        {ItemId:10,
+          ItemDescription:'beer with malt and guiness',
+          ItemName:'Jp Chenet',
+          ItemPrice:750,
+          ItemImage:"../../assets/guiness.png",
+          ItemModels:"GM",
+          ItemProvider:''
         },
         {
-          id:2,
-          name:'Malta',
-          price:750,
-          image:"../../assets/malta.png",
-          model:"PM"
+          ItemId:11,
+          ItemDescription:'beer with malt and guiness',
+          ItemName:'El vino',
+          ItemPrice:750,
+          ItemImage:"../../assets/33.png",
+          ItemModels:"GM",
+          ItemProvider:''
         },
-        {
-          id:3,
-          name:'33 Export',
-          price:750,
-          image:"../../assets/33.png",
-          model:"GM"
-        },
-        {
-          id:4,
-          name:'Guiness',
-          price:750,
-          image:"../../assets/guiness.png",
-          model:"PM"
-        },
-        {
-          id:5,
-          name:'Guiness',
-          price:750,
-          image:"../../assets/guiness.png",
-          model:"GM"
-        },
-        {
-          id:6,
-          name:'Malta',
-          price:750,
-          image:"../../assets/malta.png",
-          model:"PM"
-        },
-        {
-          id:7,
-          name:'33 Export',
-          price:750,
-          image:"../../assets/33.png",
-          model:"GM"
-        },
-        {
-          id:8,
-          name:'Guiness',
-          price:750,
-          image:"../../assets/guiness.png",
-          model:"PM"
-        },
-        {
-          id:9,
-          name:'Guiness',
-          price:750,
-          image:"../../assets/guiness.png",
-          model:"GM"
-        },
-        {
-          id:10,
-          name:'Malta',
-          price:750,
-          image:"../../assets/malta.png",
-          model:"PM"
-        },
-        {
-          id:11,
-          name:'33 Export',
-          price:750,
-          image:"../../assets/33.png",
-          model:"GM"
-        },
-        {
-          id:12,
-          name:'Guiness',
-          price:750,
-          image:"../../assets/guiness.png",
-          model:"PM"
-        },
-        {
-          id:13,
-          name:'33 Export',
-          price:750,
-          image:"../../assets/33.png",
-          model:"GM"
-        },
-        {
-          id:14,
-          name:'Guiness',
-          price:750,
-          image:"../../assets/guiness.png",
-          model:"PM"
-        },
-        {
-          id:15,
-          name:'Guiness',
-          price:750,
-          image:"../../assets/guiness.png",
-          model:"GM"
-        },
-        {
-          id:16,
-          name:'Malta',
-          price:750,
-          image:"../../assets/malta.png",
-          model:"PM"
-        },
-        {
-          id:17,
-          name:'33 Export',
-          price:750,
-          image:"../../assets/33.png",
-          model:"GM"
+        {ItemId:12,
+          ItemDescription:'beer with malt and guiness',
+          ItemName:'Vinosol',
+          ItemPrice:750,
+          ItemImage:"../../assets/guiness.png",
+          ItemModels:"PM",
+          ItemProvider:''
         }
       ]
     },
     {
-      id:2,
-      name:"Juice&Water",
-      drink:[
-        {
-          id:5,
-          name:'Mango',
-          price:750,
-          image:"../../assets/Malta Modelo.png",
-          model:"GM"
-        },
-        {
-          id:6,
-          name:'Pineapple',
-          price:750,
-          image:"../../assets/guiness.png",
-          model:"PM"
-        },
-        {
-          id:7,
-          name:'OrangeJuice',
-          price:750,
-          image:"../../assets/33.png",
-          model:"GM"
-        },
-        {
-          id:8,
-          name:'Supermont',
-          price:750,
-          image:"../../assets/guiness.png",
-          model:"PM"
-        }
-      ]
-    },
-
-    {
-      id:3,
-      name:"wine",
-      drink:[
-        {
-          id:9,
-          name:'Almeshnauer',
-          price:750,
-          image:"../../assets/guiness.png",
-          model:"GM"
-        },
-        {id:10,
-          name:'Jp Chenet',
-          price:750,
-          image:"../../assets/guiness.png",
-          model:"GM"
-        },
-        {
-          id:11,
-          name:'El vino',
-          price:750,
-          image:"../../assets/33.png",
-          model:"GM"
-        },
-        {id:12,
-          name:'Vinosol',
-          price:750,
-          image:"../../assets/guiness.png",
-          model:"PM"
-        }
-      ]
+      CatalogId:4,
+      CatalogImage:'',
+      CatalogName:"Cocktail",
+      CatalogDescription:"",
+      CatalogItems:[]
     },
     {
-      id:4,
-      name:"Cocktail",
-      drink:[]
+      CatalogId:5,
+      CatalogImage:'',
+      CatalogName:"Whisky",
+      CatalogDescription:"",
+      CatalogItems:[],
     },
     {
-      id:5,
-      name:"Whisky",
-      drink:[],
+      CatalogId:6,
+      CatalogImage:'',
+      CatalogName:"Champagne",
+      CatalogDescription:"",
+      CatalogItems:[]
     },
     {
-      id:6,
-      name:"Champagne",
-      drink:[]
+      CatalogId:7,
+      CatalogImage:'',
+      CatalogName:"Lite",
+      CatalogDescription:"",
+      CatalogItems:[],
     },
     {
-      id:7,
-      name:"Lite",
-      drink:[],
+      CatalogId:8,
+      CatalogImage:'',
+      CatalogName:"LocalDrink",
+      CatalogDescription:"",
+      CatalogItems:[],
     },
     {
-      id:8,
-      name:"LocalDrink",
-      drink:[],
-    },
-    {
-      id:9,
-      name:"Special",
-      drink:[],
+      CatalogId:9,
+      CatalogImage:'',
+      CatalogName:"Special",
+      CatalogDescription:"",
+      CatalogItems:[],
     }
 
-  ]
+  ]  */ 
   
   }
   
 
+ /* GetUser(userName:string,passWord:string):any{
+    this.loginService.login(userName, passWord).subscribe((data: any) => { 
+      console.log(data.WindowTabData);
+      if(data.WindowTabData.Error){
+        console.log(data.WindowTabData.Error);
+        return false;
+      }else{
+        var userinfo=data.WindowTabData.DataSet.DataRow.field;
+        this.User.userId=userinfo[0].val;
+        this.User.userName=userinfo[1].val;
+        this.User.userParner='Cashier';
+        this.User.userImage='../assets/pp.png';
+        return this.User;
+      }
+    });
+    
+  }
+
+  getUserss(){
+    return this.loginService.login('', '');
+  }
+  */
+  async getCatalog(catalogId:number,itemId:number){
+    const data = await this.catalogService.getCatalog(catalogId,itemId);
+    console.log('ddytfdtrdt', data, catalogId, itemId)
+    return data
+  }
+
+  async getNewOrderId(){
+    const data:any=await this.orderService.draftOrder()
+    return data;
+  }
+
+  
+
+  
  
   SendByOM(tel: number, montant: number):Promise<string>{
     return new Promise(
@@ -312,11 +431,11 @@ send(tel:number,montant:number) {// fonction qui appellera la requette http pour
 
 saveOrder(Order:Order){// this function will also return promise wich will be suppose to send the new state of orther to the backend after every change in each component 
  for (const order of this.Orders){
-   if(order.orderId===Order.orderId){
+   if(order.OrderId===Order.OrderId){
      this.Orders.splice(this.Orders.indexOf(order),1); 
    }
  }
- Order.orderStatus='Closed';
+ Order.OrderStatus='Closed';
  this.Orders.push(Order);
  return Promise.resolve(this.Orders);
 }

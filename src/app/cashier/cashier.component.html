@@ -1,0 +1,186 @@
+<ion-header #header>
+  <ion-toolbar>
+    <ion-menu-button id="btMenu" slot="start"></ion-menu-button>
+    <ion-title  >Cashier</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content  >
+  <div id="global" >
+    <div id="globalCatalog" >
+      <div id="surface">
+        <div>
+          <ion-label id="labelName">
+            <ion-icon name="pricetag-outline"></ion-icon>
+            <ion-text id="sOrderId" > {{Order.OrderId | slice:0:8}}</ion-text>
+          </ion-label>
+          
+          <ion-label >
+            <ion-icon name="person-outline"></ion-icon>
+            <ion-text id="divers">DIVERS</ion-text>
+          </ion-label>
+        </div>
+        <ion-icon name="ellipsis-vertical" id="OrderEllipse"></ion-icon>
+        <ion-popover trigger="OrderEllipse" id="OrderPopOver" side="right">
+          <ng-template>
+            <ion-list >
+              <div>
+                <ion-item class="popOverIcon" lines="none"><ion-icon name="trash-outline"></ion-icon></ion-item>
+                <ion-item class="ItemDelete" ><ion-text> Delete</ion-text></ion-item>
+              </div>
+              <div>
+                <ion-item lines="none"><ion-icon name="information-circle-outline"></ion-icon></ion-item> 
+                <ion-item class="ItemDelete">Show details</ion-item>
+              </div>
+              <div>
+                <ion-item lines="none"><ion-icon name="pencil-outline"></ion-icon></ion-item> 
+                <ion-item class="ItemDelete">Edit</ion-item>
+              </div>
+          </ion-list>
+          </ng-template>
+        </ion-popover>
+      </div>
+    
+    <div id="menuBlock">
+      <div id="menuItems">
+        <ion-label>Catalog</ion-label>
+        <div id="menuIcon"> 
+                     
+              <ion-label  *ngIf="currentMenu==='search'" mode="ios" class="search ion-no-padding ion-no-margin" ><ion-searchbar id="search"  placeholder="search" (ionChange)="doSearch()" [(ngModel)]="searchValue"></ion-searchbar> </ion-label>
+              <ion-label *ngIf="currentMenu!=='search'" [ngClass]="currentMenu==='search'? 'active' : 'inactive'">
+                <ion-icon  id="searchIcon"  (click)="setMenu('search')" name="search" ></ion-icon>
+             </ion-label>
+            <ion-label  [ngClass]="currentMenu==='SCAN'? 'active' : 'inactive'" id="scanIcon"><ion-icon  name="barcode"  (click)="setMenu('SCAN')"></ion-icon></ion-label>
+            <ion-label  id="catalogLabel" [ngClass]="currentMenu==='grid'? 'active' : 'inactive'">
+              <ion-icon  name="grid"  id="gridIcon" (click)="setMenu('grid')"></ion-icon> 
+              <ion-label *ngIf="currentMenu==='grid'" id="catalogTrigger">
+                <ion-text> {{CatalogSelected.CatalogName}}</ion-text>
+                <ion-icon name="caret-down"  ></ion-icon>
+                <ion-popover id="catalogPopOver" trigger="catalogTrigger" side="right">
+                  <ng-template>
+                    <ion-list >
+                      <ion-item *ngFor="let catalog of Catalog" [id]="'Catalog'+(Catalog.catalogId)"  (click)="showItem(catalog.CatalogItems,catalog.CatalogName)" class="catalogType" (click)='setCatalog(catalog.CatalogId)'>
+                        <ion-text [color]="choiceColor(catalog.CatalogId)" >{{catalog.CatalogName}}</ion-text>
+                      </ion-item>
+                  </ion-list>
+                  </ng-template>
+                </ion-popover>
+              </ion-label>
+            </ion-label>
+        </div>
+      </div>
+      <div  *ngIf="noItems.length>5" id="noItems">
+        <ion-text>
+          {{noItems}}
+        </ion-text>
+      </div>
+      <div id="btScan" *ngIf="currentMenu==='SCAN'">
+        <ion-button (click)="scan()" ><ion-icon name="barcode" ></ion-icon>SCAN</ion-button>
+      </div>
+      <div>
+        <ion-label id="slideBack" *ngIf="(currentMenu==='grid' || ('no'===noItems && currentMenu==='search')) && 5>noItems.length && template.length>1"  >
+          <ion-icon name="caret-back-circle" (click)="swipePrev()"></ion-icon>
+        </ion-label>
+        <ion-slides id="slides" *ngIf="(currentMenu==='grid' || (noItems==='no' && currentMenu==='search')) && 5>noItems.length  "  class="slides ion-padding-bottom" pager="true" [options]="slideOpts" #mySlider>  
+          <ion-slide class="ion-padding-bottom" *ngFor="let slide of template">
+            <ion-grid>
+              <ion-row class="ion-justify-content-between " >
+                <ion-col   size="4"  class="ion-text-center" *ngFor="let item of slide.items ; let i= index"  > 
+                  <div *ngIf="item.ItemId>=0">
+                    <div class="card" (click)="addItem(item)" >
+                      <div class="ItemImage" [id]="'image'+i">
+                        <img [src]="item.ItemImage">
+                      </div>
+                      <ion-label>
+                        <ion-text [id]="'GridItemName'+i">
+                          {{item.ItemName}}
+                          <ion-label  [id]="'badge'+i"  class="Qte">{{getQuantity(item.ItemId)}}</ion-label>
+                        </ion-text>
+                        <ion-text class="cardItemDescription">
+                          {{item.ItemDescription}}
+                        </ion-text>
+                      </ion-label>
+                    </div>
+                    </div>
+                  <div *ngIf="0>item.ItemId">
+                  </div>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-slide>
+        </ion-slides>
+        <ion-label id="slideNext" *ngIf="(currentMenu==='grid' || (noItems==='no' && currentMenu==='search')) && 5>noItems.length && template.length>1" >
+          <ion-icon name="caret-forward-circle" (click)="swipeNext()"></ion-icon>
+        </ion-label>
+      </div>
+    </div>
+    
+    
+
+    
+    <div id="orderBlock">
+      <div id="orderTitle">
+        <ion-text>Order Line</ion-text>
+        <ion-icon name="ellipsis-vertical"></ion-icon>
+      </div>
+
+      <div *ngIf="Order.OrderItems!=null" id="orderItemsList" [ngClass]="currentMenu==='SCAN'  || (noItems!=='no' && currentMenu==='search') || (noItems.length>5 && currentMenu==='grid')   ? 'orderItemsList1' : 'orderItemsList2'">
+
+        <div  class="orderItems" *ngFor="let OrderItem of Order.OrderItems;let i= index">
+          <ion-label class="orderItemsImg" [id]="'orderItemsImg'+i">
+            <img [src]="OrderItem.Item.ItemImage" [alt]="OrderItem.ItemName">
+          </ion-label>
+          <div class="orderItemsDetailsContainer" [id]="'orderItemsDetailsContainer'+i">
+            <div class="orderItemsDetails" [id]="'orderItemsDetails'+i">
+              <ion-label class="orderItemsName" [id]="'orderItemsName'+i">
+                <ion-text>
+                  {{OrderItem.Item.ItemName}}
+                  <ion-text class="orderItemsDesc" >
+                    {{OrderItem.Item.ItemDescription}}
+                  </ion-text>
+                </ion-text> 
+              </ion-label>
+              <ion-label class="orderItemsPrice" [id]="'orderItemsPrice'+i"> {{OrderItem.ItemQuantity * OrderItem.ItemModel.Price }}</ion-label>
+            </div>
+            <div class="orderItemsDetails" style="margin-top:-5px">
+              <ion-label class="orderItemsModel">
+                <ion-button [id]="'BtSwitchModel'+i" slot="icon-only" (disabled)="canSwitchModel(OrderItem.Item.ItemModels)" (click)="switchModels(OrderItem)">
+                  <ion-icon  name="shuffle" ></ion-icon>
+                  </ion-button>  
+                  <ion-label [id]="'OrderItemModel'+i" >{{OrderItem.ItemModel.Model}}</ion-label> 
+              </ion-label>
+              <ion-label class="orderItemsButton">
+                <ion-icon  [id]="'btRemove'+i" [ngClass]="checkDisable(OrderItem)? 'remove' : 'noremove'"  (click)="decreaseQuantity(OrderItem.Item.ItemId)" name="remove-circle"></ion-icon>
+                <ion-label   class="qtItem" [id]="'qtItem'+i" ><ion-text>{{OrderItem.ItemQuantity}}</ion-text></ion-label>
+                <ion-icon class="add" [id]="'btAdd'+i" (click)="increaseQuantity(OrderItem.Item.ItemId)"  name="add-circle"></ion-icon>
+              </ion-label>
+            </div>
+          </div>
+          <ion-icon name="ellipsis-vertical" [id]="'ItemEllipse'+i" ></ion-icon>
+          <ion-popover [trigger]="'ItemEllipse'+i" class="ItemPopOver" [id]="'ItemPopOver'+i" side="right">
+            <ng-template>
+              <ion-list >
+                <div>
+                  <ion-item lines="none"><ion-icon name="trash-outline"></ion-icon> </ion-item>
+                  <ion-item class="ItemDelete" [id]="'ItemDelete'+i" (click)="deleteItem(OrderItem)" ><ion-text> Delete</ion-text></ion-item>
+                </div>
+            </ion-list>
+            </ng-template>
+          </ion-popover>
+        </div>
+        
+      </div>
+    </div>
+  
+    </div>
+    
+    
+  </div>
+  
+</ion-content>
+
+
+<ion-footer *ngIf="Pay==='null'" id="footer" >
+  <ion-text id="Total">CFA  <ion-label style="font-weight: bold">{{getTotal()}}</ion-label> </ion-text>
+  <ion-text id="Pay" *ngIf="Order.OrderTotalAmount>0" (click)="pay()"> <ion-text>PAY </ion-text>  <ion-icon name="chevron-forward"></ion-icon></ion-text>
+</ion-footer>
+

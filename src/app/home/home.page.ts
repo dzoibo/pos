@@ -1,8 +1,11 @@
-import { Component,OnInit,OnDestroy } from '@angular/core';
+import { Component,OnInit,OnDestroy,ViewChild } from '@angular/core';
 import { AuthService } from '../service/auth.service';
 import { FormBuilder, FormGroup,Validators } from '@angular/forms';
 import{ User} from '../Models';
+import { OrdersService } from '../service/order.service';
 import { Router } from '@angular/router';
+import { MenuController } from '@ionic/angular';
+import { LoginService } from 'poslibrary';
 
 
 @Component({
@@ -15,24 +18,52 @@ export class HomePage {
   PasswordError!:string;
   LoginError=" ";
   loginForm:FormGroup;
-  Bartender!:User;
+  User!:User;
   authStatus:boolean;
+  online: boolean = navigator.onLine;
   showPassword:boolean=false;
-;  constructor(private formBuilder:FormBuilder,private router:Router, private authService:AuthService) {
-    this.Bartender=new User('Barabas','User420'); 
-  }
+  spinner=false;
+  @ViewChild('loginName') inputName  ;
+  @ViewChild('loginPassword') inputPassword ;
+  constructor(public loginService:LoginService, public menuCtrl: MenuController,private formBuilder:FormBuilder,private router:Router, private authService:AuthService,private orderService:OrdersService) {
+   this.User=new User
+    }
+  
   ngOnInit(){
       this.initForm();
-      this.authStatus=this.authService.isAuth;  
+      this.authStatus=this.authService.isAuth; 
   }
+
+  SubmitByEnter(){
+     if(this.inputName.value.length>0){
+       if(this.inputPassword.value.length>=6){
+         console.log('uio')
+         this.onSubmitForm()
+       }else{
+         this.inputPassword.setFocus();
+       }
+     }else{
+        console.log('Name');
+        this.inputName.setFocus();
+     }
+}
+  ionViewDidEnter() {
+    this.menuCtrl.enable(false);
+    this.inputName.setFocus();
+  }
+  ionViewDidLeave()
+  {
+    this.menuCtrl.enable(true);
+  }
+  
   public onPasswordToggle(): void {
     this.showPassword = !this.showPassword;
   }
   
   initForm() {
     this.loginForm = this.formBuilder.group({
-      Name: [''],
-      Password: [''],
+      Name: ['',Validators.required],
+      Password: ['',[Validators.minLength(6),Validators.required]],
     });
   }
 
@@ -42,15 +73,16 @@ export class HomePage {
       this.LoginError='';
     }
 
-    onSubmitForm(){
-    
-      this.resetError();
+     async onSubmitForm()
+     {
       const formValue = this.loginForm.value;
+      this.spinner=true;
+     /* this.resetError();   all this part is no longuer relevant because the user can't longer submit the form without provide his userName and his password
       var error1=false;
       var error2=false;
       
       if(formValue['Password']===null || formValue['Password']===''){
-        this.PasswordError ="Enter password";
+        this.PasswordError ="Enter Password";
         var elem=document.getElementById('loginPassword') as HTMLInputElement;
         console.log('error 2');
         elem.focus();
@@ -61,22 +93,50 @@ export class HomePage {
         console.log(formValue['Name']);
         this.NameError="Enter Username";
         var elem=document.getElementById('loginName') as HTMLInputElement;
-        
         error1=true;
       }
 
       if (error1 || error2){
-        return
+        return 0
       }
-      else{
-        if(formValue['Name']===this.Bartender.userName && formValue['Password']===this.Bartender.userPassword){
+      else */
+      
+        //var login=  await this.orderService.GetUser(formValue['Name'],formValue['Password']).catch(err => console.log('error', err));
+        this.LoginError='';
+        if(!this.online){
+          this.LoginError='No connection';
+          return false;
+        }else{
+           try
+          {
+            var login=  await this.authService.GetUser(formValue['Name'],formValue['Password']);
+            this.spinner=false;
+
+          } catch (error) {
+            this.LoginError='Server error please try again';
+            console.log(JSON.stringify(error), formValue['Name'], formValue['Password']);
+            return false;
+          }
+
+        }
+        
+        if( login !== 'null' ){//'medard@ranites.com','medard'
           this.authService.signIn().then(
-            () => {
-              console.log('Sign in successful!');
-              this.authStatus = this.authService.isAuth;
+           async () => {
+              
               this.initForm()
-      console.log(this.authService.isAuth);
-      this.router.navigate(['Order']);
+              this.LoginError='';
+              try {
+                this.User=new User
+                login;
+                console.log('Sign in successful!');
+                this.authStatus = this.authService.isAuth;
+                this.authService.User=login;
+                this.authService.createCookies()
+              } catch (error) {
+               console.log(error) 
+              }
+              this.router.navigate(['Cashier']);
             }
           ); 
         }
@@ -86,7 +146,6 @@ export class HomePage {
         
       }
       
-    }
     
 
 }

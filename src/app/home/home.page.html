@@ -1,100 +1,45 @@
 
-  
-<!--
-<ion-content class="padding"  fullscreen id="container"> 
-    <ion-grid>
-      <ion-row class="ion-justify-content-center">
-        <ion-col fixed="true" size="12" size-md="6">
-          <form [formGroup]="loginForm" (ngSubmit)="onSubmitForm()"  id="form-container" >
-            <div id="LoginError" class="ion-text-center">
-               {{LoginError}}
-            </div>
-            <div >
-              <ion-list>  
-                <ion-item>  
-                  <ion-label position="floating">Username:</ion-label>  
-                  <ion-input type="text"  id="loginName" formControlName="Name" inputId="loginNames"  ></ion-input>
-                </ion-item>
-                <div id='idNameError' class="ion-padding" [ngClass]="NameError === 'Enter Username' ? 'placeHolderClass' : 'inutileClass'">
-                  {{NameError}}
-                </div>
-                
-                <ion-item>  
-                  <ion-label position="floating">Password:</ion-label>  
-                  <ion-input type="password" id="loginPassword" formControlName="Password"   ></ion-input> 
-                </ion-item>
-                <div class="ion-padding" id='idPasswordError' [ngClass]="PasswordError === 'Enter password' ? 'placeHolderClass' : 'inutileClass'">
-                  {{PasswordError}}
-                </div>   
-              </ion-list>  
-                    
-              <div >  
-                <ion-button ion-button large class="ion-no-margin"  type="submit" id="loginSubmit" color="primary" expand="full">Sign In</ion-button>  
-              </div>
-            </div>
-          </form>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-    
-</ion-content>  -->
 
-<ion-content fullscreen="true">
+<ion-content fullscreen="true" (keyup.Enter)="SubmitByEnter($event)">
   <ion-grid>
-
     <ion-row class="ion-justify-content-center">
-      <ion-col class="ion-align-self-center" size-md="6" size-lg="5" size-xs="12">
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmitForm()"   >
-          
-          
-          <div  class="login-logo">
-            <h2 class="ion-text-center main-header8">
-              <ion-text color="white" style="color: white;">LOGIN</ion-text>
-            </h2>        
-          </div>
+        <ion-spinner *ngIf="spinner===true"  name="lines"></ion-spinner> 
+        <ion-col class="ion-align-self-center" size-md="6" size-lg="5" size-xs="12">
+        <div  id="login-logo">
+          <img src="../../assets/isnov.png" alt="logo">     
+        </div>
 
-          <ion-list class="margin-top-25 ion-margin margin-0-28">
-            <ion-item class="roundedInput8px margin-bottom-15 ">
-              <ion-label>
-                <ion-icon color="medium" name="mail-outline"></ion-icon>
-              </ion-label>
-              <ion-input placeholder="Username" type="text"  id="loginName" formControlName="Name" ></ion-input>
+        
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmitForm()" id="logForm" > 
+          <ion-list lines="none" class="margin-top-25 ion-margin margin-0-28">
+
+            <ion-text>
+              Identification or Phone Number
+            </ion-text>
+            <ion-item   >
+              <ion-input  placeholder="Identification or Phone Number" type="text"  id="loginName" #loginName formControlName="Name" ></ion-input>
             </ion-item>
-            <div id='idNameError'   [ngClass]="NameError === 'Enter Username' ? 'placeHolderClass' : 'inutileClass'">
-              {{NameError}}
-            </div>
-            <div   id="loginError"  class="placeHolderClass ">
-              {{LoginError}}
-            </div>
 
-            <ion-item class="roundedInput8px margin-bottom-20">
-              <ion-label>
-                <ion-icon color="medium" name="lock-closed-outline"></ion-icon>
-              </ion-label>
-
-              <ion-input placeholder="Password"  id="loginPassword" formControlName="Password" [type]="showPassword ? 'text' : 'password'" clearOnEdit="false">
+            <ion-text>
+              Password
+            </ion-text>
+            <ion-item >
+              <ion-input placeholder="At lest 6 characters" #loginPassword  id="loginPassword" formControlName="Password" [type]="showPassword ? 'text' : 'password'" clearOnEdit="false">
               </ion-input>
               <div (click)="onPasswordToggle()" ion-button fill="clear" size="small">
-                <ion-icon slot="icon-only" color="medium" [name]="showPassword ? 'eye-off' : 'eye'"></ion-icon>
+               <ion-icon slot="icon-only" color="medium" [name]="showPassword ? 'eye-off' : 'eye'"></ion-icon> 
               </div>
             </ion-item>
-            <ion-text  id='idPasswordError'   [ngClass]="PasswordError === 'Enter password' ? 'placeHolderClass' : 'inutileClass'">
-              {{PasswordError}}
-            </ion-text>
-            <div   id="loginError"  class="placeHolderClass ">
-              {{LoginError}}
-            </div>   
-       
-            <ion-text color="slightgray">
-            </ion-text>
-            <ion-button mode="ios" class="aliceblue " type="submit" id="loginSubmit"  style="color:white"   expand="block">LOGIN</ion-button>
-          </ion-list>
+            
+            
+            <ion-button mode="ios" color="success" type="submit" [disabled]="loginForm.invalid" id="loginSubmit"  style="color:white"   expand="block">Login</ion-button>
+        <ion-label id="forgot" color="primary">Forgot Password?</ion-label>
+      </ion-list>
+      <div id ="Error" *ngIf="LoginError.length>5">
+        {{LoginError}}
+      </div>
         </form>
       </ion-col>
     </ion-row>
   </ion-grid>
-
-
-
-
 </ion-content>

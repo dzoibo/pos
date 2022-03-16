@@ -10,17 +10,6 @@ export class AppPage {
     return element(by.deepCss('app-root ion-content')).getText();
   }
 
-  
-  
-  /*the function bellow doesn't work on the ion element due to to the select by id 
-  sendKey(id:string,key:string){
-    var elm=element(by.id(id));
-    return elm.sendKeys(key);
-
-    getelm(id:string): any {
-    return element(by.id(id)).isPresent();
-  }
-*/
   getTextid(id:string){
     const elm = element(by.id(id));
     return elm.getText();
@@ -92,4 +81,22 @@ export class AppPage {
     return elm.click();
   }
   
+
+  async logIn(){
+    await this.clearElm('ion-input-0');
+    await this.sendKey('ion-input-0','medard@ranites.com');
+    await this.clearElm('ion-input-1');
+    await this.sendKey('ion-input-1','medard');
+    await this.ClickId('loginSubmit');
+    }
+    
+  async logOut(){
+    var EC=ExpectedConditions;
+    const btMenu=element(by.id('btMenu'));
+    const signOut=element(by.id('signOut'));
+    await browser.wait(EC.elementToBeClickable(btMenu),10000);
+    btMenu.click();
+    await browser.wait(EC.elementToBeClickable(signOut),10000);
+    signOut.click();
+  }
 }
