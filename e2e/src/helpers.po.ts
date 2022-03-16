@@ -98,5 +98,6 @@ export class AppPage {
     btMenu.click();
     await browser.wait(EC.elementToBeClickable(signOut),10000);
     signOut.click();
+    
   }
 }

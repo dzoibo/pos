@@ -19,17 +19,27 @@ import { SQLite } from '@ionic-native/sqlite/ngx';
 import { SQLitePorter } from '@ionic-native/sqlite-porter/ngx';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { LoginService,OrderService,CatalogService } from 'poslibrary';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule,HttpClient } from '@angular/common/http';
 import { OrdersService } from './service/order.service';
 //import { PayComponent } from './pay/pay.component';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { TranslateConfigService } from './service/translate-config.service';
+import { CashierPage } from 'e2e/src/Cashier/cashier.po';
 
+export function LanguageLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
+}
 
 
 
 
 const appRoutes: Routes = [
 { path: "Cashier", canActivate: [AuthGuardService],component: CashierComponent },
+{ path: "home", canActivate: [GuardAvoidService], component: CashierComponent },
 //{ path: "Pay", canActivate: [AuthGuardService],component: PayComponent },
+{ path: "**", redirectTo:'Cashier' },
+
 ];
 @NgModule({
   declarations: [
@@ -51,6 +61,13 @@ const appRoutes: Routes = [
     ScrollingModule,
     RouterModule.forRoot(appRoutes),
     IonicStorageModule.forRoot(),
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: (LanguageLoader),
+        deps: [HttpClient]
+      }
+    })
   ],
   providers: [
     AuthService,
@@ -64,6 +81,7 @@ const appRoutes: Routes = [
     OrdersService,
     CatalogService,
     CookieService,
+    TranslateConfigService,
     {provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent],

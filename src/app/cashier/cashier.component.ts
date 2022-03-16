@@ -4,7 +4,7 @@ import { Router,ActivatedRoute } from '@angular/router';
 import { OrdersService } from '../service/order.service';
 import { Catalog,OrderItem,Item,Order, Slide, ItemModel } from '../Models';
 import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
-import { PopoverController } from '@ionic/angular';
+import { AlertController, PopoverController } from '@ionic/angular';
 import { IonSlides} from '@ionic/angular';
 import { LoginService } from 'poslibrary';
 
@@ -15,7 +15,7 @@ import { LoginService } from 'poslibrary';
   styleUrls: ['./cashier.component.scss'],
   
 })
-export class CashierComponent implements OnDestroy {
+export class CashierComponent  {
   @ViewChild('mySlider')  slides: IonSlides;
   selectedLeave : string = '';
   searchValue:string='';
@@ -37,21 +37,19 @@ export class CashierComponent implements OnDestroy {
   slideSize=6; // variable to manage the size of the slide depending of the height of the screen 
   currentMenu='SCAN';
   CatalogSelected:Catalog;
-  AllCatalog:Catalog
+  AllCatalog:Catalog;
+  goToPay:boolean;
 
 
-  constructor(private barcodeScanner: BarcodeScanner,private router:Router, private orderService:OrdersService,private route:ActivatedRoute,private popoverController:PopoverController, private log: LoginService) {
+  constructor(private alertController:AlertController, private barcodeScanner: BarcodeScanner,private router:Router, private orderService:OrdersService,private route:ActivatedRoute,private popoverController:PopoverController, private log: LoginService) {
    
     this.Orders=this.orderService.Orders;
     this.Order=new Order();
     this.CatalogSelected=new Catalog();
    }
-  ngOnDestroy(): void {
-    this.Order=new Order();
-  }
+  
   
    async ionViewWillEnter() {
-    console.log('init cashier');
     this.Catalog = [];
     await this.initCatalog();
     await this.getOrder();
@@ -59,11 +57,45 @@ export class CashierComponent implements OnDestroy {
     this.getSize();
     this.showItem(this.CatalogSelected.CatalogItems,this.CatalogSelected.CatalogName);
     this.searchValue="";
+    this.goToPay=false
   }
   
-    
+  async ionViewWillLeave() {
+    this.Order=new Order();
+    this.currentMenu='search'
+    if(this.Order.OrderTotalAmount>0){
+     await this.presentAlertConfirm();
+     return
+    }
+  }
   
+  
+  async presentAlertConfirm() {
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Confirm!',
+      message: 'If you quit now all progress will be lost',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          id: 'cancel-button',
+          handler: (blah) => {
+            console.log('Confirm Cancel: blah');
+          }
+        }, {
+          text: 'Okay',
+          id: 'confirm-button',
+          handler: () => {
+            console.log('Confirm Okay');
+          }
+        }
+      ]
+    });
 
+    await alert.present();
+  }
 
   async initCatalog(){
     await this.orderService.getCatalog(0,0).catch(err => console.log('get catalog', err));
@@ -399,15 +431,6 @@ checkDisable(Item:OrderItem){
  }
 
 
- 
-
-
-
- //fonction and propertie of the payment by cash
-
- Mode:string='CASH';
- Pay='null';// the state os the order about pay ; it can be 'null','pay'or 'valid'
- Payment:number=0;
 
   
  pay(){
