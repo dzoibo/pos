@@ -179,7 +179,7 @@
 </ion-content>
 
 
-<ion-footer *ngIf="Pay==='null'" id="footer" >
+<ion-footer  id="footer" >
   <ion-text id="Total">CFA  <ion-label style="font-weight: bold">{{getTotal()}}</ion-label> </ion-text>
   <ion-text id="Pay" *ngIf="Order.OrderTotalAmount>0" (click)="pay()"> <ion-text>PAY </ion-text>  <ion-icon name="chevron-forward"></ion-icon></ion-text>
 </ion-footer>

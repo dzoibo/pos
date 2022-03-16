@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomePage } from './home.page';
-import { AuthService } from '../service/auth.service';
-import { GuardAvoidService } from '../service/guard-avoid.service';
+import { AuthService } from '../guard/auth.service';
+import { GuardAvoidService } from '../guard/guard-avoid.service';
 
 const routes: Routes = [
   {

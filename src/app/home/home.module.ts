@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { HomePage } from './home.page';
-import { GuardAvoidService } from '../service/guard-avoid.service';
-import { AuthGuardService } from '../service/auth-guard.service';
+import { GuardAvoidService } from '../guard/guard-avoid.service';
+import { AuthGuardService } from '../guard/auth-guard.service';
 import { HomePageRoutingModule } from './home-routing.module';
 
 

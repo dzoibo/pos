@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthService } from './service/auth.service';
+import { AuthService } from './guard/auth.service';
 import { OrdersService } from './service/order.service';
 import { Router } from '@angular/router';
 import { MenuController } from '@ionic/angular';

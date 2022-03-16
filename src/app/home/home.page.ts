@@ -1,5 +1,5 @@
 import { Component,OnInit,OnDestroy,ViewChild } from '@angular/core';
-import { AuthService } from '../service/auth.service';
+import { AuthService } from '../guard/auth.service';
 import { FormBuilder, FormGroup,Validators } from '@angular/forms';
 import{ User} from '../Models';
 import { OrdersService } from '../service/order.service';
@@ -76,7 +76,6 @@ export class HomePage {
      async onSubmitForm()
      {
       const formValue = this.loginForm.value;
-      this.spinner=true;
      /* this.resetError();   all this part is no longuer relevant because the user can't longer submit the form without provide his userName and his password
       var error1=false;
       var error2=false;
@@ -107,7 +106,8 @@ export class HomePage {
           this.LoginError='No connection';
           return false;
         }else{
-           try
+          this.spinner=true;
+          try
           {
             var login=  await this.authService.GetUser(formValue['Name'],formValue['Password']);
             this.spinner=false;

@@ -1,5 +1,7 @@
 
-import { Component, OnInit,OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit,OnDestroy, ViewChild,HostListener } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ComponentCanDeactivate } from '../guard/deactivate-guard.guard';
 import { Router,ActivatedRoute } from '@angular/router';
 import { OrdersService } from '../service/order.service';
 import { Catalog,OrderItem,Item,Order, Slide, ItemModel } from '../Models';
@@ -15,7 +17,24 @@ import { LoginService } from 'poslibrary';
   styleUrls: ['./cashier.component.scss'],
   
 })
-export class CashierComponent  {
+export class CashierComponent implements ComponentCanDeactivate {
+
+   // @HostListener allows us to also guard against browser refresh, close, etc.
+   @HostListener('window:beforeunload')
+   canDeactivate(): Observable<boolean> | boolean {
+     // insert logic to check if there are pending changes here;
+     // returning true will navigate without confirmation
+     // returning false will show a confirm dialog before navigating away
+     if (this.Order.OrderTotalAmount>0){
+       console.log('guard confirm');
+       return false;
+     }else{
+       console.log('guard no confirm');
+       return true ;
+     }
+   }
+
+   
   @ViewChild('mySlider')  slides: IonSlides;
   selectedLeave : string = '';
   searchValue:string='';
@@ -41,7 +60,7 @@ export class CashierComponent  {
   goToPay:boolean;
 
 
-  constructor(private alertController:AlertController, private barcodeScanner: BarcodeScanner,private router:Router, private orderService:OrdersService,private route:ActivatedRoute,private popoverController:PopoverController, private log: LoginService) {
+  constructor( private barcodeScanner: BarcodeScanner,private router:Router, private orderService:OrdersService,private route:ActivatedRoute,private popoverController:PopoverController, private log: LoginService) {
    
     this.Orders=this.orderService.Orders;
     this.Order=new Order();
@@ -63,39 +82,10 @@ export class CashierComponent  {
   async ionViewWillLeave() {
     this.Order=new Order();
     this.currentMenu='search'
-    if(this.Order.OrderTotalAmount>0){
-     await this.presentAlertConfirm();
-     return
-    }
   }
   
   
-  async presentAlertConfirm() {
-    const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
-      header: 'Confirm!',
-      message: 'If you quit now all progress will be lost',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary',
-          id: 'cancel-button',
-          handler: (blah) => {
-            console.log('Confirm Cancel: blah');
-          }
-        }, {
-          text: 'Okay',
-          id: 'confirm-button',
-          handler: () => {
-            console.log('Confirm Okay');
-          }
-        }
-      ]
-    });
-
-    await alert.present();
-  }
+  
 
   async initCatalog(){
     await this.orderService.getCatalog(0,0).catch(err => console.log('get catalog', err));
