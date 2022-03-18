@@ -4,8 +4,9 @@ import { FormBuilder, FormGroup,Validators } from '@angular/forms';
 import{ User} from '../Models';
 import { OrdersService } from '../service/order.service';
 import { Router } from '@angular/router';
-import { MenuController } from '@ionic/angular';
+import { AlertController, MenuController } from '@ionic/angular';
 import { LoginService } from 'poslibrary';
+import { TranslateConfigService } from '../service/translate-config.service';
 
 
 @Component({
@@ -23,11 +24,13 @@ export class HomePage {
   online: boolean = navigator.onLine;
   showPassword:boolean=false;
   spinner=false;
+  selectedLanguage:string;
   @ViewChild('loginName') inputName  ;
   @ViewChild('loginPassword') inputPassword ;
-  constructor(public loginService:LoginService, public menuCtrl: MenuController,private formBuilder:FormBuilder,private router:Router, private authService:AuthService,private orderService:OrdersService) {
-   this.User=new User
-    }
+  constructor(private alertController:AlertController, public translateConfigService:TranslateConfigService, public loginService:LoginService, public menuCtrl: MenuController,private formBuilder:FormBuilder,private router:Router, private authService:AuthService,private orderService:OrdersService) {
+   this.User=new User;
+   this.translateConfigService.setLanguage('en'); 
+  }
   
   ngOnInit(){
       this.initForm();
@@ -113,6 +116,7 @@ export class HomePage {
             this.spinner=false;
 
           } catch (error) {
+            this.spinner=false;
             this.LoginError='Server error please try again';
             console.log(JSON.stringify(error), formValue['Name'], formValue['Password']);
             return false;
@@ -145,7 +149,45 @@ export class HomePage {
         }
         
       }
-      
+      languageChanged(){// this function will be call by the function calling when we have to save this in cookies;
+        this.translateConfigService.setLanguage(this.selectedLanguage);
+      }
+
+
+
+    //this part is just for the tests of multi scenario
+
     
+  async presentAlertPrompt() {
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Prompt!',
+      inputs: [
+        {
+          name: 'name1',
+          type: 'text',
+          placeholder: 'Placeholder 1'
+        }
+       
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel');
+          }
+        }, {
+          text: 'Ok',
+          handler: () => {
+            console.log('Confirm Ok');
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
 
 }

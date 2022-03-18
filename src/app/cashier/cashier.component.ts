@@ -19,20 +19,7 @@ import { LoginService } from 'poslibrary';
 })
 export class CashierComponent implements ComponentCanDeactivate {
 
-   // @HostListener allows us to also guard against browser refresh, close, etc.
-   @HostListener('window:beforeunload')
-   canDeactivate(): Observable<boolean> | boolean {
-     // insert logic to check if there are pending changes here;
-     // returning true will navigate without confirmation
-     // returning false will show a confirm dialog before navigating away
-     if (this.Order.OrderTotalAmount>0){
-       console.log('guard confirm');
-       return false;
-     }else{
-       console.log('guard no confirm');
-       return true ;
-     }
-   }
+   
 
    
   @ViewChild('mySlider')  slides: IonSlides;
@@ -67,7 +54,15 @@ export class CashierComponent implements ComponentCanDeactivate {
     this.CatalogSelected=new Catalog();
    }
   
-  
+  // @HostListener allows us to also guard against browser refresh, close, etc.
+  @HostListener('window:beforeunload')
+  canDeactivate(): Observable<boolean> | boolean {
+    if (this.Order.OrderTotalAmount>0 && this.goToPay===false){
+      return false;
+    }else{
+      return true ;
+    }
+  }
    async ionViewWillEnter() {
     this.Catalog = [];
     await this.initCatalog();
@@ -81,7 +76,7 @@ export class CashierComponent implements ComponentCanDeactivate {
   
   async ionViewWillLeave() {
     this.Order=new Order();
-    this.currentMenu='search'
+    this.currentMenu='SCAN';
   }
   
   
@@ -247,14 +242,14 @@ addItem(newItem:Item){
         Item:{
           ItemId:newItem.ItemId,
           ItemImage:newItem.ItemImage,
-          ItemPrice:newItem.ItemPrice,
+          ItemPrice:newItem.ItemModels[0].Price,
           ItemName:newItem.ItemName,
           ItemDescription:newItem.ItemDescription,
           ItemModels:newItem.ItemModels, 
           ItemProvider:''
           },
           ItemQuantity:1,
-          ItemModel:newItem.ItemModels[0],// we will set this after adding the different modele fonctionnality.
+          ItemModel:newItem.ItemModels[0].Model,
     };
     this.Order.OrderItems.push(newSelectedItem)
   }
@@ -299,6 +294,7 @@ deleteItem(Item:Item){
    
  }
  canSwitchModel(Models:ItemModel[]){
+   console.log(Models)
    if ( Models.length>1){
      return false;
    }
@@ -308,16 +304,30 @@ deleteItem(Item:Item){
  }
 
  switchModels(orderItem:OrderItem){ // this function is to  switch between different model of item 
+  var Model={
+    Model:orderItem.ItemModel,
+    Price:orderItem.Item.ItemPrice}
   try {
-    var indexModel= orderItem.Item.ItemModels.indexOf(orderItem.ItemModel); // we start first by try to get acces to the index of the current model of the item
+    var indexModel:number=-1;
+    for (let i=0;i<orderItem.Item.ItemModels.length;i++){
+      if(orderItem.Item.ItemModels[i].Model===orderItem.ItemModel && orderItem.Item.ItemModels[i].Price===orderItem.Item.ItemPrice ){
+         indexModel=i
+      }
+    }
     var indexOrdeItem=this.Order.OrderItems.indexOf(orderItem);// now we get the position of the orderItem to set the model in the order.
+    console.log(indexModel);
+    console.log(indexOrdeItem);
+    console.log(Model);
+    console.log(orderItem.Item.ItemModels);
     if(indexModel+1<orderItem.Item.ItemModels.length){
-      this.Order.OrderItems[indexOrdeItem].ItemModel=orderItem.Item.ItemModels[indexModel+1];
+      this.Order.OrderItems[indexOrdeItem].ItemModel=orderItem.Item.ItemModels[indexModel+1].Model;
+      this.Order.OrderItems[indexOrdeItem].Item.ItemPrice=orderItem.Item.ItemModels[indexModel+1].Price;
     }
     else{   
-      this.Order.OrderItems[indexOrdeItem].ItemModel=orderItem.Item.ItemModels[0];
+      this.Order.OrderItems[indexOrdeItem].ItemModel=orderItem.Item.ItemModels[0].Model;
     }
   } catch (error) {
+    console.log('You can\'t switch');
     console.log('You can\'t switch');
   }
  }
@@ -327,8 +337,8 @@ deleteItem(Item:Item){
   total=0;
   try 
   {
-    for (const item of this.Order.OrderItems){
-      const finalPrice=item.ItemModel.Price*item.ItemQuantity;
+    for (const orderItem of this.Order.OrderItems){
+      const finalPrice=orderItem.Item.ItemPrice *orderItem.ItemQuantity;
       total=total+finalPrice;
       }
       this.Order.OrderTotalAmount=total;
@@ -424,6 +434,7 @@ checkDisable(Item:OrderItem){
 
   
  pay(){
+   this.goToPay=true;
   localStorage.setItem('Order', JSON.stringify(this.Order));
   this.router.navigate(['Pay']);
   

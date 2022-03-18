@@ -5,18 +5,24 @@ import { Router } from '@angular/router';
 import { MenuController } from '@ionic/angular';
 import { User } from './Models';
 import { CookieService } from 'ngx-cookie-service';
+import { TranslateConfigService } from './service/translate-config.service';
+
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
+
 })
 
 export class AppComponent {
   currentLink:string;
   status:boolean;
   User=new User;
-  constructor(public menuCtrl: MenuController,private cookieService:CookieService, private authService:AuthService, private router:Router,private orderService:OrdersService) {
+  selectedLanguage;
+  constructor(public translateConfigService:TranslateConfigService,public menuCtrl: MenuController,private cookieService:CookieService, private authService:AuthService, private router:Router,private orderService:OrdersService) {
+   this.translateConfigService.setLanguage('en'); 
+   localStorage.clear();
   }
   ngOnInit(){
     this.status=this.authService.isAuth;
@@ -41,5 +47,8 @@ export class AppComponent {
 
   async closeMenu(){
     await this.menuCtrl.close();
+  }
+  languageChanged(){// this function will be call by the function calling when twe have to save this in cookies;
+    this.translateConfigService.setLanguage(this.selectedLanguage);
   }
 }

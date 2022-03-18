@@ -1,0 +1,40 @@
+{
+
+    "Menu":{
+        "oders":"Commandes",
+        "cashier":"Caisse",
+        "catalog":"Catalogue",
+        "setting":"Réglage",
+        "about":"A Propos",
+        "logout":"Se Déconnecter"
+    },
+    "HOME": {
+        "userName": "Identifiant ou Numéro de Telephone ",
+        "passWord": "Mot de Passe",
+        "forgot":"Mot de passe oublié?",
+        "login":"Se Connecter",
+        "error":"//for now we don't know how to handle it"
+    },
+    "Cashier":{
+        "title":"Caissier",
+        "divers":"Divers",
+        "delete":"Supprimer",
+        "SDetails":"afficher details",
+        "edit":"Modifier",
+        "orderLine":"Ligne de Commande",
+        "pay":"PAY",
+        "catalog":"Catalogue"
+    },
+    "Pay":{
+        "title":"Caissier",
+         "cash":"CASH",
+         "noCash":"NON CASH",
+         "payment":"Paiement",
+         "change":"Reste",
+         "exactAmount":"MONTANT EXACT",
+         "enter":"ENTRER",
+         "cancel":"ANNULER"
+     }
+     
+
+}

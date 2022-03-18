@@ -48,10 +48,7 @@ export class Order{
 }
 
     
-export class Location {
-    public Floor!: string;
-    public Table!: Table[];
-}
+
 
 export class Table{
     public TableId!: number;
@@ -59,35 +56,41 @@ export class Table{
     public Status!: string;
 }
 
-export class OrderItem{
-    public Item!: Item;
-    public ItemQuantity!: number;
-    public ItemModel:ItemModel;
+export  class LocationLevel {
+    LocationLevelName: string;
+    Locations: Location[];
 }
-
-export class Catalog{
-    public CatalogId!: number;
-    public CatalogName!: string;
-    public CatalogDescription!: string;
-    public CatalogImage!: string;
-    public CatalogItems!: Item[];
+export  class Location {
+    LocationId: number;
+    LocationName: string;
+    LocationStatus: string;
+    LocationLevelName: string;
 }
-export class Item{
-    public ItemId!: number;
-    public ItemName!: string;
-    public ItemPrice!: number;
-    public ItemDescription!:string;
-    public ItemImage!: string;
-    public ItemModels: ItemModel[];
-    public ItemProvider: string='';
+export  class OrderItem {
+    Item: Item;
+    ItemQuantity: number;
+    ItemModel: string;
 }
-
-export class ItemModel {
-    public Model: string;
-    public Price: number;
+export  class Catalog {
+    CatalogId: number;
+    CatalogName: string;
+    CatalogDescription: string;
+    CatalogImage: string;
+    CatalogItems: Item[];
 }
-
-
+export  class Item {
+    ItemId: number;
+    ItemName: string;
+    ItemDescription: string;
+    ItemPrice: number;
+    ItemImage: string;
+    ItemModels: ItemModel[];
+    ItemProvider: string;
+}
+export  class ItemModel {
+    Model: string;
+    Price: number;
+}
 
 
 

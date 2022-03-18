@@ -1,0 +1,41 @@
+{
+    "HOME": {
+        "userName": "Identification or Phone Number",
+        "passWord": "Password",
+        "forgot":"Forgot Password?",
+        "error":"for now we don't know how to handle it",
+        "login":"Login"
+    },
+    "Cashier":{
+        "title":"Cashier",
+        "divers":"Divers",
+        "delete":"Delete",
+        "SDetails":"show details",
+        "edit":"Edit",
+        "orderLine":"Order Line",
+        "catalog":"Catalog",
+        "pay":"PAY"
+
+    },
+    "Menu":{
+        "oders":"Orders",
+        "cashier":"Cashier",
+        "catalog":"Catalog",
+        "setting":"Setting",
+        "about":"About",
+        "logout":"LOGOUT"
+    },
+     "Pay":{
+        "title":"Cashier",
+         "cash":"CASH",
+         "noCash":"NO CASH",
+         "payment":"Payment",
+         "change":"Change",
+         "exactAmount":"EXACT AMOUNT",
+         "enter":"ENTER",
+         "cancel":"CANCEL",
+         "paySuccess":"Payment succesful",
+         "Pay.printed":"Receipt is being printed"
+
+     }
+}

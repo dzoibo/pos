@@ -1,6 +1,9 @@
 
 
-
+ion-content,ion-footer,ion-toolbar{
+  --background:#FFFFFF;
+  position:relative;
+}
 
 #login-logo{
   margin-top: 95px !important;

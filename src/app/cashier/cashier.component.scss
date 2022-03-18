@@ -1,4 +1,7 @@
-
+ion-content,ion-footer,ion-toolbar{
+    --background:#FFFFFF;
+    position:relative;
+  }
 $fullheight:calc(100vh - 56px);
 .verticalCenter{
     position:absolute;

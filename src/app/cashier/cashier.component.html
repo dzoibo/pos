@@ -1,7 +1,7 @@
 <ion-header #header>
   <ion-toolbar>
     <ion-menu-button id="btMenu" slot="start"></ion-menu-button>
-    <ion-title  >Cashier</ion-title>
+    <ion-title  >{{'Cashier.title'|translate:params }}</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content  >
@@ -16,7 +16,7 @@
           
           <ion-label >
             <ion-icon name="person-outline"></ion-icon>
-            <ion-text id="divers">DIVERS</ion-text>
+            <ion-text id="divers">{{ 'Cashier.divers' | translate:params }}</ion-text>
           </ion-label>
         </div>
         <ion-icon name="ellipsis-vertical" id="OrderEllipse"></ion-icon>
@@ -25,15 +25,15 @@
             <ion-list >
               <div>
                 <ion-item class="popOverIcon" lines="none"><ion-icon name="trash-outline"></ion-icon></ion-item>
-                <ion-item class="ItemDelete" ><ion-text> Delete</ion-text></ion-item>
+                <ion-item class="ItemDelete" ><ion-text> {{'Cashier.delete'|translate:params}}</ion-text></ion-item>
               </div>
               <div>
                 <ion-item lines="none"><ion-icon name="information-circle-outline"></ion-icon></ion-item> 
-                <ion-item class="ItemDelete">Show details</ion-item>
+                <ion-item class="ItemDelete">{{'Cashier.SDetails' | translate:params}}</ion-item>
               </div>
               <div>
                 <ion-item lines="none"><ion-icon name="pencil-outline"></ion-icon></ion-item> 
-                <ion-item class="ItemDelete">Edit</ion-item>
+                <ion-item class="ItemDelete">{{'Cashier.edit' | translate:params}}</ion-item>
               </div>
           </ion-list>
           </ng-template>
@@ -42,7 +42,7 @@
     
     <div id="menuBlock">
       <div id="menuItems">
-        <ion-label>Catalog</ion-label>
+        <ion-label>{{'Cashier.catalog' | translate:params}}</ion-label>
         <div id="menuIcon"> 
                      
               <ion-label  *ngIf="currentMenu==='search'" mode="ios" class="search ion-no-padding ion-no-margin" ><ion-searchbar id="search"  placeholder="search" (ionChange)="doSearch()" [(ngModel)]="searchValue"></ion-searchbar> </ion-label>
@@ -119,7 +119,7 @@
     
     <div id="orderBlock">
       <div id="orderTitle">
-        <ion-text>Order Line</ion-text>
+        <ion-text>{{'Cashier.orderLine' | translate:params}}</ion-text>
         <ion-icon name="ellipsis-vertical"></ion-icon>
       </div>
 
@@ -139,14 +139,14 @@
                   </ion-text>
                 </ion-text> 
               </ion-label>
-              <ion-label class="orderItemsPrice" [id]="'orderItemsPrice'+i"> {{OrderItem.ItemQuantity * OrderItem.ItemModel.Price }}</ion-label>
+              <ion-label class="orderItemsPrice" [id]="'orderItemsPrice'+i"> {{OrderItem.ItemQuantity * OrderItem.Item.ItemPrice }}</ion-label>
             </div>
             <div class="orderItemsDetails" style="margin-top:-5px">
               <ion-label class="orderItemsModel">
-                <ion-button [id]="'BtSwitchModel'+i" slot="icon-only" (disabled)="canSwitchModel(OrderItem.Item.ItemModels)" (click)="switchModels(OrderItem)">
+                <ion-button [id]="'BtSwitchModel'+i" slot="icon-only" [disabled]="canSwitchModel(OrderItem.Item.ItemModels)" (click)="switchModels(OrderItem)">
                   <ion-icon  name="shuffle" ></ion-icon>
                   </ion-button>  
-                  <ion-label [id]="'OrderItemModel'+i" >{{OrderItem.ItemModel.Model}}</ion-label> 
+                  <ion-label [id]="'OrderItemModel'+i" >{{OrderItem.ItemModel}}</ion-label> 
               </ion-label>
               <ion-label class="orderItemsButton">
                 <ion-icon  [id]="'btRemove'+i" [ngClass]="checkDisable(OrderItem)? 'remove' : 'noremove'"  (click)="decreaseQuantity(OrderItem.Item.ItemId)" name="remove-circle"></ion-icon>
@@ -161,7 +161,7 @@
               <ion-list >
                 <div>
                   <ion-item lines="none"><ion-icon name="trash-outline"></ion-icon> </ion-item>
-                  <ion-item class="ItemDelete" [id]="'ItemDelete'+i" (click)="deleteItem(OrderItem)" ><ion-text> Delete</ion-text></ion-item>
+                  <ion-item class="ItemDelete" [id]="'ItemDelete'+i" (click)="deleteItem(OrderItem)" ><ion-text> {{'Cashier.delete'|translate:params}}</ion-text></ion-item>
                 </div>
             </ion-list>
             </ng-template>

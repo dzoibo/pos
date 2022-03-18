@@ -14,14 +14,14 @@
           <ion-list lines="none" class="margin-top-25 ion-margin margin-0-28">
 
             <ion-text>
-              Identification or Phone Number
+              {{ 'HOME.userName' | translate:params }}
             </ion-text>
             <ion-item   >
               <ion-input  placeholder="Identification or Phone Number" type="text"  id="loginName" #loginName formControlName="Name" ></ion-input>
             </ion-item>
 
             <ion-text>
-              Password
+              {{ 'HOME.passWord' | translate:params }}
             </ion-text>
             <ion-item >
               <ion-input placeholder="At lest 6 characters" #loginPassword  id="loginPassword" formControlName="Password" [type]="showPassword ? 'text' : 'password'" clearOnEdit="false">
@@ -32,8 +32,8 @@
             </ion-item>
             
             
-            <ion-button mode="ios" color="success" type="submit" [disabled]="loginForm.invalid" id="loginSubmit"  style="color:white"   expand="block">Login</ion-button>
-        <ion-label id="forgot" color="primary">Forgot Password?</ion-label>
+            <ion-button mode="ios" color="success" type="submit" [disabled]="loginForm.invalid" id="loginSubmit"  style="color:white"   expand="block">{{ 'HOME.login' | translate:params }}</ion-button>
+        <ion-label id="forgot" color="primary">{{ 'HOME.forgot' | translate:params }}</ion-label>
       </ion-list>
       <div id ="Error" *ngIf="LoginError.length>5">
         {{LoginError}}
