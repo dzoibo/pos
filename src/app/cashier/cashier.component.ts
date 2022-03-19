@@ -251,7 +251,9 @@ addItem(newItem:Item){
           ItemQuantity:1,
           ItemModel:newItem.ItemModels[0].Model,
     };
-    this.Order.OrderItems.push(newSelectedItem)
+    var reverse=this.Order.OrderItems.reverse()//we do this the manipulation to add items at the top
+    reverse.push(newSelectedItem);
+    this.Order.OrderItems=reverse.reverse()
   }
 }
 increaseQuantity(id:number){

@@ -8,17 +8,17 @@
   <div id="global" >
     <div id="globalCatalog" >
       <div id="surface">
+        <ion-label id="divers">
+          <ion-icon name="person-outline"></ion-icon>
+          <ion-text >{{ 'Cashier.divers' | translate:params }}</ion-text>
+        </ion-label>
         <div>
           <ion-label id="labelName">
             <ion-icon name="pricetag-outline"></ion-icon>
             <ion-text id="sOrderId" > {{Order.OrderId | slice:0:8}}</ion-text>
           </ion-label>
-          
-          <ion-label >
-            <ion-icon name="person-outline"></ion-icon>
-            <ion-text id="divers">{{ 'Cashier.divers' | translate:params }}</ion-text>
-          </ion-label>
         </div>
+        
         <ion-icon name="ellipsis-vertical" id="OrderEllipse"></ion-icon>
         <ion-popover trigger="OrderEllipse" id="OrderPopOver" side="right">
           <ng-template>
@@ -42,7 +42,7 @@
     
     <div id="menuBlock">
       <div id="menuItems">
-        <ion-label>{{'Cashier.catalog' | translate:params}}</ion-label>
+        <ion-label id="inuCatalog">{{'Cashier.catalog' | translate:params}}</ion-label>
         <div id="menuIcon"> 
                      
               <ion-label  *ngIf="currentMenu==='search'" mode="ios" class="search ion-no-padding ion-no-margin" ><ion-searchbar id="search"  placeholder="search" (ionChange)="doSearch()" [(ngModel)]="searchValue"></ion-searchbar> </ion-label>
@@ -93,12 +93,12 @@
                       <ion-label>
                         <ion-text [id]="'GridItemName'+i">
                           {{item.ItemName}}
-                          <ion-label  [id]="'badge'+i"  class="Qte">{{getQuantity(item.ItemId)}}</ion-label>
                         </ion-text>
                         <ion-text class="cardItemDescription">
                           {{item.ItemDescription}}
                         </ion-text>
                       </ion-label>
+                      <ion-label  [id]="'badge'+i"  class="Qte">{{getQuantity(item.ItemId)}}</ion-label>
                     </div>
                     </div>
                   <div *ngIf="0>item.ItemId">

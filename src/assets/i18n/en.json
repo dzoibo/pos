@@ -35,7 +35,8 @@
          "enter":"ENTER",
          "cancel":"CANCEL",
          "paySuccess":"Payment succesful",
-         "Pay.printed":"Receipt is being printed"
+         "payPrinted":"Receipt is being printed",
+         "Total":"Total"
 
      }
 }

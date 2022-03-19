@@ -42,19 +42,15 @@ ion-icon[name=ellipsis-vertical]{
     margin-bottom: 3px;
     box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
     background-color:#FFFFFF;
+    
     div{
-        
         display: flex;
         align-items: center;
         justify-content:space-between;
         @extend .verticalCenter;
         width:48%;
     }
-    #divers{
-        display:inline-block;
-        @extend .verticalCenter;
-        margin-left: 8px;
-    }
+    
     #labelName{
         border:1px solid rgba(102, 102, 102,0.5);
         border-radius: 16px;
@@ -72,8 +68,24 @@ ion-icon[name=ellipsis-vertical]{
     ion-icon[name=person-outline]{
         font-size: xx-large;
     }
-    
-    
+
+}
+
+#divers{
+    display:inline-block;
+    @extend .verticalCenter;
+    margin-left: 40%;
+    width: 30%;
+    display: flex;
+    align-items: center;
+    font-family: 'Roboto';
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.25px;
+    text-align: left;
+
 }
 #menuBlock{
     border-radius: 4px;
@@ -84,8 +96,13 @@ ion-icon[name=ellipsis-vertical]{
     flex-direction: column;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
+    #inuCatalog{
+        position: absolute;
+        margin-left: 12px;
+    }
     #menuItems{
-        #scanIcon{
+            
+            #scanIcon{
             margin-right:5%;
             margin-left:5%;
         }
@@ -93,13 +110,15 @@ ion-icon[name=ellipsis-vertical]{
         display: flex;
         align-items: center;
         position:relative;
-        padding-left: 12px;
         border-bottom:1px solid rgba( #000000, 12%);
         .search{
             width: 70%;
             padding: 0px !important;
             height: 25px;
+            position: relative;
             #search{
+                position: absolute;
+                left: -8px;
                 --icon-color:var(--ion-color-success);
                 &::ng-deep {
                     input.searchbar-input.sc-ion-searchbar-md {
@@ -112,7 +131,7 @@ ion-icon[name=ellipsis-vertical]{
             }
         }
         #menuIcon{
-            margin-left: 20%;
+            margin-left: 40%;
             position: relative;
             flex-grow: 1;
             display: flex;
@@ -367,6 +386,7 @@ ion-icon[name=ellipsis-vertical]{
             position: relative;
         }
         ion-text{
+            position: relative;
             height: 16px;
             width: 100%;
             display:block;
@@ -377,7 +397,7 @@ ion-icon[name=ellipsis-vertical]{
     .Qte{
          position: absolute;
          right:0px;
-         top:0px;
+         bottom:0px;
          z-index: 2;
          border-radius:50%;
          color: white;

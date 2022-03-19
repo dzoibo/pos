@@ -18,7 +18,7 @@
     
       <ion-label id="PayList" [ngStyle]="{'height': Pay==='Pay'? '84px' : '105px' }" >
         <ion-label>
-          <ion-text class="PayListLabel">Total</ion-text>
+          <ion-text class="PayListLabel">{{ 'Pay.Total' | translate:params }}</ion-text>
           <ion-text color="success" class="PaylistPrice" id="PayListTotal">{{Order.OrderTotalAmount}} </ion-text>
         </ion-label>
         <ion-label>
@@ -31,7 +31,7 @@
         </ion-label>
       </ion-label>
     
-      <ion-label id="ExactAmount" *ngIf="Pay==='Pay'">
+      <ion-label id="ExactAmount" (click)="ExactAmount()" *ngIf="Pay==='Pay'">
         <ion-text ><ion-icon name="wallet-outline"></ion-icon></ion-text>
         <ion-text> {{ 'Pay.exactAmount' | translate:params }}</ion-text>
       </ion-label>
@@ -101,7 +101,7 @@
           </ion-label>
           <ion-label id="keyEnter" class="col2" (click)="Valid()" >
             <ion-text>
-              {{ 'Pay.enter' | translate:params }}
+               {{ 'Pay.enter' | translate:params }}
             </ion-text>
           </ion-label>
        </ion-label>
@@ -110,10 +110,8 @@
         
         <ion-label id="successPayLabel" *ngIf="Pay==='Valid'">
           <ion-label id="successPayIcon"><ion-icon   name="checkmark-circle" color="success"></ion-icon></ion-label>
-          <ion-label id="successMessage"><ion-text>Payment succesful</ion-text></ion-label>
-          <ion-label id="successReceipt"><ion-text>Receipt is being printed</ion-text></ion-label>
-          
-          
+          <ion-label id="successMessage"><ion-text>{{ 'Pay.paySuccess' | translate:params }}</ion-text></ion-label>
+          <ion-label id="successReceipt"><ion-text>{{ 'Pay.payPrinted' | translate:params }}</ion-text></ion-label>
         </ion-label>
         
     </div>

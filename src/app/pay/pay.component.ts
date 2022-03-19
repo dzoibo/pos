@@ -22,7 +22,7 @@ import { PrintService } from '../service/print';
   templateUrl: './pay.component.html',
   styleUrls: ['./pay.component.scss'],
 })
-export class PayComponent  {
+export class PayComponent implements OnInit {
 
     // @HostListener allows us to also guard against browser refresh, close, etc.
     @HostListener('window:beforeunload')
@@ -45,18 +45,31 @@ export class PayComponent  {
 
     ionViewDidEnter() {
       try {
+        
         var retrievedObject = localStorage.getItem('Order')
         this.Order= JSON.parse(retrievedObject);
         console.log(this.Order,'edee')
-        
         if(this.Order===null){
+          console.log('jkik');
           this.router.navigate(['Cashier'])
         }
       } catch (error) {
+          console.log(error);
           this.router.navigate(['Cashier'])
         }
+        
+
     } 
-  
+    ngOnInit(): void {
+      setTimeout(() => {
+        var width= document.getElementById('keyEnter') as HTMLElement
+      var back= document.getElementById('keyBack') as HTMLElement
+      var numero = width.clientWidth;
+      numero=numero+1;
+      back.style.width=numero+'px';
+      width.style.width=numero+'px';
+      }, 100);
+    }
 
   changeMode(){ // function to set the Mode of payment
     if(this.Mode==='CASH'){
@@ -102,6 +115,7 @@ export class PayComponent  {
     }
    }
 
+   
    async presentAlert() {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -151,12 +165,12 @@ export class PayComponent  {
             console.log(data);
             const print= await  this.orderService.Printer(data)
             this.print(print);
-            this.Order=new Order;
             localStorage.removeItem('Order');
             console.log('uuu',localStorage.getItem('Order'))
             setTimeout(() => {
+            this.Order=new Order;
             this.router.navigate(['/Cashier']);
-            }, 200);
+            }, 2000);
           }else{
             this.Pay='Error'// we display the error icon and the error message in red
             console.log('error');
@@ -169,5 +183,8 @@ export class PayComponent  {
     this.printBluetooth(text);
    }
    
-
+   ExactAmount(){
+     this.Payment=this.Order.OrderTotalAmount;
+   }
+  
 }

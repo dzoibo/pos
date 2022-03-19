@@ -33,7 +33,10 @@
          "change":"Reste",
          "exactAmount":"MONTANT EXACT",
          "enter":"ENTRER",
-         "cancel":"ANNULER"
+         "cancel":"ANNULER",
+         "paySuccess":"Paiement réussi",
+         "payPrinted":"Reçu en cours d'impression",
+         "Total":"Total"
      }
      
 

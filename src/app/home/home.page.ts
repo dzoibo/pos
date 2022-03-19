@@ -29,7 +29,7 @@ export class HomePage {
   @ViewChild('loginPassword') inputPassword ;
   constructor(private alertController:AlertController, public translateConfigService:TranslateConfigService, public loginService:LoginService, public menuCtrl: MenuController,private formBuilder:FormBuilder,private router:Router, private authService:AuthService,private orderService:OrdersService) {
    this.User=new User;
-   this.translateConfigService.setLanguage('en'); 
+   this.translateConfigService.setLanguage('fr'); 
   }
   
   ngOnInit(){

@@ -19,7 +19,7 @@ ion-toolbar{
         position: absolute;
         bottom: 8px;
         left: 0px;
-        width: 113px;
+        min-width: 113px;
         height: 36px;
         ion-icon{
             color:white;
@@ -227,7 +227,7 @@ ion-toolbar{
     width: 100%;
     #successPayIcon{
         @extend .horizontalCenter;
-        margin-top: 12%;
+        margin-top: 10%;
         ion-icon{
             font-size: 200px;
         }
