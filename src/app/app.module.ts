@@ -43,6 +43,7 @@ export function LanguageLoader(http: HttpClient) {
 const appRoutes: Routes = [
 { path: "Cashier", canActivate: [AuthGuardService],canDeactivate:[DeactivateGuardGuard] ,component: CashierComponent },
 //{ path: "Order",component: OrdersComponent },
+{ path: "",canActivate: [GuardAvoidService], component: CashierComponent },
 { path: "home", canActivate: [GuardAvoidService], component: CashierComponent },
 { path: "Pay", canActivate: [AuthGuardService],component: PayComponent },
 { path: "**", redirectTo:'home' },
