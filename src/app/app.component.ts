@@ -6,6 +6,9 @@ import { MenuController } from '@ionic/angular';
 import { User } from './Models';
 import { CookieService } from 'ngx-cookie-service';
 import { TranslateConfigService } from './service/translate-config.service';
+import { Platform } from '@ionic/angular';
+import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
+
 
 
 @Component({
@@ -21,8 +24,11 @@ export class AppComponent implements OnDestroy,OnDestroy {
   User=new User;
   selectedLanguage;
   event$;
-  constructor(public translateConfigService:TranslateConfigService,public menuCtrl: MenuController,private cookieService:CookieService, private authService:AuthService, private router:Router,private orderService:OrdersService) {
-   this.translateConfigService.setLanguage('en'); 
+  constructor(private screenOrientation:ScreenOrientation, private platform: Platform ,public translateConfigService:TranslateConfigService,public menuCtrl: MenuController,private cookieService:CookieService, private authService:AuthService, private router:Router,private orderService:OrdersService) {
+    if(this.platform.is('mobile')||this.platform.is('mobileweb')){
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+    }
+    this.translateConfigService.setLanguage('en'); 
    localStorage.clear();
    this.event$=this.router.events
    .subscribe(
