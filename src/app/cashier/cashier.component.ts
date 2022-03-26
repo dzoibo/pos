@@ -6,9 +6,10 @@ import { Router,ActivatedRoute } from '@angular/router';
 import { OrdersService } from '../service/order.service';
 import { Catalog,OrderItem,Item,Order, Slide, ItemModel } from '../Models';
 import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
-import { AlertController, PopoverController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { IonSlides} from '@ionic/angular';
 import { LoginService } from 'poslibrary';
+import { AuthService } from '../guard/auth.service';
 
 
 @Component({
@@ -17,7 +18,7 @@ import { LoginService } from 'poslibrary';
   styleUrls: ['./cashier.component.scss'],
   
 })
-export class CashierComponent implements ComponentCanDeactivate {
+export class CashierComponent implements ComponentCanDeactivate,OnInit {
 
    
 
@@ -33,7 +34,7 @@ export class CashierComponent implements ComponentCanDeactivate {
     speed: 400
   };
   idCatalog=1;
-  Orders:Order[];
+  Orders:Order[]=[];
   Order:Order;  // the Order we are currently handling;
   Catalog:Catalog[];// variable to get the catalog comming frrom the service 
   template:{ // template to create several slide by dividing by different items group  
@@ -45,33 +46,43 @@ export class CashierComponent implements ComponentCanDeactivate {
   CatalogSelected:Catalog;
   AllCatalog:Catalog;
   goToPay:boolean;
-
-
-  constructor( private barcodeScanner: BarcodeScanner,private router:Router, private orderService:OrdersService,private route:ActivatedRoute,private popoverController:PopoverController, private log: LoginService) {
-   
-    this.Orders=this.orderService.Orders;
+  permission:string;
+  OrderIsSelected;//  this property is using only in the cashier scenario to know if we have already select and order
+  orderFromSeller:boolean;//this property is to handle the pop up of the orders list 
+  constructor( private authService:AuthService, private barcodeScanner: BarcodeScanner,private router:Router, private orderService:OrdersService,private route:ActivatedRoute,private popoverController:PopoverController, private log: LoginService) {
     this.Order=new Order();
     this.CatalogSelected=new Catalog();
+    this.permission=this.authService.permission;
+    console.log(this.permission);
    }
   
+   ngOnInit(): void {
+    this.OrderIsSelected=false;
+   }
   // @HostListener allows us to also guard against browser refresh, close, etc.
   @HostListener('window:beforeunload')
   canDeactivate(): Observable<boolean> | boolean {
-    if (this.Order.OrderTotalAmount>0 && this.goToPay===false){
-      return false;
+    if ( this.Order!==null){
+      if(this.Order.OrderTotalAmount>0 && this.goToPay===false){
+        return false;
+      }else{
+        return true
+      }
     }else{
-      return true ;
+      return true;
     }
   }
    async ionViewWillEnter() {
+    this.getOrderList();
     this.Catalog = [];
     await this.initCatalog();
-    await this.getOrder();
+    await this.initOrder();
     this.CatalogSelected=this.AllCatalog;// this function return the entier list of items in the app;
     this.getSize();
     this.showItem(this.CatalogSelected.CatalogItems,this.CatalogSelected.CatalogName);
     this.searchValue="";
-    this.goToPay=false
+    this.goToPay=false;
+    this.orderFromSeller=false;
   }
   
   async ionViewWillLeave() {
@@ -123,6 +134,9 @@ export class CashierComponent implements ComponentCanDeactivate {
   }
   
    scan(){// question to come: what we are suppose to display if the user scan a bad code? ...
+    if(this.permission==='cashier'){
+      return false;
+    }
     this.barcodeScanner.scan().then(barcodeData => {
         console.log('Item Id', (barcodeData.text));
         var itemId:number= parseInt(JSON.parse(barcodeData.text));
@@ -211,22 +225,36 @@ export class CashierComponent implements ComponentCanDeactivate {
     console.log('template',this.template);
  }
 
-async getOrder(){//this function is to get the id of the order send by a router
- if(localStorage.getItem('Order')){
-  var retrievedObject = localStorage.getItem('Order')
-  this.Order=JSON.parse(retrievedObject)
- }else{
-   try {
+async initOrder(){
+ 
+ if(this.permission==='seller' || this.permission==='cashier & seller'){// in each of these cases the user want to create a new order
+   try 
+   {
     this.Order.OrderId=await this.orderService.getNewOrderId();
    } catch (error) {
-     console.log('error :', error);
-     
+     console.log('error :', error); 
    }
  }
-   
-
+else{
+    // we are in the cashier scenario and this means that one order is selected
+      var retrievedObject = localStorage.getItem('Order')
+      this.Order=JSON.parse(retrievedObject)
+      if(this.Order!==null){
+        console.log(this.Order,'yo');
+        this.OrderIsSelected=true;
+      }else{
+        console.log(this.Order);
+      }
+  }
+  console.log(this.OrderIsSelected);
+  
 }
+
+   
 addItem(newItem:Item){
+  if(this.permission==='cashier'){
+    return false;
+  }
   let present=false;
   for(let Item of this.Order.OrderItems){
     if(Item.Item.ItemId===newItem.ItemId){//it means that the Item is already present
@@ -273,7 +301,9 @@ decreaseQuantity(id:number){
   }
 }
 deleteItem(Item:Item){
-  
+  if(this.permission==='cashier'){
+    return false;
+  }
   let index=-1;
   for(const item of this.Order.OrderItems){
     if(item.Item.ItemId===Item.ItemId){
@@ -327,6 +357,7 @@ deleteItem(Item:Item){
     }
     else{   
       this.Order.OrderItems[indexOrdeItem].ItemModel=orderItem.Item.ItemModels[0].Model;
+      this.Order.OrderItems[indexOrdeItem].Item.ItemPrice=orderItem.Item.ItemModels[0].Price;
     }
   } catch (error) {
     console.log('You can\'t switch');
@@ -433,13 +464,91 @@ checkDisable(Item:OrderItem){
  }
 
 
-
-  
- pay(){
-   this.goToPay=true;
-  localStorage.setItem('Order', JSON.stringify(this.Order));
-  this.router.navigate(['Pay']);
-  
+ OrderFromSeller(){
+  this.orderFromSeller=!this.orderFromSeller
+  if(this.OrderIsSelected===true){
+    this.OrderIsSelected=false
+  }else{
+    if(this.Order!==null){
+      this.OrderIsSelected=true;
+    }
+  }
  }
   
+
+ pay(){
+  this.goToPay=true;
+  localStorage.setItem('Order', JSON.stringify(this.Order));
+  this.router.navigate(['Pay']);
+ }
+
+ async send(){
+    this.Order.Created=new Date();
+    this.Order.OrderLocationId=1;
+    this.Order.OrderLocationLevelName='Floor1';
+    this.Order.OrderLocationName='Table1';
+    this.Order.OrderStatus='Open';// we will tcheck the good order status after , and a thing to display if the order fall to serve or if there is not connection...
+    const data= await this.orderService.createOrder(this.Order);
+       if(typeof(data)==='string'){
+         this.orderService.Created=true;
+         this.Order=new Order;
+         this.router.navigate(['/Order'])   
+       }else{
+         console.log('error');
+       }
+ }
+
+ OrderInProgress(){
+   var i=0
+   if(this.Orders.length===0){
+     return 0;
+   }
+   for(const order of this.Orders){
+    if(order.OrderStatus='In Progress'){
+      i++;
+    }
+   }
+   return i;
+ }
+ async getOrderList(){
+    if(this.permission==='cashier'){
+      try {
+        this.Orders=await this.orderService.getOrdersList()
+      } catch (error) {
+        console.log(error)
+      }
+      var testOrder=new Order();
+      testOrder.OrderId='N1229991';
+      testOrder.Created='2022-03-25 10:32:18';
+      testOrder.OrderItems=[];
+      testOrder.OrderLocationId=1;
+      testOrder.OrderLocationLevelName='floor1',
+      testOrder.OrderLocationName='table1',
+      testOrder.OrderStatus='In Progress',
+      testOrder.OrderTotalAmount=0;
+      this.Orders.push(testOrder);
+      this.Orders.push(testOrder);
+    }
+   }
+   getColor(OrderStatus:string){
+    if(OrderStatus==='Draft'){
+      return 'medium'
+    }else if(OrderStatus==='Paid'){
+      return 'successs'
+    }else{
+      return 'warning'
+    }
+  }
+
+  seeOrder(order:Order){
+    this.Order=new Order();
+   this.Order=order;
+   console.log(JSON.stringify(order),'order1');
+   console.log(JSON.stringify(this.Order),'order2');
+   this.orderFromSeller=false;
+   this.OrderIsSelected=true;
+  }
+  displayDate(datestring:string){
+    return this.orderService.displayDate(datestring);  
+   }
 }

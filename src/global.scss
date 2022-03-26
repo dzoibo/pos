@@ -39,3 +39,37 @@ ion-icon{
 ion-title{
   color:black;
 }
+#btMenu{
+  color:#666666;
+}
+ion-spinner{
+  width: 100px;
+  height:100px;
+  position: absolute;
+  z-index: 4;
+  display: block;
+  top: 45%;
+  left: 50%;
+  transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateX(-50%);
+  -ms-transform:translateX(-50%)
+}
+
+.alert-permission{
+  #changeOk{
+    color:var(--ion-color-success) ! important
+  }
+  .changeRadio[aria-checked="true"]{
+    .alert-radio-label{
+      color:var(--ion-color-success) ! important;
+    }
+    .alert-radio-icon{
+      border-color:var(--ion-color-success) ! important ;
+    } 
+  }
+  .alert-radio-inner{
+    background-color:var(--ion-color-success) ! important;
+  }
+  
+}

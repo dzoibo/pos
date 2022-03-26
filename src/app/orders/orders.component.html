@@ -1,67 +1,65 @@
 <ion-header #header>
     <ion-toolbar>
       <ion-menu-button id="btMenu" slot="start"></ion-menu-button>
-      <ion-title  >Orders</ion-title>
+      <ion-title  >Orders </ion-title>
+      
     </ion-toolbar>
   </ion-header>
   <ion-content>
       <div id="globalOrder">
-          <div id="noOrder" *ngIf="Orders.length===0">
+          <div id="noOrder" *ngIf="Orders.length===0 && Created===false">
               <ion-text>No order available</ion-text>
           </div>
-          <ion-fab vertical="bottom" horizontal="end"  >
+          <ion-fab  *ngIf="permission==='seller' && Created===false" vertical="bottom" horizontal="end" (click)="newOrder()" >
             <ion-fab-button color="success" >
               <ion-icon name="add"></ion-icon>
             </ion-fab-button>
           </ion-fab>
 
-          <div id="orderCreated">
+          <div id="orderCreated" *ngIf="Created===true">
             <ion-label id="successPayIcon"><ion-icon   name="checkmark-circle" color="success"></ion-icon></ion-label>
             <ion-text>Order created</ion-text>
           </div>
           <div id="orderBlock">
-            
-      
-            <div>
-      
-              <div  class="orderItems" >
-                
+            <div *ngIf="Created===false">
+              <div *ngFor="let order of Orders , let i= index" class="orderItems" (click)="seeOrder(order)">
                 <div class="orderItemsDetailsContainer" >
                   <div class="orderItemsDetails" >
                     <ion-label class="orderItemsName" >
                       <ion-text >
-                        <ion-text class="idOrder">NN12077</ion-text>
+                        <ion-text  class="idOrder" >{{order.OrderId}}</ion-text>
                         <ion-text class="orderItemsDesc" >
-                          <strong>23</strong>
-                          items
+                          <strong>{{order.OrderItems.length}} </strong>
+                           <ion-text *ngIf="order.OrderItems.length>1">items</ion-text> 
+                           <ion-text *ngIf="order.OrderItems.length<=1">item</ion-text> 
                         </ion-text>
                       </ion-text> 
                     </ion-label>
-                    <ion-label class="orderItemsPrice" > CFA 204 0000</ion-label>
+                    <ion-label class="orderItemsPrice" > CFA {{order.OrderTotalAmount}}</ion-label>
                   </div>
                   <div class="orderItemsDetails" style="margin-top:-5px">
                     <ion-label class="orderItemsModel">
-                        <ion-label class="oderSceller"><img src="../../assets/pp.png" alt=""></ion-label>
+                        <ion-label class="oderSeller"><img src="../../assets/pa.png" alt=""></ion-label>
                          
                         <ion-label >Seina</ion-label> 
                     </ion-label>
                     <ion-label class="orderDate">
-                        <ion-text>23.01.2022 12:55:35</ion-text>
+                        <ion-text>{{displayDate(order.Created)}}</ion-text>
                     </ion-label>
                     <ion-label class="orderStatus">
-                        <ion-badge [class]='getColor("jre")'  >
-                            Open
+                        <ion-badge [color]='getColor(order.OrderStatus)'  >
+                            <ion-text>{{order.OrderStatus}}</ion-text>
                         </ion-badge>
                     </ion-label>
                   </div>
                 </div>
-                <ion-icon name="ellipsis-vertical" ></ion-icon>
-                <ion-popover  class="ItemPopOver"  side="right">
+                <ion-icon name="ellipsis-vertical" [id]="odersEllispe+'i'"  ></ion-icon>
+                <ion-popover  class="ItemPopOver"  side="right" [trigger]="odersEllispe+'i'"  >
                   <ng-template>
                     <ion-list >
-                      <div>
+                      <div class="deleteOrder">
                         <ion-item lines="none"><ion-icon name="trash-outline"></ion-icon> </ion-item>
-                        <ion-item class="ItemDelete"  (click)="deleteOrder(Order)" ><ion-text> delete</ion-text></ion-item>
+                        <ion-item class="ItemDelete"  (click)="deleteOrder(order)" ><ion-text> delete</ion-text></ion-item>
                       </div>
                   </ion-list>
                   </ng-template>

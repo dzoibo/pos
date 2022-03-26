@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { AlertController, MenuController } from '@ionic/angular';
 import { LoginService } from 'poslibrary';
 import { TranslateConfigService } from '../service/translate-config.service';
+import { CashierPage } from 'e2e/src/Cashier/cashier.po';
 
 
 @Component({
@@ -25,11 +26,12 @@ export class HomePage {
   showPassword:boolean=false;
   spinner=false;
   selectedLanguage:string;
+  permission:string='cashierOnly';
   @ViewChild('loginName') inputName  ;
   @ViewChild('loginPassword') inputPassword ;
   constructor(private alertController:AlertController, public translateConfigService:TranslateConfigService, public loginService:LoginService, public menuCtrl: MenuController,private formBuilder:FormBuilder,private router:Router, private authService:AuthService,private orderService:OrdersService) {
    this.User=new User;
-   this.translateConfigService.setLanguage('fr'); 
+   this.translateConfigService.setLanguage('en'); 
   }
   
   ngOnInit(){
@@ -40,7 +42,6 @@ export class HomePage {
   SubmitByEnter(){
      if(this.inputName.value.length>0){
        if(this.inputPassword.value.length>=6){
-         console.log('uio')
          this.onSubmitForm()
        }else{
          this.inputPassword.setFocus();
@@ -79,32 +80,8 @@ export class HomePage {
      async onSubmitForm()
      {
       const formValue = this.loginForm.value;
-     /* this.resetError();   all this part is no longuer relevant because the user can't longer submit the form without provide his userName and his password
-      var error1=false;
-      var error2=false;
-      
-      if(formValue['Password']===null || formValue['Password']===''){
-        this.PasswordError ="Enter Password";
-        var elem=document.getElementById('loginPassword') as HTMLInputElement;
-        console.log('error 2');
-        elem.focus();
-        error2=true;
-      }
-
-      if(formValue['Name']===null || formValue['Name']===''){
-        console.log(formValue['Name']);
-        this.NameError="Enter Username";
-        var elem=document.getElementById('loginName') as HTMLInputElement;
-        error1=true;
-      }
-
-      if (error1 || error2){
-        return 0
-      }
-      else */
-      
-        //var login=  await this.orderService.GetUser(formValue['Name'],formValue['Password']).catch(err => console.log('error', err));
         this.LoginError='';
+
         if(!this.online){
           this.LoginError='No connection';
           return false;
@@ -124,30 +101,28 @@ export class HomePage {
 
         }
         
-        if( login !== 'null' ){//'medard@ranites.com','medard'
+        if( login !== 'null' ){
           this.authService.signIn().then(
            async () => {
-              
               this.initForm()
               this.LoginError='';
               try {
-                this.User=new User
-                login;
+                this.User=new User()
                 console.log('Sign in successful!');
                 this.authStatus = this.authService.isAuth;
                 this.authService.User=login;
-                this.authService.createCookies()
+                
               } catch (error) {
                console.log(error) 
-              }
-              this.router.navigate(['Cashier']);
+              } 
+              this.router.navigate(['/Loading'])
+              
             }
           ); 
         }
         else{
           this.LoginError='Invalid Password or Username';
         }
-        
       }
       languageChanged(){// this function will be call by the function calling when we have to save this in cookies;
         this.translateConfigService.setLanguage(this.selectedLanguage);
@@ -158,36 +133,6 @@ export class HomePage {
     //this part is just for the tests of multi scenario
 
     
-  async presentAlertPrompt() {
-    const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
-      header: 'Prompt!',
-      inputs: [
-        {
-          name: 'name1',
-          type: 'text',
-          placeholder: 'Placeholder 1'
-        }
-       
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {
-            console.log('Confirm Cancel');
-          }
-        }, {
-          text: 'Ok',
-          handler: () => {
-            console.log('Confirm Ok');
-          }
-        }
-      ]
-    });
-
-    await alert.present();
-  }
+  
 
 }

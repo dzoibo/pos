@@ -33,7 +33,7 @@ export class Order{
     public OrderLocationLevelName: string;
     public OrderTotalAmount: number;
     public OrderStatus: string;
-    public Created: any;
+    public Created:any;
     public OrderItems: OrderItem[];
     constructor(){
         this.Created=null,

@@ -154,7 +154,8 @@ export class PayComponent implements OnInit {
       //we display the alert message with the message "payment is not suffisant"
      }else{//Maybe we can add a spinner here...
       
-      this.Order.Created='2022'
+      this.Order.Created= new Date ('23.01.2022 12:55:35')
+
        this.Order.OrderLocationId=1;
        this.Order.OrderLocationLevelName='Floor1';
        this.Order.OrderLocationName='Table1';
@@ -166,7 +167,6 @@ export class PayComponent implements OnInit {
             const print= await  this.orderService.Printer(data)
             this.print(print);
             localStorage.removeItem('Order');
-            console.log('uuu',localStorage.getItem('Order'))
             setTimeout(() => {
             this.Order=new Order;
             this.router.navigate(['/Cashier']);

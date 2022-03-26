@@ -11,14 +11,17 @@ export class AuthService {
   
   
   User= new User;
+  permission:string;
   isAuth = false;
   constructor(private loginService:LoginService,private platform:Platform, private cookieService:CookieService){
+
     if(cookieService.check('userId')&&cookieService.check('userName')&&cookieService.check('userImage')&&cookieService.check('userParner')){
       try {
         this.User.userId=parseInt(this.decryptData(cookieService.get('userId')));
         this.User.userName=this.decryptData(cookieService.get('userName'));
         this.User.userParner=this.decryptData(cookieService.get('userParner'));
         this.User.userImage=this.decryptData(cookieService.get('userImage'));
+        this.permission=this.decryptData(cookieService.get('permission'));
         this.isAuth=true;
       } catch (error) {
         this.isAuth=false
@@ -56,6 +59,7 @@ export class AuthService {
     this.cookieService.set('userName', this.encryptData(this.User.userName),{ expires: timeOut });
     this.cookieService.set('userImage', this.encryptData(this.User.userImage),{ expires: timeOut });
     this.cookieService.set('userParner', this.encryptData(this.User.userParner),{ expires: timeOut });
+    this.cookieService.set('permission', this.encryptData(this.permission),{ expires: timeOut });
   }
   encryptData(text:string){
     var CryptoJS = require("crypto-js");

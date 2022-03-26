@@ -4,6 +4,8 @@ import { Order,Catalog,User } from '../Models';
 import { LoginService,CatalogService,OrderService } from 'poslibrary';
 import { url } from 'inspector';
 import { CookieService } from 'ngx-cookie-service';
+import { AuthGuardService } from '../guard/auth-guard.service';
+import { AuthService } from '../guard/auth.service';
 
 
 @Injectable({
@@ -14,10 +16,11 @@ export class OrdersService {
   Catalog:Catalog[];
   result:string;
   Order:Order;
-  Permission;
+  Created:boolean;
   
-   constructor(private cookies:CookieService, private catalogService:CatalogService,private orderService:OrderService) { 
-   this.Permission= cookies.get('permission')
+   constructor(private auth:AuthService, private catalogService:CatalogService,private orderService:OrderService) { 
+   this.Created=false;
+   
   }
   
 
@@ -55,7 +58,6 @@ export class OrdersService {
 
   async getOrdersList(){
     const data=await this.orderService.getOrders('','','');
-    console.log('OrdersList',data);
     return data
   }
 
@@ -70,10 +72,25 @@ export class OrdersService {
 
   async createOrder(order:Order){
     const data=await this.orderService.createOrder(order);
+    console.log(JSON.stringify(data))
     return data
+
   }// for now we don't not what is return by this fucntion...
   
-  
+  displayDate(datestring:string){
+    var date=new Date(datestring)
+    console.log(JSON.stringify(date));
+    var day=date.getDate();
+    var month=''+date.getMonth()+1;
+    if(month.length===1){
+     month='0'+month
+    }
+    var hours = date.getHours();
+    var seconde = date.getSeconds();
+    var minute = date.getMinutes();
+    var years = date.getFullYear();
+    return day+':'+month+':'+years+' '+hours+':'+minute+':'+seconde;
+  }
 
 
 

@@ -10,14 +10,14 @@
           <ion-text>
             {{User.userName}}
           </ion-text>
-          <ion-text>{{User.userParner}}</ion-text>
+          <ion-text>{{User.userParner | titlecase}}</ion-text>
         </div>
         
       </ion-label>
     </ion-label>
     <ion-content>
       <ion-list class="ion-no-border">
-       <div  [ngClass]="currentLink==='Orders'? 'active' : 'inactive'" (click)="setItem('Orders')" id="OrderLink">
+       <div  [ngClass]="currentLink==='Order'? 'active' : 'inactive'" (click)="setItem('Order')" id="OrderLink">
          <ion-item lines="none"><ion-icon name="pricetags-outline"></ion-icon></ion-item> 
          <ion-item class="items">{{ 'Menu.oders' | translate:params }}</ion-item>
        </div>

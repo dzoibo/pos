@@ -1,9 +1,10 @@
 
 
 <ion-content fullscreen="true" (keyup.Enter)="SubmitByEnter($event)">
+  <ion-spinner *ngIf="spinner===true"  name="lines"></ion-spinner> 
   <ion-grid>
     <ion-row class="ion-justify-content-center">
-        <ion-spinner *ngIf="spinner===true"  name="lines"></ion-spinner> 
+        
         <ion-col class="ion-align-self-center" size-md="6" size-lg="5" size-xs="12">
         <div  id="login-logo">
           <img src="../../assets/isnov.png" alt="logo">     

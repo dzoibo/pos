@@ -20,19 +20,16 @@ import { SQLitePorter } from '@ionic-native/sqlite-porter/ngx';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { LoginService,OrderService,CatalogService } from 'poslibrary';
 import { HttpClientModule,HttpClient } from '@angular/common/http';
+//import { NativeAudio } from '@awesome-cordova-plugins/native-audio/ngx';
+import { BluetoothSerial } from '@ionic-native/bluetooth-serial/ngx';
 import { OrdersService } from './service/order.service';
-import { HomePage } from './home/home.page';
 import { PayComponent } from './pay/pay.component';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateConfigService } from './service/translate-config.service';
 import { DeactivateGuardGuard } from './guard/deactivate-guard.guard';
-import { HomePageModule } from './home/home.module';
-import { OrdersComponent } from './orders/orders.component';
-import { Order } from './Models';
-import { PrintService } from './service/print';
-
-import { BluetoothSerial } from '@ionic-native/bluetooth-serial/ngx';
+import {OrdersComponent} from  './orders/orders.component';
+import { BlanckPageComponent } from './blanck-page/blanck-page.component';
 
 export function LanguageLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -41,21 +38,23 @@ export function LanguageLoader(http: HttpClient) {
 
 
 const appRoutes: Routes = [
-{ path: "Cashier", canActivate: [AuthGuardService],canDeactivate:[DeactivateGuardGuard] ,component: CashierComponent },
-//{ path: "Order",component: OrdersComponent },
-{ path: "",canActivate: [GuardAvoidService], component: CashierComponent },
+{ path: "Cashier",canDeactivate: [DeactivateGuardGuard] ,component: CashierComponent },
+{ path: "Order", canActivate: [AuthGuardService],component: OrdersComponent },
+{ path: "New Order", canActivate: [AuthGuardService],component: CashierComponent },
 { path: "home", canActivate: [GuardAvoidService], component: CashierComponent },
 { path: "Pay", canActivate: [AuthGuardService],component: PayComponent },
-{ path: "**", redirectTo:'home' },
+{ path: "Loading", canActivate: [AuthGuardService],component: BlanckPageComponent },
+{ path: "**", redirectTo:'Cashier'},
 
 
 ];
 @NgModule({
   declarations: [
     AppComponent,
+    BlanckPageComponent,
     CashierComponent,
     PayComponent,
-    OrdersComponent
+    OrdersComponent,
     
   ],
   entryComponents: [],  
@@ -67,7 +66,6 @@ const appRoutes: Routes = [
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HomePageModule,
     SwiperModule,
     ScrollingModule,
     RouterModule.forRoot(appRoutes),
@@ -86,7 +84,6 @@ const appRoutes: Routes = [
     GuardAvoidService,
     DeactivateGuardGuard,
     BarcodeScanner,
-    BluetoothSerial,
     SQLite,
     SQLitePorter,
     LoginService,
@@ -94,8 +91,7 @@ const appRoutes: Routes = [
     OrdersService,
     CatalogService,
     CookieService,
-    PrintService
-    ,
+    BluetoothSerial,
     TranslateConfigService,
     {provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
