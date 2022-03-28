@@ -6,10 +6,13 @@ import { Router,ActivatedRoute } from '@angular/router';
 import { OrdersService } from '../service/order.service';
 import { Catalog,OrderItem,Item,Order, Slide, ItemModel } from '../Models';
 import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
-import { PopoverController } from '@ionic/angular';
+import { BarcodeFormat } from '@zxing/library';
+import { Platform, PopoverController } from '@ionic/angular';
 import { IonSlides} from '@ionic/angular';
 import { LoginService } from 'poslibrary';
 import { AuthService } from '../guard/auth.service';
+import { NativeAudio } from '@awesome-cordova-plugins/native-audio/ngx';
+
 
 
 @Component({
@@ -47,18 +50,24 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
   AllCatalog:Catalog;
   goToPay:boolean;
   permission:string;
+  uniqueId:string// id to use for audio
   OrderIsSelected;//  this property is using only in the cashier scenario to know if we have already select and order
   orderFromSeller:boolean;//this property is to handle the pop up of the orders list 
-  constructor( private authService:AuthService, private barcodeScanner: BarcodeScanner,private router:Router, private orderService:OrdersService,private route:ActivatedRoute,private popoverController:PopoverController, private log: LoginService) {
+  constructor(private nativeAudio: NativeAudio, private platform: Platform, private authService:AuthService, private barcodeScanner: BarcodeScanner,private router:Router, private orderService:OrdersService,private route:ActivatedRoute,private popoverController:PopoverController, private log: LoginService) {
     this.Order=new Order();
     this.CatalogSelected=new Catalog();
     this.permission=this.authService.permission;
-    console.log(this.permission);
    }
-  
-   ngOnInit(): void {
+   ngOnInit() {
     this.OrderIsSelected=false;
-   }
+  }
+
+
+  playSound() {
+    this.nativeAudio.play(this.uniqueId, () => console.log('uniqueId1 is done playing'));
+    console.log('play',this.uniqueId);
+  }
+
   // @HostListener allows us to also guard against browser refresh, close, etc.
   @HostListener('window:beforeunload')
   canDeactivate(): Observable<boolean> | boolean {
@@ -73,6 +82,19 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
     }
   }
    async ionViewWillEnter() {
+
+    this.platform.ready().then(() => {
+      console.log('PLATFORM READY');
+      const date = new Date();
+      this.uniqueId = '' + date.getFullYear() + date.getMonth() + date.getDate() + date.getHours() + date.getMinutes() + date.getSeconds() + date.getMilliseconds();
+      this.nativeAudio.preloadSimple(this.uniqueId, 'assets/sounds/susccess_beep.mp3').then((res) => {
+        console.log('PRELOAD RESPONSE', JSON.stringify(res));
+      }), err => {
+        console.log('ERROR', JSON.stringify(err))
+      }
+      console.log(this.uniqueId);
+    });
+
     this.getOrderList();
     this.Catalog = [];
     await this.initCatalog();
@@ -133,36 +155,20 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
     this.slides.slidePrev();
   }
   
-   scan(){// question to come: what we are suppose to display if the user scan a bad code? ...
-    if(this.permission==='cashier'){
-      return false;
-    }
-    this.barcodeScanner.scan().then(barcodeData => {
-        console.log('Item Id', (barcodeData.text));
-        var itemId:number= parseInt(JSON.parse(barcodeData.text));
-        
-        try {
-          this.orderService.getCatalog(0,itemId).then((data)=>{
-          var catalog:Catalog[];
-          catalog=data;
-          this.addItem(catalog[0].CatalogItems[0]);
-          })
-          this.scan();
-        } 
-        catch (error) {
-          console.log(' Ce scan ne correspond à aucun produit ...')
-        }
-      }).catch(err => {
-            console.log('Error scan : ', err);
-     });
-  }
+   
  async setMenu(menuItem:string){
     if(menuItem==='grid'){
       await this.initCatalog;
+      this.showscanner=false;
       if(this.template.length===0){
         this.noItems='No items avalaible here for now ; you must refresh the stock';
       }
-    }else{
+    }else if(menuItem!=='SCAN'){
+      this.noItems='';
+      this.showscanner=false;
+    }
+    else{
+      await this.initCatalog;
       this.noItems='';
     }
     this.currentMenu=menuItem;
@@ -227,7 +233,7 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
 
 async initOrder(){
  
- if(this.permission==='seller' || this.permission==='cashier & seller'){// in each of these cases the user want to create a new order
+ if(this.permission==='seller' || this.permission==='seller & cashier'){
    try 
    {
     this.Order.OrderId=await this.orderService.getNewOrderId();
@@ -236,6 +242,7 @@ async initOrder(){
    }
  }
 else{
+
     // we are in the cashier scenario and this means that one order is selected
       var retrievedObject = localStorage.getItem('Order')
       this.Order=JSON.parse(retrievedObject)
@@ -326,7 +333,6 @@ deleteItem(Item:Item){
    
  }
  canSwitchModel(Models:ItemModel[]){
-   console.log(Models)
    if ( Models.length>1){
      return false;
    }
@@ -551,4 +557,48 @@ checkDisable(Item:OrderItem){
   displayDate(datestring:string){
     return this.orderService.displayDate(datestring);  
    }
+   showscanner = false;
+   formatsEnabled: BarcodeFormat[] = [
+    BarcodeFormat.CODE_128,
+    BarcodeFormat.DATA_MATRIX,
+    BarcodeFormat.EAN_13,
+    BarcodeFormat.QR_CODE,
+  ];
+   showScanner() {
+    this.showscanner = !this.showscanner;
+  }
+
+  onCodeResult(resultString: string) {
+        var badScan:boolean=false;
+        try {
+          var itemId:number= parseInt(resultString);
+        } catch (error) {
+          badScan=true;
+          console.log('Error',error);
+        }
+        this.orderService.getCatalog(0,itemId).then((data)=>{
+          var catalog:Catalog[];
+          catalog=data;
+          try {
+                if(catalog[0]){
+                  this.addItem(catalog[0].CatalogItems[0]);
+                }else{
+                  badScan=true;
+                }
+              }
+          catch (error) {
+              badScan=true;
+              console.log(' this scan does\'nt match any product...')
+            }
+          })
+
+        if(badScan===false){
+          //play the success sound
+        }else{
+          //play the error sound
+        }
+        
+      }
+  
+  
 }

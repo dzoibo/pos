@@ -20,7 +20,8 @@ import { SQLitePorter } from '@ionic-native/sqlite-porter/ngx';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { LoginService,OrderService,CatalogService } from 'poslibrary';
 import { HttpClientModule,HttpClient } from '@angular/common/http';
-//import { NativeAudio } from '@awesome-cordova-plugins/native-audio/ngx';
+import { NativeAudio } from '@awesome-cordova-plugins/native-audio/ngx';
+import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial/ngx';
 import { OrdersService } from './service/order.service';
 import { PayComponent } from './pay/pay.component';
@@ -30,6 +31,8 @@ import { TranslateConfigService } from './service/translate-config.service';
 import { DeactivateGuardGuard } from './guard/deactivate-guard.guard';
 import {OrdersComponent} from  './orders/orders.component';
 import { BlanckPageComponent } from './blanck-page/blanck-page.component';
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
+import { Media, MediaObject } from '@awesome-cordova-plugins/media/ngx';
 
 export function LanguageLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -38,6 +41,7 @@ export function LanguageLoader(http: HttpClient) {
 
 
 const appRoutes: Routes = [
+
 { path: "Cashier",canDeactivate: [DeactivateGuardGuard] ,component: CashierComponent },
 { path: "Order", canActivate: [AuthGuardService],component: OrdersComponent },
 { path: "New Order", canActivate: [AuthGuardService],component: CashierComponent },
@@ -66,7 +70,9 @@ const appRoutes: Routes = [
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    IonicModule,
     SwiperModule,
+    ZXingScannerModule,
     ScrollingModule,
     RouterModule.forRoot(appRoutes),
     IonicStorageModule.forRoot(),
@@ -79,8 +85,10 @@ const appRoutes: Routes = [
     })
   ],
   providers: [
+    ScreenOrientation,
     AuthService,
     AuthGuardService,
+    NativeAudio,
     GuardAvoidService,
     DeactivateGuardGuard,
     BarcodeScanner,

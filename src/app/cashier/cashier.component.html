@@ -4,13 +4,16 @@
     <ion-buttons slot="start" *ngIf="permission==='seller'" >
       <ion-back-button mode="android"></ion-back-button>
     </ion-buttons>
-    <ion-title  *ngIf="permission!=='seller'">{{'Cashier.title'|translate:params }}  <ion-label  *ngIf="permission==='cashier'"  class="ordersNumber" (click)="OrderFromSeller()"><ion-icon name="pricetags-outline"></ion-icon><ion-badge><ion-text>{{OrderInProgress()}}</ion-text> </ion-badge></ion-label></ion-title>
+    <ion-title  *ngIf="permission!=='seller'">{{'Cashier.title'|translate:params }}   <ion-label  *ngIf="permission==='cashier'"  class="ordersNumber" (click)="OrderFromSeller()"><ion-icon name="pricetags-outline"></ion-icon><ion-badge><ion-text>{{OrderInProgress()}}</ion-text> </ion-badge></ion-label></ion-title>
     <ion-title  *ngIf="permission==='seller'" >New Order </ion-title>
-     <div class="triagle-up"></div>
-  </ion-toolbar>
+</ion-toolbar>
+  <ion-icon name="triangle-outline"></ion-icon>
+
 </ion-header>
+
 <ion-content  >
-  <div id="global" >
+
+<div id="global" >
     <div id="globalCatalog" *ngIf="permission!=='cashier' || (permission==='cashier' && OrderIsSelected===true)" >
       <div id="surface">
         <ion-label id="divers">
@@ -18,11 +21,13 @@
           <ion-text >{{ 'Cashier.divers' | translate:params }}</ion-text>
         </ion-label>
         <div>
+
           <ion-label id="labelName">
             <ion-icon name="pricetag-outline"></ion-icon>
             <ion-text id="sOrderId" > {{Order.OrderId | slice:0:8}}</ion-text>
           </ion-label>
         </div>
+
         
         <ion-icon name="ellipsis-vertical" id="OrderEllipse"></ion-icon>
         <ion-popover trigger="OrderEllipse" id="OrderPopOver" side="right">
@@ -78,14 +83,22 @@
           {{noItems}}
         </ion-text>
       </div>
-      <div id="btScan" *ngIf="currentMenu==='SCAN'">
-        <ion-button (click)="scan()" ><ion-icon name="barcode" ></ion-icon>SCAN</ion-button>
+      <div id="btScan"  *ngIf="currentMenu==='SCAN'">
+        <div class="div" *ngIf="showscanner" >
+          <zxing-scanner autofocusEnabled="true"
+          (scanSuccess)="onCodeResult($event)"
+          delayBetweenScanSuccess="2000"
+          [formats]="formatsEnabled"
+           *ngIf="showscanner || currentMenu==='SCAN'"></zxing-scanner>
+        </div>
+        <ion-button  *ngIf="!showscanner" (click)="showScanner()" ><ion-icon name="barcode" ></ion-icon>SCAN</ion-button>
+        <ion-button id="btCloseScan" *ngIf="showscanner" (click)="showScanner()"><ion-icon name="close" ></ion-icon >STOP</ion-button>
       </div>
       <div>
         <ion-label id="slideBack" *ngIf="(currentMenu==='grid' || ('no'===noItems && currentMenu==='search')) && 5>noItems.length && template.length>1"  >
           <ion-icon name="caret-back-circle" (click)="swipePrev()"></ion-icon>
         </ion-label>
-        <ion-slides id="slides" *ngIf="(currentMenu==='grid' || (noItems==='no' && currentMenu==='search')) && 5>noItems.length  "  class="slides ion-padding-bottom" pager="true" [options]="slideOpts" #mySlider>  
+        <ion-slides id="slides" *ngIf="(currentMenu==='grid' ||  currentMenu==='search') && 5>noItems.length  "  class="slides ion-padding-bottom" pager="true" [options]="slideOpts" #mySlider>  
           <ion-slide class="ion-padding-bottom" *ngFor="let slide of template">
             <ion-grid>
               <ion-row class="ion-justify-content-between " >
@@ -128,7 +141,7 @@
         <ion-icon name="ellipsis-vertical"></ion-icon>
       </div>
 
-      <div *ngIf="Order.OrderItems!=null" id="orderItemsList" [ngClass]="currentMenu==='SCAN'  || (noItems!=='no' && currentMenu==='search') || (noItems.length>5 && currentMenu==='grid')   ? 'orderItemsList1' : 'orderItemsList2'">
+      <div *ngIf="Order.OrderItems!=null" id="orderItemsList" [ngClass]="(currentMenu==='SCAN' && !showscanner)  || (noItems.length>5 && currentMenu==='search') || (noItems.length>5 && currentMenu==='grid')    ? 'orderItemsList1' : 'orderItemsList2'">
 
         <div  class="orderItems" *ngFor="let OrderItem of Order.OrderItems;let i= index">
           <ion-label class="orderItemsImg" [id]="'orderItemsImg'+i">
@@ -231,7 +244,7 @@
 </ion-content>
 
 
-<ion-footer *ngIf="(permission==='cashier' && OrderIsSelected===true) || permission==='cashier & seller' " id="footer"  (click)="pay()" >
+<ion-footer *ngIf="(permission==='cashier' && OrderIsSelected===true) || permission==='seller & cashier' " id="footer"  (click)="pay()" >
   <ion-text id="Total">CFA  <ion-label style="font-weight: bold">{{getTotal()}}</ion-label> </ion-text>
   <ion-text id="Pay" *ngIf="Order.OrderTotalAmount>0" > <ion-text>PAY </ion-text>  <ion-icon name="chevron-forward" ></ion-icon></ion-text>
 </ion-footer>

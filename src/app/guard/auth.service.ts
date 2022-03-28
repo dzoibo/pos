@@ -50,7 +50,7 @@ export class AuthService {
 
 
   createCookies(){
-    if(this.platform.is( 'mobile') && !this.platform.is( 'mobileweb') ) {
+    if((this.platform.is( 'mobile') || this.platform.is('tablet') )&& !this.platform.is( 'mobileweb') ) {
       var timeOut=0;
     }else{
       var timeOut=86400;

@@ -28,7 +28,7 @@ export class BlanckPageComponent implements OnInit {
     const alert = await this.alertController.create({
       cssClass: 'alert-permission',
       header: 'Please select the role you want to use',
-
+      
       inputs: [
         {
           type: 'radio',
