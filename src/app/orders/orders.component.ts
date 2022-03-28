@@ -41,7 +41,7 @@ export class OrdersComponent implements OnInit {
         }
       
     }
-    /*this.Created=false;
+    this.Created=false;
     this.testOrder=new Order();// this is just for the test 
     this.testOrder.OrderId='N1229991';
     this.testOrder.Created= '2022-03-25 10:32:18';
@@ -51,7 +51,7 @@ export class OrdersComponent implements OnInit {
     this.testOrder.OrderLocationName='table1',
     this.testOrder.OrderStatus='Draft',
     this.testOrder.OrderTotalAmount=0;
-    this.Orders.push(this.testOrder);*/
+    this.Orders.push(this.testOrder);
     this.isCreated();
   }
 
