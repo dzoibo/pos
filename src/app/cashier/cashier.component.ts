@@ -137,6 +137,10 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
     for (const catalog of this.Catalog){
       for ( const item of catalog.CatalogItems){
         AllItem.push(item);
+        AllItem.push(item);
+        AllItem.push(item);
+        AllItem.push(item);
+        AllItem.push(item);
       }
     }
     const allCatalog=new Catalog();
@@ -158,7 +162,7 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
    
  async setMenu(menuItem:string){
     if(menuItem==='grid'){
-      await this.initCatalog;
+      this.showItem(this.CatalogSelected.CatalogItems,'all categories')
       this.showscanner=false;
       if(this.template.length===0){
         this.noItems='No items avalaible here for now ; you must refresh the stock';
@@ -403,6 +407,7 @@ checkDisable(Item:OrderItem){
     this.noItems='';
     this.template=[];
     if(this.searchValue.length===0){
+      this.showItem(this.AllCatalog.CatalogItems,'all categories');
       return 0
     }
     
@@ -430,22 +435,22 @@ checkDisable(Item:OrderItem){
  
   getSize()
   {
-    if (screen.width>=900&& screen.height>=700 ) {
-      this.slideSize=20;
+    if (screen.width>=961 && screen.height>900  ) {
+      this.slideSize=48;
     }
 
-    else if (screen.width>800 && screen.height>900){
-      this.slideSize=20;
+    else if (screen.width>900 && screen.height<900){
+      this.slideSize=42;
     }
-    else if (screen.width>900){
-      this.slideSize=10;
-    }else if (screen.width>800 && screen.height<500){
-      this.slideSize=10;
+    //else if (screen.width>900){
+    //  this.slideSize=10;
+    //}
+    else if (screen.height>960 && screen.height>screen.width){
+      this.slideSize=24;
     }
     else {
-      this.slideSize=8;
+      this.slideSize=6;
     }
-    this.slideSize=6
   }
   
  

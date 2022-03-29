@@ -16,6 +16,7 @@ ion-toolbar{
     transform: translateX(-50%);
     -ms-transform:translateX(-50%) ;
 }
+
 #globalOrder{
     height: calc(100vh - 60px);
     margin-top: 4px;
@@ -236,4 +237,25 @@ ion-toolbar{
         }
 }
 
+}
+
+@media (min-width:961px)  { 
+    #globalOrder{
+        position: relative;
+        width: 70%;
+        margin-left: 15%;
+    }
+    ion-title{
+        text-align: left;
+    }
+    #orderCreated{
+        margin-top: 30% !important;
+        text-align: center;
+        align-items: center;
+    }
+    ion-fab{
+        ion-icon{
+            color:white;
+        }
+    }
 }

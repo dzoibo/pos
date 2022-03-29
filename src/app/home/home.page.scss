@@ -74,7 +74,7 @@ ion-button{
 }
 
 #forgot{
-  margin-top: 5px;
+margin-top: 5px;
 color: #1A72DD;
 font-family: 'Rubik', sans-serif;
 font-style: normal;
@@ -86,4 +86,9 @@ text-decoration-line: underline;
 left: 50%;
 transform: translateX(-50%);
 transform-origin: left;
+}
+@media (min-height:900px) and (max-width:1000px) {
+  ion-content{
+    --padding-top: 15vh;
+  }
 }

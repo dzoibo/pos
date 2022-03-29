@@ -113,11 +113,9 @@
           <ion-label id="successMessage"><ion-text>{{ 'Pay.paySuccess' | translate:params }}</ion-text></ion-label>
           <ion-label id="successReceipt"><ion-text>{{ 'Pay.payPrinted' | translate:params }}</ion-text></ion-label>
         </ion-label>
-        
+        <ion-button id="btCancel" *ngIf="Pay==='Pay'" color="medium"  (click)="Cancel()">
+          <ion-icon name="Close-Circle-outline" ></ion-icon> <ion-text>{{ 'Pay.cancel' | translate:params }}</ion-text>
+      </ion-button>
     </div>
   </ion-content>
-  <ion-footer id="footer" *ngIf="Pay==='Pay'" >
-    <ion-button  color="medium"  (click)="Cancel()">
-        <ion-icon name="Close-Circle-outline" ></ion-icon> <ion-text>{{ 'Pay.cancel' | translate:params }}</ion-text>
-    </ion-button>
-  </ion-footer>
+   
