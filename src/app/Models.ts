@@ -47,8 +47,34 @@ export class Order{
     }
 }
 
-    
-
+export class OrderCreated{
+    public OrderId: string;
+    public OrderLocationId: number;
+    public OrderLocationName: string;
+    public OrderLocationLevelName: string;
+    public OrderTotalAmount: number;
+    public OrderStatus: string;
+    public Created:any;
+    public OrderItems: {
+        ItemId:number;
+        ItemName:string;
+        ItemModel:string;
+        ItemProvider:string;
+        ItemPrice:number;
+        ItemImage:string;
+        ItemQuantity:number;
+    }[];
+    constructor(){
+        this.Created=null,
+        this.OrderId='',
+        this.OrderLocationId=0,
+        this.OrderLocationLevelName='',
+        this.OrderLocationLevelName='',
+        this.OrderStatus='',
+        this.OrderTotalAmount=0,
+        this.OrderItems=[];
+    }
+}
 
 export class Table{
     public TableId!: number;
@@ -70,6 +96,7 @@ export  class OrderItem {
     Item: Item;
     ItemQuantity: number;
     ItemModel: string;
+    constructor(){}
 }
 export  class Catalog {
     CatalogId: number;

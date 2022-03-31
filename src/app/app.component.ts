@@ -24,8 +24,10 @@ export class AppComponent implements OnDestroy,OnDestroy {
   User=new User;
   selectedLanguage;
   event$;
-  constructor(private screenOrientation:ScreenOrientation, private platform: Platform ,public translateConfigService:TranslateConfigService,public menuCtrl: MenuController,private cookieService:CookieService, private authService:AuthService, private router:Router,private orderService:OrdersService) {
-    if(this.platform.is('mobile')||this.platform.is('mobileweb')){
+  permission:string;
+  constructor(private auth:AuthService, private screenOrientation:ScreenOrientation, private platform: Platform ,public translateConfigService:TranslateConfigService,public menuCtrl: MenuController,private cookieService:CookieService, private authService:AuthService, private router:Router,private orderService:OrdersService) {
+    this.permission=this.auth.permission;
+    if((this.platform.is('mobile')||this.platform.is('mobileweb'))&& !this.platform.is('tablet')){
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
     }
     this.translateConfigService.setLanguage('en'); 
@@ -58,6 +60,11 @@ export class AppComponent implements OnDestroy,OnDestroy {
   }
 
   setItem(item:string){
+    if(this.permission==='seller & cashier'){
+      this.router.navigate(['/Cashier']);
+      this.closeMenu();
+      return false
+    }
     this.currentLink=item;
     setTimeout(() => {
       this.closeMenu();
@@ -76,6 +83,9 @@ export class AppComponent implements OnDestroy,OnDestroy {
           this.currentLink='Catalog'
           break;
       case '/New Order' :
+          this.currentLink='Order'
+          break;
+      case '/Order detail' :
           this.currentLink='Order'
           break;
       case '/Order' :

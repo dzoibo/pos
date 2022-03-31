@@ -1,5 +1,5 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { Order } from '../Models';
+import { Order,OrderCreated,OrderItem } from '../Models';
 import { CanDeactivate, Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { Observable } from 'rxjs';
@@ -7,6 +7,8 @@ import { ComponentCanDeactivate } from '../guard/deactivate-guard.guard';
 import { OrdersService } from '../service/order.service';
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial/ngx';
 import { PrintService } from '../service/print';
+import { CookieService } from 'ngx-cookie-service';
+import { AuthService } from '../guard/auth.service';
 
 
 
@@ -35,22 +37,40 @@ export class PayComponent implements OnInit {
   bluetoothList: any=[];
   selectedPrinter: any;
   macAddress: any;
+  permission:string;
   
 
 
-  constructor(private printService:PrintService, private bluetoothSerial: BluetoothSerial,private router:Router,private alertController:AlertController,private orderService:OrdersService) {
-    this.Order=new Order();
-   }
+  constructor(private cookies:CookieService,private auth: AuthService, private printService:PrintService, private bluetoothSerial: BluetoothSerial,private router:Router,private alertController:AlertController,private orderService:OrdersService) {
+   this.permission=this.auth.permission
+  }
 
 
     ionViewDidEnter() {
       try {
         
-        var retrievedObject = localStorage.getItem('Order')
-        this.Order= JSON.parse(retrievedObject);
-        console.log(this.Order,'edee')
+        var retrievedObject = localStorage.getItem('Order');
+        if(this.permission==='cashier'){
+          let order =new Order();
+          order =JSON.parse(retrievedObject);
+          this.Order = order;
+        }
+        else if(this.permission==='seller & cashier'){
+          let order =new OrderCreated();
+          order =JSON.parse(retrievedObject);
+          this.Order=new Order();
+          this.Order.OrderId=order.OrderId
+          this.Order.Created= order.Created;
+          this.Order.OrderLocationId=order.Created;
+          this.Order.OrderLocationLevelName=order.OrderLocationLevelName,
+          this.Order.OrderLocationName=order.OrderLocationName,
+          this.Order.OrderStatus=order.OrderStatus,
+          this.Order.OrderTotalAmount=order.OrderTotalAmount;
+          this.Order.OrderItems=this.TransfertItem(order.OrderItems);
+        }else{
+          this.router.navigate(['Order'])
+        }
         if(this.Order===null){
-          console.log('jkik');
           this.router.navigate(['Cashier'])
         }
       } catch (error) {
@@ -70,6 +90,38 @@ export class PayComponent implements OnInit {
       width.style.width=numero+'px';
       }, 100);
     }
+    TransfertItem(  OrderItems2: {
+                ItemId:number;
+                ItemName:string;
+                ItemModel:string;
+                ItemProvider:string;
+                ItemPrice:number;
+                ItemImage:string;
+                ItemQuantity:number;
+              }[]){
+          var OrderItems1:OrderItem[]=[];                                                   
+          for(const item of OrderItems2){
+          let OrderItem:OrderItem={
+          ItemModel:item.ItemModel,
+          ItemQuantity:item.ItemQuantity,
+          Item:
+          {ItemId:item.ItemId,
+          ItemDescription:item.ItemProvider,// i think that the property permission going with the propertie description
+          ItemProvider:item.ItemProvider,
+          ItemImage:item.ItemImage,
+          ItemName:item.ItemName,
+          ItemPrice:item.ItemPrice,
+          ItemModels:[{
+          Model:item.ItemModel,
+          Price:item.ItemPrice
+          },],
+          }
+      };
+OrderItems1.push(OrderItem); 
+}
+//console.log(JSON.stringify(OrderItem));
+return OrderItems1;
+}
 
   changeMode(){ // function to set the Mode of payment
     if(this.Mode==='CASH'){

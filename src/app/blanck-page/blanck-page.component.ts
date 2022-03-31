@@ -17,7 +17,7 @@ export class BlanckPageComponent implements OnInit {
   User:User;
   permission:string;
   spinner=false;
-  constructor(private router:Router, private alertController:AlertController,private authService:AuthService,private orderService:OrdersService) {
+  constructor(private cookieService:CookieService, public menuCtrl: MenuController, private router:Router, private alertController:AlertController,private authService:AuthService,private orderService:OrdersService) {
     this.User=new User;
    }
 
@@ -77,5 +77,16 @@ export class BlanckPageComponent implements OnInit {
     });
 
     await alert.present();
+  }
+
+  ionViewDidEnter() {
+    this.menuCtrl.enable(false);
+    if(this.cookieService.check('permission')){
+      this.router.navigate(['/Order']);
+      }
+  }
+  ionViewDidLeave()
+  {
+    this.menuCtrl.enable(true);
   }
 }

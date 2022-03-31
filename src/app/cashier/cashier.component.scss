@@ -7,16 +7,17 @@
   }
   ion-header{
       overflow-y: visible!important ;
+      img{
+        border:1px solid red;
+        
+        font-size: 30px;
+        padding: 0px;
+        top: 47px;
+        position: absolute;
+        left:15px;
+    }
   }
 
-  ion-icon[name=triangle-outline]{
-    color:#666666;
-    position: absolute;
-    right: 54px;
-    top :-15px;
-    opacity: 0.5;
-    font-size: 50px;
-    font-weight:lighter    }
   
 .grayColor,ion-content{
     --background:#E5E5E5;
@@ -49,9 +50,7 @@
           ion-icon{
               font-size: x-large;
           }
-          ion-badge{
-              min-width: 22px;
-          }
+          
       }
   }
 $fullheight:calc(100vh - 56px);
@@ -117,8 +116,29 @@ ion-icon[name=ellipsis-vertical]{
           padding-right: 10px;
       }
     }
+    #labelOrderStatus{
+        @extend .verticalCenter;
+        display: flex;
+        justify-content: right;
+        text-align: right;
+        align-items: center;
+        right: 10%;
+            height: 19px;
+            display: flex;
+            align-items: right;
+            justify-content: right;
+            ion-text{
+                color: white;
+            }
+    }
     ion-icon[name=person-outline]{
         font-size: xx-large;
+        
+    }
+    ion-icon[name=ellipsis-vertical]{
+        @extend .verticalCenter;
+        right: 0px;
+        font-size: x-large;
     }
 
 }
@@ -723,14 +743,19 @@ ion-footer{
                     display: flex;
                     justify-content: right;
                     text-align: right;
-                    align-items: center;
-                        height: 19px;
+                    font-family: "roboto", sans-serif;
+                    size: 14px;
+                    font-weight: 400;
+                    line-height: 20px;
+                    letter-spacing: 0.25px;
+                    ion-text{
+                        color: white;
+                    }
+                    ion-badge{
+                        height: 29px;
+                        align-items: center;
                         display: flex;
-                        align-items: right;
-                        justify-content: right;
-                        ion-text{
-                            color: white;
-                        }
+                    }
                 }
                 
             }
@@ -759,6 +784,18 @@ ion-footer{
     overflow: hidden;
     height: 236px !important;
     width: 100%;
+    position: relative;
+    .scannerIcon{
+        opacity: 0.7;
+        position: absolute;
+        left:50%;
+        top:35%;
+        transform:translateY(-50%) ;
+        transform:translateX(-50%) ;
+        ion-icon{
+            font-size: 80px;
+        }
+    }
 }
 
 zxing-scanner {
@@ -767,13 +804,23 @@ zxing-scanner {
 }
 
 ::ng-deep video {
-    max-height: 300px;
+    max-height: 236px;
     width: 100vw;
     object-fit: contain;
 }
 @media (min-width:961px)  { 
+    .scannerIcon{
+        opacity: 0.7;
+        position: absolute;
+        left:50%;
+        top:50%;
+        transform:translateX(-50%) ;
+        transform:translateY(-50%) ;
+        ion-icon{
+            font-size: 120px;
+        }
+    }
     #OrderFromSeller{
-    
         padding-top: -10px;
         background-color: white;
         height: calc(100vh - 62px);////this is of android only
@@ -782,6 +829,7 @@ zxing-scanner {
         position:absolute;
         margin-top: 6px;
     }
+
     ion-title{
         text-align: left;
     }
@@ -789,10 +837,10 @@ zxing-scanner {
         padding-left: 6.6%;
         padding-right: 6.6%;
         padding-bottom: 0px;
-        height: calc(100vh - 44px);// for android only
+        height: calc(100vh - 56px);// for android only
         display: grid;
         grid-template-columns: 10% 10% 10% 10% 10% 10% 10% 10% 10% 10%;
-        grid-template-rows: 5% 15% 10% 10% 10% 10% 10% 10% 15% 5%;
+        grid-template-rows: 5.5% 14.5% 15% 5% 10% 10% 10% 10% 12% 8%;
         #surface{
             grid-column-start: 7;
             grid-column-end: 11;
@@ -807,9 +855,7 @@ zxing-scanner {
             box-sizing: border-box;
             margin-right: 5px ;
             #menuItems{
-            
-               
-            height: 38px;
+            height: 41px !important;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -863,21 +909,22 @@ zxing-scanner {
             grid-column-end: 11;
             grid-row-start: 2;
             grid-row-end: 11;
+            position: relative;
+            overflow-y: auto;
             #orderItemsList{
-                overflow-y: auto;
-                height: calc(100% -  34px );
-                padding-bottom: 34px;
+                height: calc(100% - 34px) !important;
+                padding-bottom: 70px;
             }
             
         }
      
         ion-footer{
+            height: 100%;
             position: relative;
             grid-column-start: 7;
             grid-column-end: 11;
             grid-row-start: 10;
             grid-row-end: 11;
-            margin-top:6px ;
         }
     }
 
@@ -913,11 +960,11 @@ zxing-scanner {
     
     .div {
         overflow: hidden;
-        height: calc(100vh - 70px) !important;
+        height: calc(100vh - 100px) !important;
         width: 100%;
         ::ng-deep video {
-            max-height: calc(100vh - 70px) ;
-            width: 100vw;
+            width: 100%;
+            min-height: calc(100vh - 100px) !important;
             object-fit: contain;
         }
     }
@@ -933,6 +980,20 @@ zxing-scanner {
 }
 
 @media (min-height:961px) and (orientation: portrait){
+    .scannerIcon{
+        opacity: 0.7;
+        position: absolute;
+        left:50%;
+        top:50%;
+        transform:translateX(-50%) ;
+        transform:translateY(-50%) ;
+        ion-icon{
+            font-size: 120px;
+        }
+    }
+    .slides{
+        min-height: 420px;
+    }
 
     .orderItemsList1{ // we just remove the height of the slide and the catalog section
         height: calc(100vh - 255px) ;

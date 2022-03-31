@@ -42,9 +42,10 @@ export function LanguageLoader(http: HttpClient) {
 
 const appRoutes: Routes = [
 
-{ path: "Cashier",canDeactivate: [DeactivateGuardGuard] ,component: CashierComponent },
-{ path: "Order", canActivate: [AuthGuardService],component: OrdersComponent },
+{ path: "Cashier",canActivate: [AuthGuardService], canDeactivate: [DeactivateGuardGuard] ,component: CashierComponent },
+{ path: "Order", component: OrdersComponent },
 { path: "New Order", canActivate: [AuthGuardService],component: CashierComponent },
+{ path: "Order detail", canActivate: [AuthGuardService],component: CashierComponent },
 { path: "home", canActivate: [GuardAvoidService], component: CashierComponent },
 { path: "Pay", canActivate: [AuthGuardService],component: PayComponent },
 { path: "Loading", canActivate: [AuthGuardService],component: BlanckPageComponent },

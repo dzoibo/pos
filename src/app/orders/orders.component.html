@@ -22,9 +22,9 @@
           </div>
           <div id="orderBlock">
             <div *ngIf="Created===false">
-              <div *ngFor="let order of Orders , let i= index" class="orderItems" (click)="seeOrder(order)">
+              <div *ngFor="let order of Orders , let i= index" class="orderItems" >
                 <div class="orderItemsDetailsContainer" >
-                  <div class="orderItemsDetails" >
+                  <div class="orderItemsDetails" (click)="ShowDetails(order)" >
                     <ion-label class="orderItemsName" >
                       <ion-text >
                         <ion-text  class="idOrder" >{{order.OrderId}}</ion-text>
@@ -41,7 +41,7 @@
                       </ion-text>
                     </ion-label>
                   </div>
-                  <div class="orderItemsDetails orderItemsDetails2" style="margin-top:-5px">
+                  <div class="orderItemsDetails orderItemsDetails2"  style="margin-top:-5px">
                     <ion-label class="orderItemsModel">
                         <ion-label class="oderSeller"><img src="../../assets/pa.png" alt=""></ion-label>
                          
@@ -58,11 +58,19 @@
                   </div>
                 </div>
                 <ion-icon name="ellipsis-vertical" [id]="odersEllispe+'i'"  ></ion-icon>
-                <ion-popover  class="ItemPopOver"  side="right" [trigger]="odersEllispe+'i'"  >
+                <ion-popover alignment="end"  class="ItemPopOver"  side="right" [trigger]="odersEllispe+'i'" 	dismiss-on-select="true" backdrop-dismiss="true">
                   <ng-template>
                     <ion-list >
                       <div class="deleteOrder">
-                        <ion-item lines="none"><ion-icon name="trash-outline"></ion-icon> </ion-item>
+                        <ion-item lines="none"><ion-icon name="information-circle-outline"></ion-icon> </ion-item>
+                        <ion-item class="ItemDelete"  (click)="ShowDetails(order)" ><ion-text> Show Details</ion-text></ion-item>
+                      </div>
+                      <div class="deleteOrder" [ngClass]="permission==='seller'? 'disabled' : 'nothing'" >
+                        <ion-item lines="none"><ion-icon name="cash-outline"></ion-icon></ion-item>
+                        <ion-item class="ItemDelete"  (click)="PerfomPayment(order)" ><ion-text>Perfom Payment</ion-text></ion-item>
+                      </div>
+                      <div class="deleteOrder disabled">
+                        <ion-item lines="none"><ion-icon name="trash-outline"  ></ion-icon> </ion-item>
                         <ion-item class="ItemDelete"  (click)="deleteOrder(order)" ><ion-text> delete</ion-text></ion-item>
                       </div>
                   </ion-list>

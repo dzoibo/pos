@@ -1,14 +1,17 @@
 <ion-header #header>
   <ion-toolbar>
-    <ion-menu-button *ngIf="permission!=='seller'" id="btMenu" slot="start" ></ion-menu-button>
-    <ion-buttons slot="start" *ngIf="permission==='seller'" >
-      <ion-back-button mode="android"></ion-back-button>
+    <ion-menu-button *ngIf="permission!=='seller' && routerValue!=='Order detail'" id="btMenu" slot="start" ></ion-menu-button>
+    <ion-buttons  slot="start" *ngIf="permission==='seller' || routerValue==='Order detail'" >
+      <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title  *ngIf="permission!=='seller'">{{'Cashier.title'|translate:params }}   <ion-label  *ngIf="permission==='cashier'"  class="ordersNumber" (click)="OrderFromSeller()"><ion-icon name="pricetags-outline"></ion-icon><ion-badge><ion-text>{{OrderInProgress()}}</ion-text> </ion-badge></ion-label></ion-title>
-    <ion-title  *ngIf="permission==='seller'" >New Order </ion-title>
+    <ion-title  >{{title}}  
+      <ion-label  *ngIf="permission==='cashier'"  class="ordersNumber" (click)="OrderFromSeller()">
+        <ion-icon name="pricetags-outline"></ion-icon>
+        <ion-badge><ion-text>{{OrderInProgress()}}</ion-text> </ion-badge>
+      </ion-label>
+    </ion-title>
 </ion-toolbar>
-  <ion-icon name="triangle-outline"></ion-icon>
-
+<!--<img  *ngIf="permission==='cashier'" src="../../assets/Untitled.svg">-->
 </ion-header>
 
 <ion-content  >
@@ -26,8 +29,13 @@
             <ion-icon name="pricetag-outline"></ion-icon>
             <ion-text id="sOrderId" > {{Order.OrderId | slice:0:8}}</ion-text>
           </ion-label>
-        </div>
 
+        </div>
+        <ion-label id="labelOrderStatus" *ngIf="permission==='cashier' || (permission==='seller' && OrderIsSelected===true)">
+          <ion-badge [color]='getColor(Order.OrderStatus)'  >
+            <ion-text>{{Order.OrderStatus}}</ion-text>
+          </ion-badge>
+        </ion-label>
         
         <ion-icon name="ellipsis-vertical" id="OrderEllipse"></ion-icon>
         <ion-popover trigger="OrderEllipse" id="OrderPopOver" side="right">
@@ -84,6 +92,10 @@
         </div>
         <div id="btScan"  *ngIf="currentMenu==='SCAN'">
           <div class="div" *ngIf="showscanner" >
+            <div class="scannerIcon">
+              <ion-icon *ngIf="scannerIcon==='good'"  name="checkmark-circle" color="success"></ion-icon>
+              <ion-icon *ngIf="scannerIcon==='error'"  name="close-circle-outline" color="danger"></ion-icon>
+            </div>
             <zxing-scanner autofocusEnabled="true"
             (scanSuccess)="onCodeResult($event)"
             delayBetweenScanSuccess="2000"
@@ -172,8 +184,8 @@
                 </ion-label>
               </div>
             </div>
-            <ion-icon name="ellipsis-vertical" [id]="'ItemEllipse'+i" ></ion-icon>
-            <ion-popover [trigger]="'ItemEllipse'+i" class="ItemPopOver" [id]="'ItemPopOver'+i" side="right">
+            <ion-icon name="ellipsis-vertical" [id]="'ItemEllipse'+OrderItem.Item.ItemId" ></ion-icon>
+            <ion-popover [trigger]="'ItemEllipse'+OrderItem.Item.ItemId" class="ItemPopOver" [id]="'ItemPopOver'+i" side="right">
               <ng-template>
                 <ion-list >
                   <div>
@@ -189,11 +201,11 @@
       </div>
       <ion-footer *ngIf="(permission==='cashier' && OrderIsSelected===true) || permission==='seller & cashier' " id="footer"  (click)="pay()" >
         <ion-text id="Total">CFA  <ion-label style="font-weight: bold">{{getTotal()}}</ion-label> </ion-text>
-        <ion-text id="Pay" *ngIf="Order.OrderTotalAmount>0" > <ion-text>PAY </ion-text>  <ion-icon name="chevron-forward" ></ion-icon></ion-text>
+        <ion-text id="Pay" *ngIf="Order.OrderTotalAmount>0 && routerValue!=='Order detail'" > <ion-text>PAY </ion-text>  <ion-icon name="chevron-forward" ></ion-icon></ion-text>
       </ion-footer>
-      <ion-footer *ngIf="permission==='seller'"  id="footer"  (click)="send()" >
+      <ion-footer *ngIf="permission==='seller' "  id="footer"  (click)="send()" >
         <ion-text id="Total">CFA  <ion-label style="font-weight: bold">{{getTotal()}}</ion-label> </ion-text>
-        <ion-text id="Pay" *ngIf="Order.OrderTotalAmount>0" > <ion-text>SEND </ion-text>  <ion-icon name="chevron-forward" ></ion-icon></ion-text>
+        <ion-text id="Pay" *ngIf="Order.OrderTotalAmount>0 && routerValue!=='Order detail'" > <ion-text>SEND </ion-text>  <ion-icon name="chevron-forward" ></ion-icon></ion-text>
       </ion-footer>
   
     </div>
@@ -203,7 +215,7 @@
       <ion-label class="triangle"></ion-label>
     </ion-label>
     <div id="orderBlockFromSeller">
-      <div *ngFor="let order of Orders , let i= index" class="orderItems" (click)="seeOrder(order)" >
+      <div *ngFor="let order of Orders , let i= index"  class="orderItems" (click)="seeOrder(order)" >
         <div class="orderItemsDetailsContainer" >
           <div class="orderItemsDetails" >
             <ion-label class="orderItemsName" >

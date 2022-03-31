@@ -1,10 +1,10 @@
 
-import { Component, OnInit,OnDestroy, ViewChild,HostListener } from '@angular/core';
+import { Component, OnInit,OnDestroy, ViewChild,HostListener, ResolvedReflectiveFactory } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ComponentCanDeactivate } from '../guard/deactivate-guard.guard';
 import { Router,ActivatedRoute } from '@angular/router';
 import { OrdersService } from '../service/order.service';
-import { Catalog,OrderItem,Item,Order, Slide, ItemModel } from '../Models';
+import { Catalog,Item,Order, Slide, ItemModel,OrderCreated, OrderItem } from '../Models';
 import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
 import { BarcodeFormat } from '@zxing/library';
 import { Platform, PopoverController } from '@ionic/angular';
@@ -12,8 +12,6 @@ import { IonSlides} from '@ionic/angular';
 import { LoginService } from 'poslibrary';
 import { AuthService } from '../guard/auth.service';
 import { NativeAudio } from '@awesome-cordova-plugins/native-audio/ngx';
-
-
 
 @Component({
   selector: 'app-cashier',
@@ -28,6 +26,8 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
    
   @ViewChild('mySlider')  slides: IonSlides;
   selectedLeave : string = '';
+  routerValue='string';
+  title:string;
   searchValue:string='';
   id:string="1";
   rama=['1','2','3'];
@@ -37,8 +37,10 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
     speed: 400
   };
   idCatalog=1;
-  Orders:Order[]=[];
-  Order:Order;  // the Order we are currently handling;
+  Orders:OrderCreated[]=[];// list of order comming from the dataBase 
+  OrderSelected:OrderCreated; // Order selected from the list of the Order 
+  newOrder:Order;//new Order we are currently create;
+  Order:any;  // 
   Catalog:Catalog[];// variable to get the catalog comming frrom the service 
   template:{ // template to create several slide by dividing by different items group  
     id:number;
@@ -53,6 +55,9 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
   uniqueId:string// id to use for audio
   OrderIsSelected;//  this property is using only in the cashier scenario to know if we have already select and order
   orderFromSeller:boolean;//this property is to handle the pop up of the orders list 
+  audio;
+  scannerIcon='';
+  
   constructor(private nativeAudio: NativeAudio, private platform: Platform, private authService:AuthService, private barcodeScanner: BarcodeScanner,private router:Router, private orderService:OrdersService,private route:ActivatedRoute,private popoverController:PopoverController, private log: LoginService) {
     this.Order=new Order();
     this.CatalogSelected=new Catalog();
@@ -61,13 +66,6 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
    ngOnInit() {
     this.OrderIsSelected=false;
   }
-
-
-  playSound() {
-    this.nativeAudio.play(this.uniqueId, () => console.log('uniqueId1 is done playing'));
-    console.log('play',this.uniqueId);
-  }
-
   // @HostListener allows us to also guard against browser refresh, close, etc.
   @HostListener('window:beforeunload')
   canDeactivate(): Observable<boolean> | boolean {
@@ -81,20 +79,11 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
       return true;
     }
   }
-   async ionViewWillEnter() {
 
-    this.platform.ready().then(() => {
-      console.log('PLATFORM READY');
-      const date = new Date();
-      this.uniqueId = '' + date.getFullYear() + date.getMonth() + date.getDate() + date.getHours() + date.getMinutes() + date.getSeconds() + date.getMilliseconds();
-      this.nativeAudio.preloadSimple(this.uniqueId, 'assets/sounds/susccess_beep.mp3').then((res) => {
-        console.log('PRELOAD RESPONSE', JSON.stringify(res));
-      }), err => {
-        console.log('ERROR', JSON.stringify(err))
-      }
-      console.log(this.uniqueId);
-    });
-
+  async ionViewWillEnter() {
+    
+    this.routerValue=this.route.snapshot.routeConfig.path;
+    console.log(this.routerValue);
     this.getOrderList();
     this.Catalog = [];
     await this.initCatalog();
@@ -137,10 +126,6 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
     for (const catalog of this.Catalog){
       for ( const item of catalog.CatalogItems){
         AllItem.push(item);
-        AllItem.push(item);
-        AllItem.push(item);
-        AllItem.push(item);
-        AllItem.push(item);
       }
     }
     const allCatalog=new Catalog();
@@ -161,6 +146,9 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
   
    
  async setMenu(menuItem:string){
+   if(this.routerValue==='Order detail'){
+     return false
+   }
     if(menuItem==='grid'){
       this.showItem(this.CatalogSelected.CatalogItems,'all categories')
       this.showscanner=false;
@@ -236,34 +224,71 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
  }
 
 async initOrder(){
- 
- if(this.permission==='seller' || this.permission==='seller & cashier'){
-   try 
-   {
-    this.Order.OrderId=await this.orderService.getNewOrderId();
-   } catch (error) {
-     console.log('error :', error); 
-   }
- }
-else{
-
-    // we are in the cashier scenario and this means that one order is selected
-      var retrievedObject = localStorage.getItem('Order')
-      this.Order=JSON.parse(retrievedObject)
-      if(this.Order!==null){
-        console.log(this.Order,'yo');
-        this.OrderIsSelected=true;
-      }else{
-        console.log(this.Order);
-      }
-  }
-  console.log(this.OrderIsSelected);
   
+  var result= this.displayOrderSelectedItems()
+  if((this.permission==='seller' || this.permission==='cashier') && this.routerValue==='Order detail'){
+    this.title='Order detail';
+    this.OrderIsSelected=true;
+    if (result===false){
+      this.router.navigate(['/Order'])
+    }
+  }
+  else if(this.permission==='seller'){
+    this.title='New Order ';
+    this.Order=new Order();
+    try 
+    {
+     this.Order.OrderId=await this.orderService.getNewOrderId();
+    } catch (error) {
+      console.log('error 10:', error); 
+      this.router.navigate(['/Order']);
+    }
+  }
+  else if (this.permission==='cashier'){
+    this.title='Cashier';
+    if (result===false){
+      this.OrderIsSelected=false;
+    }else{
+      this.OrderIsSelected=true;
+    }
+  }else{
+    this.title='Cashier';
+    this.Order= new Order();
+    try 
+    {
+     this.Order.OrderId=await this.orderService.getNewOrderId();
+    } catch (error) {
+      console.log('error :', error); 
+    }
+  }
+  
+}
+
+displayOrderSelectedItems(){
+  var retrievedObject =localStorage.getItem('Order');
+  var order=JSON.parse(retrievedObject)
+  if(order===null){
+    this.Order=new Order();
+    console.log('order null',retrievedObject)
+    return false
+  }else{
+    this.Order=new Order();
+    this.Order.OrderId=order.OrderId
+    this.Order.Created= order.Created;
+    this.Order.OrderLocationId=order.Created;
+    this.Order.OrderLocationLevelName=order.OrderLocationLevelName,
+    this.Order.OrderLocationName=order.OrderLocationName,
+    this.Order.OrderStatus=order.OrderStatus,
+    this.Order.OrderTotalAmount=order.OrderTotalAmount;
+    this.Order.OrderItems=this.TransfertItem(order.OrderItems);
+    //console.log('good order',JSON.stringify(this.Order));
+    return true;
+  }
 }
 
    
 addItem(newItem:Item){
-  if(this.permission==='cashier'){
+  if(this.permission==='cashier' || this.routerValue==='Order detail'){
     return false;
   }
   let present=false;
@@ -293,9 +318,13 @@ addItem(newItem:Item){
     var reverse=this.Order.OrderItems.reverse()//we do this the manipulation to add items at the top
     reverse.push(newSelectedItem);
     this.Order.OrderItems=reverse.reverse()
+    console.log(this.Order.OrderItems.indexOf(newSelectedItem));
   }
 }
 increaseQuantity(id:number){
+  if(this.permission==='cashier' || this.routerValue==='Order detail'){// we can not set quantity in theses cases
+    return true;
+  }
   for(let item of this.Order.OrderItems){
     if(item.Item.ItemId===id){
       item.ItemQuantity++;
@@ -303,6 +332,9 @@ increaseQuantity(id:number){
   }
 }
 decreaseQuantity(id:number){
+  if(this.permission==='cashier' || this.routerValue==='Order detail'){
+    return true;
+  }
   for(let item of this.Order.OrderItems){
     if(item.Item.ItemId===id){
       if(item.ItemQuantity>1){
@@ -311,20 +343,32 @@ decreaseQuantity(id:number){
     }
   }
 }
-deleteItem(Item:Item){
+deleteItem(Item){
+  if(this.permission==='cashier' || this.routerValue==='Order detail'){
+    return true;
+  }
   if(this.permission==='cashier'){
     return false;
   }
   let index=-1;
   for(const item of this.Order.OrderItems){
-    if(item.Item.ItemId===Item.ItemId){
+
+    console.log(Item,'itemcomm');
+    console.log(item,'itemIn')
+    if(item.Item.ItemId===Item.Item.ItemId){
+      
       index= this.Order.OrderItems.indexOf(item,0);  
+      console.log(index);
+    }
+    else{
+      console.log('yo',index);
     }
   }
+  
   this.Order.OrderItems.splice(index,1);
   this.ClosePopOver();
 }
- getQuantity(id:number){
+getQuantity(id:number){
    try {
     for (const item of this.Order.OrderItems){
       if(item.Item.ItemId===id){
@@ -336,7 +380,10 @@ deleteItem(Item:Item){
    }
    
  }
- canSwitchModel(Models:ItemModel[]){
+canSwitchModel(Models:ItemModel[]){
+  if(this.permission==='cashier' || this.routerValue==='Order detail'){
+    return true;
+  }
    if ( Models.length>1){
      return false;
    }
@@ -344,8 +391,7 @@ deleteItem(Item:Item){
      return true;
    }
  }
-
- switchModels(orderItem:OrderItem){ // this function is to  switch between different model of item 
+switchModels(orderItem:OrderItem){ // this function is to  switch between different model of item 
   var Model={
     Model:orderItem.ItemModel,
     Price:orderItem.Item.ItemPrice}
@@ -375,7 +421,7 @@ deleteItem(Item:Item){
   }
  }
 
- getTotal(){
+getTotal(){
   var total=0
   total=0;
   try 
@@ -430,9 +476,7 @@ checkDisable(Item:OrderItem){
         this.noItems="no results for your search";
       }
    }
-   
- 
- 
+  
   getSize()
   {
     if (screen.width>=961 && screen.height>900  ) {
@@ -454,7 +498,7 @@ checkDisable(Item:OrderItem){
   }
   
  
-  choiceColor(id){
+choiceColor(id){
       if(this.CatalogSelected.CatalogId===id){
         return 'success';
       }else{
@@ -464,7 +508,7 @@ checkDisable(Item:OrderItem){
   }
 
   
-  truncate(input:string,max:number) { 
+truncate(input:string,max:number) { 
     if (input.length >=max && screen.width<900) {
        return input.substring(0, max) + '...';
     }
@@ -474,26 +518,22 @@ checkDisable(Item:OrderItem){
     
  }
 
-
- OrderFromSeller(){
-  this.orderFromSeller=!this.orderFromSeller
-  if(this.OrderIsSelected===true){
-    this.OrderIsSelected=false
+OrderFromSeller(){
+  if(this.orderFromSeller===false){
+    this.orderFromSeller=true;
+    this.OrderIsSelected=false;
   }else{
-    if(this.Order!==null){
-      this.OrderIsSelected=true;
-    }
+    this.orderFromSeller=false
   }
+  
  }
   
-
- pay(){
+pay(){
   this.goToPay=true;
   localStorage.setItem('Order', JSON.stringify(this.Order));
   this.router.navigate(['Pay']);
  }
-
- async send(){
+async send(){
     this.Order.Created=new Date();
     this.Order.OrderLocationId=1;
     this.Order.OrderLocationLevelName='Floor1';
@@ -509,7 +549,7 @@ checkDisable(Item:OrderItem){
        }
  }
 
- OrderInProgress(){
+OrderInProgress(){
    var i=0
    if(this.Orders.length===0){
      return 0;
@@ -521,27 +561,24 @@ checkDisable(Item:OrderItem){
    }
    return i;
  }
- async getOrderList(){
+async getOrderList(){
     if(this.permission==='cashier'){
       try {
         this.Orders=await this.orderService.getOrdersList()
       } catch (error) {
         console.log(error)
       }
-      var testOrder=new Order();
-      testOrder.OrderId='N1229991';
-      testOrder.Created='2022-03-25 10:32:18';
-      testOrder.OrderItems=[];
-      testOrder.OrderLocationId=1;
-      testOrder.OrderLocationLevelName='floor1',
-      testOrder.OrderLocationName='table1',
-      testOrder.OrderStatus='In Progress',
-      testOrder.OrderTotalAmount=0;
-      this.Orders.push(testOrder);
-      this.Orders.push(testOrder);
+    }
+
+    for(const order of this.Orders){
+      if (order.OrderStatus!=='In Progress'){
+        var index=this.Orders.indexOf(order);
+        this.Orders.splice(index,1);
+      }
     }
    }
-   getColor(OrderStatus:string){
+
+getColor(OrderStatus:string){
     if(OrderStatus==='Draft'){
       return 'medium'
     }else if(OrderStatus==='Paid'){
@@ -551,14 +588,54 @@ checkDisable(Item:OrderItem){
     }
   }
 
-  seeOrder(order:Order){
+  seeOrder(order:OrderCreated){
     this.Order=new Order();
-   this.Order=order;
-   console.log(JSON.stringify(order),'order1');
-   console.log(JSON.stringify(this.Order),'order2');
+    this.Order.OrderId=order.OrderId
+    this.Order.Created= order.Created;
+    this.Order.OrderLocationId=order.Created;
+    this.Order.OrderLocationLevelName=order.OrderLocationLevelName,
+    this.Order.OrderLocationName=order.OrderLocationName,
+    this.Order.OrderStatus=order.OrderStatus,
+    this.Order.OrderTotalAmount=order.OrderTotalAmount;
+    this.Order.OrderItems=this.TransfertItem(order.OrderItems);
+   //console.log(JSON.stringify(order),'order1');
+   //console.log(JSON.stringify(this.Order),'order2');
    this.orderFromSeller=false;
    this.OrderIsSelected=true;
   }
+TransfertItem(  OrderItems2: {
+                                                      ItemId:number;
+                                                      ItemName:string;
+                                                      ItemModel:string;
+                                                      ItemProvider:string;
+                                                      ItemPrice:number;
+                                                      ItemImage:string;
+                                                      ItemQuantity:number;
+                                                    }[]){
+  var OrderItems1:OrderItem[]=[];                                                   
+  for(const item of OrderItems2){
+    let OrderItem:OrderItem={
+      ItemModel:item.ItemModel,
+      ItemQuantity:item.ItemQuantity,
+      Item:
+      {ItemId:item.ItemId,
+      ItemDescription:item.ItemProvider,// i think that the property permission going with the propertie description
+      ItemProvider:item.ItemProvider,
+      ItemImage:item.ItemImage,
+      ItemName:item.ItemName,
+      ItemPrice:item.ItemPrice,
+      ItemModels:[{
+        Model:item.ItemModel,
+        Price:item.ItemPrice
+      },],
+    }
+    };
+    OrderItems1.push(OrderItem); 
+  }
+  //console.log(JSON.stringify(OrderItem));
+  return OrderItems1;
+}
+
   displayDate(datestring:string){
     return this.orderService.displayDate(datestring);  
    }
@@ -570,40 +647,53 @@ checkDisable(Item:OrderItem){
     BarcodeFormat.QR_CODE,
   ];
    showScanner() {
+    if(this.routerValue==='Order detail'){
+      return false
+    }
     this.showscanner = !this.showscanner;
   }
 
+
+
+
   onCodeResult(resultString: string) {
-        var badScan:boolean=false;
-        try {
-          var itemId:number= parseInt(resultString);
-        } catch (error) {
-          badScan=true;
-          console.log('Error',error);
-        }
-        this.orderService.getCatalog(0,itemId).then((data)=>{
-          var catalog:Catalog[];
-          catalog=data;
+    var number =parseInt(resultString,10);
+      if(isNaN(number)){
+        this.audio=new Audio('../../assets/sounds/error_beep.mp3');
+        this.audio.play();
+        this.scannerIcon='error';
+        setTimeout(() => {
+          this.scannerIcon='';
+        }, 1000);
+        return false;
+      }
+      this.orderService.getCatalog(0,number).then((data)=>{
+        let catalog:Catalog[];
+        catalog=data;
           try {
-                if(catalog[0]){
+                if(catalog[0]!==null){
                   this.addItem(catalog[0].CatalogItems[0]);
+                  this.audio=new Audio('../../assets/sounds/success_beep.mp3');
+                  this.audio.play();
+                  this.scannerIcon='good';
                 }else{
-                  badScan=true;
+                  this.scannerIcon='error';
+                  this.audio=new Audio('../../assets/sounds/error_beep.mp3');
+                  this.audio.play();
                 }
               }
           catch (error) {
-              badScan=true;
+              this.scannerIcon='error';
+              this.audio=new Audio('../../assets/sounds/error_beep.mp3');
+              this.audio.play();
               console.log(' this scan does\'nt match any product...')
             }
           })
-
-        if(badScan===false){
-          //play the success sound
-        }else{
-          //play the error sound
-        }
-        
+        setTimeout(() => {
+          this.scannerIcon='';
+        }, 1000);
       }
   
+ 
   
 }

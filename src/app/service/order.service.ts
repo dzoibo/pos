@@ -79,7 +79,6 @@ export class OrdersService {
   
   displayDate(datestring:string){
     var date=new Date(datestring)
-    console.log(JSON.stringify(date));
     var day=date.getDate();
     var month=''+date.getMonth()+1;
     if(month.length===1){

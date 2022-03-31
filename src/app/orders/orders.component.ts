@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../guard/auth.service';
-import { Order, } from '../Models';
+import { Order, OrderCreated, } from '../Models';
 import {OrdersService} from '../service/order.service'
 
 @Component({
@@ -10,23 +10,36 @@ import {OrdersService} from '../service/order.service'
   styleUrls: ['./orders.component.scss'],
 })
 export class OrdersComponent implements OnInit {
-  Orders:Order[]=[];
+  Orders:OrderCreated[]=[];
   noOrder=true;
   Created:boolean;
   permission:string;
   testOrder;
-  constructor( private authService:AuthService,private orderService:OrdersService,private router:Router) {
+  constructor( private authService:AuthService,private orderService:OrdersService,private router:Router,private route:ActivatedRoute) {
     this.permission=this.authService.permission;
   }
 
   async ngOnInit() {
-    
-
+    /*this.testOrder=new OrderCreated();// this is just for the test 
+    this.testOrder.OrderId='N1229991';
+    this.testOrder.Created= '2022-03-25 10:32:18';
+    this.testOrder.OrderItems=[];
+    this.testOrder.OrderLocationId=1;
+    this.testOrder.OrderLocationLevelName='floor1',
+    this.testOrder.OrderLocationName='table1',
+    this.testOrder.OrderStatus='In progress',
+    this.testOrder.OrderTotalAmount=0;
+    this.Orders.push(this.testOrder);*/
   }
-
+ionViewDidEnter(){
+  if(this.permission==='seller & cashier'){
+    this.router.navigate(['/cashier']);
+  }
+}
 
   async ionViewWillEnter(){
-    console.log('Orders 1',JSON.stringify(this.Orders));
+    this.Created=false;
+    this.isCreated();
     const data = await this.getOrders();
     
     try {
@@ -41,31 +54,20 @@ export class OrdersComponent implements OnInit {
         }
       
     }
-    this.Created=false;
-    this.testOrder=new Order();// this is just for the test 
-    this.testOrder.OrderId='N1229991';
-    this.testOrder.Created= '2022-03-25 10:32:18';
-    this.testOrder.OrderItems=[];
-    this.testOrder.OrderLocationId=1;
-    this.testOrder.OrderLocationLevelName='floor1',
-    this.testOrder.OrderLocationName='table1',
-    this.testOrder.OrderStatus='Draft',
-    this.testOrder.OrderTotalAmount=0;
-    this.Orders.push(this.testOrder);
-    this.isCreated();
+    
   }
 
  async getOrders(){
     var data=await this.orderService.getOrdersList()
-    var order:Order[];
+    var order:OrderCreated[];
     try {
-      for(const newOrder of data){
-        let templateOrder=new Order();
-        templateOrder.OrderId=newOrder.OrderId;
-        templateOrder.Created=newOrder.Created;
-      }
+      order=data;
     } catch (error) {
-      
+      console.log(error)
+    }
+    order=data;
+    if(order!==null){
+      this.Orders=order;
     }
   }
 
@@ -91,12 +93,20 @@ export class OrdersComponent implements OnInit {
     this.router.navigate(['/New Order'])
   }
 
-  seeOrder(order:Order){
+  PerfomPayment(order:Order){
     if(this.permission==='cashier'){
       localStorage.setItem('Order',JSON.stringify(order))
-      this.router.navigate(['/Cashier'])
+      this.router.navigate(['/Pay'])
     }
   }
+
+  ShowDetails(order){
+    localStorage.setItem('Order',JSON.stringify(order))
+    console.log(order);
+    this.router.navigate(['/Order detail'])
+
+  }
+  
    displayDate(datestring:string){
    return this.orderService.displayDate(datestring);  
   }
