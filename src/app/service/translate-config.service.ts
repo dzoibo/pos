@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 @Injectable({
   providedIn: 'root'
 })
-export class TranslateConfigService {
+export class  TranslateConfigService {
 
   constructor(
     private translate: TranslateService
@@ -18,6 +18,7 @@ export class TranslateConfigService {
   }
 
   setLanguage(setLang) {
+    console.log('language');
     this.translate.use(setLang);
   }
 

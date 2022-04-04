@@ -18,7 +18,7 @@ import { CashierComponent } from './cashier/cashier.component';
 import { SQLite } from '@ionic-native/sqlite/ngx';
 import { SQLitePorter } from '@ionic-native/sqlite-porter/ngx';
 import { IonicStorageModule } from '@ionic/storage-angular';
-import { LoginService,OrderService,CatalogService } from 'poslibrary';
+import { OrderService,CatalogService } from 'poslibrary';
 import { HttpClientModule,HttpClient } from '@angular/common/http';
 import { NativeAudio } from '@awesome-cordova-plugins/native-audio/ngx';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
@@ -33,6 +33,8 @@ import {OrdersComponent} from  './orders/orders.component';
 import { BlanckPageComponent } from './blanck-page/blanck-page.component';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { Media, MediaObject } from '@awesome-cordova-plugins/media/ngx';
+import { DatePipe } from '@angular/common';
+import { LoginService } from './service/login.service';
 
 export function LanguageLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -42,8 +44,8 @@ export function LanguageLoader(http: HttpClient) {
 
 const appRoutes: Routes = [
 
-{ path: "Cashier",canActivate: [AuthGuardService], canDeactivate: [DeactivateGuardGuard] ,component: CashierComponent },
-{ path: "Order", component: OrdersComponent },
+{ path: "Cashier", canActivate: [AuthGuardService], component: CashierComponent },
+{ path: "Order",canActivate: [AuthGuardService], component: OrdersComponent },
 { path: "New Order", canActivate: [AuthGuardService],component: CashierComponent },
 { path: "Order detail", canActivate: [AuthGuardService],component: CashierComponent },
 { path: "home", canActivate: [GuardAvoidService], component: CashierComponent },
@@ -99,6 +101,7 @@ const appRoutes: Routes = [
     OrderService,
     OrdersService,
     CatalogService,
+    DatePipe,
     CookieService,
     BluetoothSerial,
     TranslateConfigService,

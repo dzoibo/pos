@@ -1,14 +1,14 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { Order,OrderCreated,OrderItem } from '../Models';
+import { Order,OrderCreated,OrderItem} from '../Models';
 import { CanDeactivate, Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
-import { Observable } from 'rxjs';
 import { ComponentCanDeactivate } from '../guard/deactivate-guard.guard';
 import { OrdersService } from '../service/order.service';
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial/ngx';
 import { PrintService } from '../service/print';
 import { CookieService } from 'ngx-cookie-service';
 import { AuthService } from '../guard/auth.service';
+import { runInThisContext } from 'vm';
 
 
 
@@ -38,35 +38,31 @@ export class PayComponent implements OnInit {
   selectedPrinter: any;
   macAddress: any;
   permission:string;
+  exactAmount:boolean;
   
 
 
-  constructor(private cookies:CookieService,private auth: AuthService, private printService:PrintService, private bluetoothSerial: BluetoothSerial,private router:Router,private alertController:AlertController,private orderService:OrdersService) {
-   this.permission=this.auth.permission
+  constructor(private cookies:CookieService,private authService: AuthService, private printService:PrintService, private bluetoothSerial: BluetoothSerial,private router:Router,private alertController:AlertController,private orderService:OrdersService) {
+   this.permission=this.authService.permission;
+   this.Order=new Order();
   }
 
 
     ionViewDidEnter() {
+
       try {
         
         var retrievedObject = localStorage.getItem('Order');
-        if(this.permission==='cashier'){
-          let order =new Order();
-          order =JSON.parse(retrievedObject);
-          this.Order = order;
+        
+        if(this.permission==='seller & cashier'){
+            let order =new Order();
+            order =JSON.parse(retrievedObject);
+            this.Order = order;
         }
-        else if(this.permission==='seller & cashier'){
-          let order =new OrderCreated();
-          order =JSON.parse(retrievedObject);
-          this.Order=new Order();
-          this.Order.OrderId=order.OrderId
-          this.Order.Created= order.Created;
-          this.Order.OrderLocationId=order.Created;
-          this.Order.OrderLocationLevelName=order.OrderLocationLevelName,
-          this.Order.OrderLocationName=order.OrderLocationName,
-          this.Order.OrderStatus=order.OrderStatus,
-          this.Order.OrderTotalAmount=order.OrderTotalAmount;
-          this.Order.OrderItems=this.TransfertItem(order.OrderItems);
+        else if(this.permission==='cashier'){
+          let order =new Order();
+            order =JSON.parse(retrievedObject);
+            this.Order = order;
         }else{
           this.router.navigate(['Order'])
         }
@@ -90,36 +86,34 @@ export class PayComponent implements OnInit {
       width.style.width=numero+'px';
       }, 100);
     }
+    
     TransfertItem(  OrderItems2: {
-                ItemId:number;
-                ItemName:string;
-                ItemModel:string;
-                ItemProvider:string;
-                ItemPrice:number;
-                ItemImage:string;
-                ItemQuantity:number;
-              }[]){
+                                      ItemId:number;
+                                      ItemName:string;
+                                      ItemModel:string;
+                                      ItemProvider:string;
+                                      ItemPrice:number;
+                                      ItemImage:string;
+                                      ItemQuantity:number;
+                                    }[])
+                                    {
           var OrderItems1:OrderItem[]=[];                                                   
           for(const item of OrderItems2){
-          let OrderItem:OrderItem={
-          ItemModel:item.ItemModel,
-          ItemQuantity:item.ItemQuantity,
-          Item:
-          {ItemId:item.ItemId,
-          ItemDescription:item.ItemProvider,// i think that the property permission going with the propertie description
-          ItemProvider:item.ItemProvider,
-          ItemImage:item.ItemImage,
-          ItemName:item.ItemName,
-          ItemPrice:item.ItemPrice,
-          ItemModels:[{
-          Model:item.ItemModel,
-          Price:item.ItemPrice
-          },],
-          }
-      };
-OrderItems1.push(OrderItem); 
+          let orderItem = new OrderItem();
+          orderItem.ItemModel=item.ItemModel,
+          orderItem.ItemQuantity=item.ItemQuantity,
+          orderItem.Item.ItemId=item.ItemId;
+          orderItem.Item.ItemDescription=item.ItemProvider;
+          orderItem.Item.ItemProvider=item.ItemProvider;
+          orderItem.Item.ItemImage=item.ItemImage;
+          orderItem.Item.ItemPrice=item.ItemPrice;
+          orderItem.Item.ItemName=item.ItemName;
+          orderItem.Item.ItemModels[0].ItemId=item.ItemId;
+          orderItem.Item.ItemModels[0].C_UOM_ID=0;
+          orderItem.Item.ItemModels[0].Model=item.ItemModel;
+          orderItem.Item.ItemModels[0].Price=item.ItemPrice;
+OrderItems1.push(orderItem); 
 }
-//console.log(JSON.stringify(OrderItem));
 return OrderItems1;
 }
 
@@ -137,6 +131,10 @@ return OrderItems1;
     this.router.navigate(['Cashier'])
   }
   
+  
+  formatAmout(n) {
+    return this.orderService.formatAmout(n);
+}
    getChange(){
      var change=this.Payment - this.Order.OrderTotalAmount;
      if(change<0){
@@ -148,9 +146,14 @@ return OrderItems1;
 
    
    addPayment(key:string){
+     if(this.exactAmount===true){
+       this.Payment=0;
+       this.exactAmount=false;
+     }
      var string=this.Payment+key;
      this.Payment=parseInt(string);
    }
+
    clearPayment(key:string){
     if(key==='C'){
       this.Payment=0;
@@ -205,16 +208,17 @@ return OrderItems1;
       await this.presentAlert()
       //we display the alert message with the message "payment is not suffisant"
      }else{//Maybe we can add a spinner here...
-      
-      this.Order.Created= new Date ('23.01.2022 12:55:35')
-
+       console.log(this.Order.OrderId);
+       this.Order.Created= new Date ('23.01.2022 12:55:35')
        this.Order.OrderLocationId=1;
        this.Order.OrderLocationLevelName='Floor1';
        this.Order.OrderLocationName='Table1';
+       console.log(this.Order);
        this.Order.OrderStatus='Paid';// we will tcheck the good order status after , and a thing to display if the order fall to serve or if there is not connection...
        const data= await this.orderService.createOrder(this.Order);
           if(typeof(data)==='string'){
             this.Pay='Valid';
+            this.orderService.Created=true;
             console.log(data);
             const print= await  this.orderService.Printer(data)
             this.print(print);
@@ -237,6 +241,7 @@ return OrderItems1;
    
    ExactAmount(){
      this.Payment=this.Order.OrderTotalAmount;
+     this.exactAmount=true;
    }
   
 }

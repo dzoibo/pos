@@ -8,6 +8,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { TranslateConfigService } from './service/translate-config.service';
 import { Platform } from '@ionic/angular';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
+import { Subject } from 'rxjs';
 
 
 
@@ -25,12 +26,12 @@ export class AppComponent implements OnDestroy,OnDestroy {
   selectedLanguage;
   event$;
   permission:string;
+
   constructor(private auth:AuthService, private screenOrientation:ScreenOrientation, private platform: Platform ,public translateConfigService:TranslateConfigService,public menuCtrl: MenuController,private cookieService:CookieService, private authService:AuthService, private router:Router,private orderService:OrdersService) {
     this.permission=this.auth.permission;
     if((this.platform.is('mobile')||this.platform.is('mobileweb'))&& !this.platform.is('tablet')){
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
     }
-    this.translateConfigService.setLanguage('en'); 
    localStorage.clear();
    this.event$=this.router.events
    .subscribe(
@@ -39,24 +40,26 @@ export class AppComponent implements OnDestroy,OnDestroy {
          this.setSelectedLink(event.url);
        }
      });
-      
+     
   }
   ngOnInit(){
     this.status=this.authService.isAuth;
-    this.currentLink='Cashier';
     this.User=this.authService.User;
+    this.authService.languageChange.subscribe((value) => {
+      this.ChangeLanguage(value);
+  });
   }
    async signOut(){
     this.authService.signOut();
     this.status=this.authService.isAuth;
     await  this.closeMenu()
-    this.router.navigate(['/home']);
     localStorage.clear();
     this.cookieService.delete('userId');// we delete it one by one because we don't to clear all cookies (language is suppose to still be there)
     this.cookieService.delete('userName');
     this.cookieService.delete('userImage');
     this.cookieService.delete('userParner');
-    this.cookieService.delete('permission')
+    this.cookieService.delete('permission');
+    window.location.reload();
   }
 
   setItem(item:string){
@@ -102,7 +105,11 @@ export class AppComponent implements OnDestroy,OnDestroy {
   ngOnDestroy() {
     this.event$.unsubscribe();
   }
-  languageChanged(){// this function will be call by the function calling when twe have to save this in cookies;
-    this.translateConfigService.setLanguage(this.selectedLanguage);
+  ChangeLanguage(lang){// this function will be call by the function calling when we have to save this in cookies;
+    if(lang==='fr_FR'){
+      this.translateConfigService.setLanguage('fr');
+    }else{
+      this.translateConfigService.setLanguage('en');
+    }
   }
 }

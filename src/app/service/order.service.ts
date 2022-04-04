@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy, OnInit } from '@angular/core';
 import { promise } from 'protractor';
 import { Order,Catalog,User } from '../Models';
 import { LoginService,CatalogService,OrderService } from 'poslibrary';
@@ -11,19 +11,28 @@ import { AuthService } from '../guard/auth.service';
 @Injectable({
   providedIn: 'root'
 })
-export class OrdersService {
+export class OrdersService implements OnInit,OnDestroy {
   Orders: Order[] ;
   Catalog:Catalog[];
   result:string;
   Order:Order;
   Created:boolean;
+  language;
   
-   constructor(private auth:AuthService, private catalogService:CatalogService,private orderService:OrderService) { 
+   constructor(private authService:AuthService, private catalogService:CatalogService,private orderService:OrderService) { 
    this.Created=false;
    
   }
   
-
+  ngOnInit(){
+    this.authService.languageChange.subscribe((value)=>{
+      this.language=value
+      console.log(value);
+    })
+  }
+  ngOnDestroy() {
+    this.authService.languageChange.unsubscribe();
+  }
  /* GetUser(userName:string,passWord:string):any{
     this.loginService.login(userName, passWord).subscribe((data: any) => { 
       console.log(data.WindowTabData);
@@ -93,6 +102,18 @@ export class OrdersService {
 
 
 
-
+  formatAmout(n) {
+    var decimalSep:string;
+    if(this.language==='fr_FR'){
+      decimalSep=','
+    }else{
+      decimalSep='.'
+    }
+    var parts = n.toString().split(".");
+    const numberPart = parts[0];
+    const decimalPart = parts[1];
+    const thousands = /\B(?=(\d{3})+(?!\d))/g;
+    return numberPart.replace(thousands, " ") + decimalSep + (decimalPart ?  decimalPart :"00");
+}
 
 }

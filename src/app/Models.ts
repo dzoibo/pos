@@ -96,7 +96,6 @@ export  class OrderItem {
     Item: Item;
     ItemQuantity: number;
     ItemModel: string;
-    constructor(){}
 }
 export  class Catalog {
     CatalogId: number;
@@ -114,12 +113,79 @@ export  class Item {
     ItemModels: ItemModel[];
     ItemProvider: string;
 }
+
+
 export  class ItemModel {
+    ItemId: number;
     Model: string;
     Price: number;
+    C_UOM_ID:number;
 }
 
-
+export class ADLoginRequest {
+    public user!: string;
+    public pass!: string;
+    public lang!: string;
+    public ClientID!: string;
+    public RoleID!: string;
+    public OrgID!: string;
+    public WarehouseID!: string;
+    public stage!: string;
+  }
+  
+  export class ModelCRUD {
+    public serviceType!: string;
+    public TableName!: string;
+    public Action!: string;
+    public DataRow!: DataRow;
+  }
+  
+  export class ResponseData {
+    public WindowTabData!: WindowTabData;
+  }
+  
+  export class WindowTabData
+  {
+    public NumRows!: number;
+    public TotalRows!: number;
+    public StartRow!: number;
+    public DataSet!: DataSet;
+    public RowCount!: number;
+    public Success!: boolean;
+    public ADLoginResponse!: ADLoginResponse;
+  }
+  
+  export class DataSet
+  {
+    public DataRow!: DataRow;
+  }
+  
+  export class DataRow
+  {
+    public field!: field[];
+  }
+  
+  export class field
+  {
+    '@column': string;
+    public val!: string;
+  }
+  
+  export class ADLoginResponse
+  {
+    public Token!: string;
+  }
+  
+  
+  export class ModelCRUDRequest {
+    public ModelCRUD: ModelCRUD = new ModelCRUD;
+    public ADLoginRequest: ADLoginRequest = new ADLoginRequest;
+  }
+  
+  export class MyData
+  {
+    public ModelCRUDRequest: ModelCRUDRequest = new ModelCRUDRequest;
+  }
 
 
 

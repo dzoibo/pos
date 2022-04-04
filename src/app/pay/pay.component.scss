@@ -15,22 +15,7 @@ ion-toolbar{
     transform: translateX(-50%);
     -ms-transform:translateX(-50%) ;
 }
-    ion-button{
-        min-width: 20%;
-        height: 36px;
-        margin-top: 40px;
-        ion-icon{
-            color:white;
-            margin-right: 7px;
-        }
-        ion-text{
-            font-family:'roboto',sans-serif;
-            font-style: normal;
-            font-weight: 500;
-            font-size: 14px;
-            line-height: 257%;
-        }
-    }
+    
     
 
 #globalCash{
@@ -259,6 +244,22 @@ ion-toolbar{
         
     }
 }
+ion-button{
+    min-width: 20%;
+    height: 60px;
+    margin-top: 40px;
+    ion-icon{
+        color:white;
+        margin-right: 7px;
+    }
+    ion-text{
+        font-family:'roboto',sans-serif;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 257%;
+    }
+}
 @media (min-width:961px)  { 
     #globalCash{
         width: 70%;
@@ -295,6 +296,11 @@ ion-toolbar{
     } 
     ion-button{
         height: 60px;
+        position: absolute;
+        bottom: 10px;
+        ion-icon{
+            margin-right: 7px;
+        }
     }
 
 }
@@ -314,7 +320,7 @@ ion-toolbar{
     .col2{
         height:140px !important;
     }
-    ion-button{
-        height: 60px;
-    }
+    
+
+    
 } 

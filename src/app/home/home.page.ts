@@ -2,12 +2,10 @@ import { Component,OnInit,OnDestroy,ViewChild } from '@angular/core';
 import { AuthService } from '../guard/auth.service';
 import { FormBuilder, FormGroup,Validators } from '@angular/forms';
 import{ User} from '../Models';
-import { OrdersService } from '../service/order.service';
 import { Router } from '@angular/router';
-import { AlertController, MenuController } from '@ionic/angular';
+import {  MenuController } from '@ionic/angular';
 import { LoginService } from 'poslibrary';
 import { TranslateConfigService } from '../service/translate-config.service';
-import { CashierPage } from 'e2e/src/Cashier/cashier.po';
 
 
 @Component({
@@ -27,11 +25,16 @@ export class HomePage {
   spinner=false;
   selectedLanguage:string;
   permission:string='cashierOnly';
+  customAlertOptions: any = {
+    cssClass: 'customAlertCss',
+
+  };
   @ViewChild('loginName') inputName  ;
   @ViewChild('loginPassword') inputPassword ;
-  constructor(private alertController:AlertController, public translateConfigService:TranslateConfigService, public loginService:LoginService, public menuCtrl: MenuController,private formBuilder:FormBuilder,private router:Router, private authService:AuthService,private orderService:OrdersService) {
+  constructor( private translateConfigService:TranslateConfigService, public loginService:LoginService, public menuCtrl: MenuController,private formBuilder:FormBuilder,private router:Router, private authService:AuthService) {
    this.User=new User;
-   this.translateConfigService.setLanguage('en'); 
+   this.selectedLanguage=this.authService.language;
+   this.ChangeLanguage(this.selectedLanguage)
   }
   
   ngOnInit(){
@@ -68,6 +71,7 @@ export class HomePage {
     this.loginForm = this.formBuilder.group({
       Name: ['',Validators.required],
       Password: ['',[Validators.minLength(6),Validators.required]],
+      Language:[this.selectedLanguage]
     });
   }
 
@@ -81,6 +85,7 @@ export class HomePage {
      {
       const formValue = this.loginForm.value;
         this.LoginError='';
+        let login: any;
 
         if(!this.online){
           this.LoginError='No connection';
@@ -89,13 +94,13 @@ export class HomePage {
           this.spinner=true;
           try
           {
-            var login=  await this.authService.GetUser(formValue['Name'],formValue['Password']);
+            login=  await this.authService.GetUser(formValue['Name'],formValue['Password'],formValue['Language']);
             this.spinner=false;
 
           } catch (error) {
             this.spinner=false;
             this.LoginError='Server error please try again';
-            console.log(JSON.stringify(error), formValue['Name'], formValue['Password']);
+            console.log('erroooor', error, JSON.stringify(error), formValue['Name'], formValue['Password'],formValue['Language']);
             return false;
           }
 
@@ -108,13 +113,13 @@ export class HomePage {
               this.LoginError='';
               try {
                 this.User=new User()
-                console.log('Sign in successful!');
                 this.authStatus = this.authService.isAuth;
                 this.authService.User=login;
                 
               } catch (error) {
                console.log(error) 
               } 
+              this.ChangeLanguage(formValue['Language']);
               this.router.navigate(['/Loading'])
               
             }
@@ -124,8 +129,13 @@ export class HomePage {
           this.LoginError='Invalid Password or Username';
         }
       }
-      languageChanged(){// this function will be call by the function calling when we have to save this in cookies;
-        this.translateConfigService.setLanguage(this.selectedLanguage);
+      
+      ChangeLanguage(lang){// this function will be call by the function calling when we have to save this in cookies;
+        if(lang==='fr_FR'){
+          this.translateConfigService.setLanguage('fr');
+        }else{
+          this.translateConfigService.setLanguage('en');
+        }
       }
 
 

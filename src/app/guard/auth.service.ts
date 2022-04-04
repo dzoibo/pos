@@ -1,20 +1,30 @@
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
-import { LoginService } from 'poslibrary';
+import { BehaviorSubject, firstValueFrom, Subject } from 'rxjs';
 import { User } from '../Models';
 import { Platform } from '@ionic/angular';
+import { LoginService } from '../service/login.service';
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class AuthService {
-  
-  
   User= new User;
   permission:string;
   isAuth = false;
+  language='en_US';
+  languageChange: BehaviorSubject<string> 
+  
   constructor(private loginService:LoginService,private platform:Platform, private cookieService:CookieService){
-
+    if(this.cookieService.check('language')){
+      if(this.decryptData(cookieService.get('language'))==='fr_FR'){
+        this.language='fr_FR'
+      }else{
+        this.language='en_US'
+      }
+     this.languageChange= new BehaviorSubject<string>(this.language);
+    }
     if(cookieService.check('userId')&&cookieService.check('userName')&&cookieService.check('userImage')&&cookieService.check('userParner')){
       try {
         this.User.userId=parseInt(this.decryptData(cookieService.get('userId')));
@@ -30,9 +40,11 @@ export class AuthService {
   }
 
 
-  async GetUser(userName:string='medard@ranites.com',passWord:string='medard'):Promise<any> {
-    const data: any = await this.loginService.login(userName, passWord).toPromise(); // it's mustly using when we make a http request, it's converting the method to a promise 
-    console.log(data.WindowTabData);
+  async GetUser(userName:string,passWord:string,language:string='en_US'):Promise<any> {
+    //, '1000116', '1011698'
+    this.language=language;
+    const data: any = await firstValueFrom(this.loginService.authenticateUser(userName, passWord,language));
+    console.log('daataaa',JSON.stringify(data) , data.WindowTabData);
       if(data.WindowTabData.Error){
         console.log(data.WindowTabData.Error);
         return 'null';
@@ -50,16 +62,18 @@ export class AuthService {
 
 
   createCookies(){
+    var timeOut;
     if((this.platform.is( 'mobile') || this.platform.is('tablet') )&& !this.platform.is( 'mobileweb') ) {
-      var timeOut=0;
+      timeOut=0;
     }else{
-      var timeOut=86400;
+      timeOut=86400;
     }
     this.cookieService.set('userId', this.encryptData(this.User.userId+''),{ expires: timeOut });
     this.cookieService.set('userName', this.encryptData(this.User.userName),{ expires: timeOut });
     this.cookieService.set('userImage', this.encryptData(this.User.userImage),{ expires: timeOut });
     this.cookieService.set('userParner', this.encryptData(this.User.userParner),{ expires: timeOut });
     this.cookieService.set('permission', this.encryptData(this.permission),{ expires: timeOut });
+    this.cookieService.set('language', this.encryptData(this.language),{ expires: 0});
   }
   encryptData(text:string){
     var CryptoJS = require("crypto-js");
@@ -91,3 +105,4 @@ export class AuthService {
       this.isAuth = false;
   }
 }
+

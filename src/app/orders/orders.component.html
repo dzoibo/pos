@@ -37,7 +37,7 @@
                     </ion-label>
                     <ion-label class="orderItemsPrice " > 
                       <ion-text class="priceOrder">
-                        CFA {{order.OrderTotalAmount}}
+                        CFA {{formatAmout(order.OrderTotalAmount)}}
                       </ion-text>
                     </ion-label>
                   </div>
@@ -45,7 +45,7 @@
                     <ion-label class="orderItemsModel">
                         <ion-label class="oderSeller"><img src="../../assets/pa.png" alt=""></ion-label>
                          
-                        <ion-label >Seina</ion-label> 
+                        <ion-label >Selina</ion-label> 
                     </ion-label>
                     <ion-label class="orderDate">
                         <ion-text>{{displayDate(order.Created)}}</ion-text>
@@ -57,8 +57,8 @@
                     </ion-label>
                   </div>
                 </div>
-                <ion-icon name="ellipsis-vertical" [id]="odersEllispe+'i'"  ></ion-icon>
-                <ion-popover alignment="end"  class="ItemPopOver"  side="right" [trigger]="odersEllispe+'i'" 	dismiss-on-select="true" backdrop-dismiss="true">
+                <ion-icon name="ellipsis-vertical" [id]="'odersEllispe'+i"  ></ion-icon>
+                <ion-popover alignment="end"  class="ItemPopOver"  side="right" [trigger]="'odersEllispe'+ i" 	dismissOnSelect="true">
                   <ng-template>
                     <ion-list >
                       <div class="deleteOrder">

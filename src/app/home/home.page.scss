@@ -4,9 +4,13 @@ ion-content,ion-footer,ion-toolbar{
   --background:#FFFFFF;
   position:relative;
 }
+ion-select::part(button) {
+  color: #545ca7;
+}
+
 
 #login-logo{
-  margin-top: 95px !important;
+  margin-top: 55px !important;
   margin-bottom: 44px !important;
   margin: auto;
   width: 156px;
@@ -32,13 +36,17 @@ form{
    Line-height: 24px;
  }
 
- ion-item{
+ ion-item[lines=none]{
   margin-top: 10px;
   margin-bottom: 17px;// normal 17
   border-radius: 16px;
    --ion-item-background:rgba(0, 0, 0, 0.05);
    --highlight-height: 0px;
  } 
+ ion-item{
+  --ion-item-background:transparent; 
+  --highlight-height: 0px;
+ }
  ion-input{
    font-family: 'Roboto',sans-serif;
    font-style :normal;

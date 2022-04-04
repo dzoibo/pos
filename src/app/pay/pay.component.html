@@ -19,15 +19,15 @@
       <ion-label id="PayList" [ngStyle]="{'height': Pay==='Pay'? '84px' : '105px' }" >
         <ion-label>
           <ion-text class="PayListLabel">{{ 'Pay.Total' | translate:params }}</ion-text>
-          <ion-text color="success" class="PaylistPrice" id="PayListTotal">{{Order.OrderTotalAmount}} </ion-text>
+          <ion-text color="success" class="PaylistPrice" id="PayListTotal">{{formatAmout(Order.OrderTotalAmount)}} </ion-text>
         </ion-label>
         <ion-label>
           <ion-text class="PayListLabel"> {{ 'Pay.payment' | translate:params }}</ion-text>
-          <ion-text class="PayListPrice" color="dark">{{Payment}}</ion-text>
+          <ion-text class="PayListPrice" color="dark">{{formatAmout(Payment)}}</ion-text>
         </ion-label>
         <ion-label>
           <ion-text class="PayListLabel" >{{ 'Pay.change' | translate:params }}</ion-text>
-          <ion-text class="PayListPrice" color="danger">{{getChange()}}</ion-text>
+          <ion-text class="PayListPrice" color="danger">{{formatAmout(getChange())}}</ion-text>
         </ion-label>
       </ion-label>
     
@@ -38,7 +38,7 @@
   
       <ion-label id="PayPayment" *ngIf="Pay==='Pay'">
         <ion-text id="PayPayment_text" color="dark">{{ 'Pay.payment' | translate:params }}</ion-text>
-        <ion-text id="PayPayment_number">CFA {{Payment}}</ion-text>
+        <ion-text id="PayPayment_number">CFA {{formatAmout(Payment)}}</ion-text>
       </ion-label>
     
     

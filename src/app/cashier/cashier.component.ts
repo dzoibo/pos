@@ -29,6 +29,7 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
   routerValue='string';
   title:string;
   searchValue:string='';
+  searchValue2:string='';
   id:string="1";
   rama=['1','2','3'];
   noItems:string='';
@@ -38,9 +39,10 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
   };
   idCatalog=1;
   Orders:OrderCreated[]=[];// list of order comming from the dataBase 
+  OrdersInProgress:OrderCreated[]=[];// list of order comming from the dataBase 
   OrderSelected:OrderCreated; // Order selected from the list of the Order 
   newOrder:Order;//new Order we are currently create;
-  Order:any;  // 
+  Order:Order;  // 
   Catalog:Catalog[];// variable to get the catalog comming frrom the service 
   template:{ // template to create several slide by dividing by different items group  
     id:number;
@@ -62,9 +64,11 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
     this.Order=new Order();
     this.CatalogSelected=new Catalog();
     this.permission=this.authService.permission;
+
    }
    ngOnInit() {
     this.OrderIsSelected=false;
+    this.goToPay=false;
   }
   // @HostListener allows us to also guard against browser refresh, close, etc.
   @HostListener('window:beforeunload')
@@ -92,8 +96,6 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
     this.getSize();
     this.showItem(this.CatalogSelected.CatalogItems,this.CatalogSelected.CatalogName);
     this.searchValue="";
-    this.goToPay=false;
-    this.orderFromSeller=false;
   }
   
   async ionViewWillLeave() {
@@ -146,7 +148,7 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
   
    
  async setMenu(menuItem:string){
-   if(this.routerValue==='Order detail'){
+   if(this.routerValue==='Order detail'|| this.permission==='cashier'){
      return false
    }
     if(menuItem==='grid'){
@@ -246,25 +248,40 @@ async initOrder(){
   }
   else if (this.permission==='cashier'){
     this.title='Cashier';
-    if (result===false){
+    if(this.orderService.Created){
       this.OrderIsSelected=false;
+      this.orderFromSeller=false;
+      this.isPaid()
     }else{
-      this.OrderIsSelected=true;
+      if (result===false){
+        this.OrderIsSelected=false;
+      }else{
+        this.OrderIsSelected=true;
+      }
     }
+    
   }else{
     this.title='Cashier';
-    this.Order= new Order();
-    try 
-    {
-     this.Order.OrderId=await this.orderService.getNewOrderId();
-    } catch (error) {
-      console.log('error :', error); 
+    if(this.orderService.Created || result === false){
+      this.isPaid();
+      this.Order= new Order();
+      try 
+      {
+      this.Order.OrderId=await this.orderService.getNewOrderId();
+      } catch (error) {
+        console.log('error :', error); 
+      }
     }
+    
   }
   
 }
 
 displayOrderSelectedItems(){
+  if(this.orderService.Created===true){
+    return false;
+  }
+  
   var retrievedObject =localStorage.getItem('Order');
   var order=JSON.parse(retrievedObject)
   if(order===null){
@@ -280,13 +297,18 @@ displayOrderSelectedItems(){
     this.Order.OrderLocationName=order.OrderLocationName,
     this.Order.OrderStatus=order.OrderStatus,
     this.Order.OrderTotalAmount=order.OrderTotalAmount;
-    this.Order.OrderItems=this.TransfertItem(order.OrderItems);
-    //console.log('good order',JSON.stringify(this.Order));
+    if(this.permission!=='seller & cashier'){
+      this.Order.OrderItems=this.TransfertItem(order.OrderItems);
+    }else{
+      this.Order.OrderItems=order.OrderItems
+    }
     return true;
   }
 }
 
-   
+  isPaid(){// this function is to ckeck if we have a new order to display the message
+    this.orderService.Created=false;
+ }  
 addItem(newItem:Item){
   if(this.permission==='cashier' || this.routerValue==='Order detail'){
     return false;
@@ -380,6 +402,7 @@ getQuantity(id:number){
    }
    
  }
+ 
 canSwitchModel(Models:ItemModel[]){
   if(this.permission==='cashier' || this.routerValue==='Order detail'){
     return true;
@@ -420,7 +443,6 @@ switchModels(orderItem:OrderItem){ // this function is to  switch between differ
     console.log('You can\'t switch');
   }
  }
-
 getTotal(){
   var total=0
   total=0;
@@ -447,7 +469,13 @@ checkDisable(Item:OrderItem){
   }
 }
 
-
+PerfomPayment(order:Order){
+  if(this.permission==='cashier'){
+    this.ClosePopOver()
+    localStorage.setItem('Order',JSON.stringify(order))
+    this.router.navigate(['/Pay'])
+  }
+}
  async doSearch(){
   await this.initCatalog(); // we refresh the catalog comming from the data base
     this.noItems='';
@@ -531,6 +559,10 @@ OrderFromSeller(){
 pay(){
   this.goToPay=true;
   localStorage.setItem('Order', JSON.stringify(this.Order));
+  this.Order=new Order()
+  this.OrderIsSelected=false;
+  this.orderFromSeller=false;
+  this.OrderSelected=new OrderCreated;
   this.router.navigate(['Pay']);
  }
 async send(){
@@ -549,19 +581,8 @@ async send(){
        }
  }
 
-OrderInProgress(){
-   var i=0
-   if(this.Orders.length===0){
-     return 0;
-   }
-   for(const order of this.Orders){
-    if(order.OrderStatus='In Progress'){
-      i++;
-    }
-   }
-   return i;
- }
 async getOrderList(){
+    this.OrdersInProgress=[];
     if(this.permission==='cashier'){
       try {
         this.Orders=await this.orderService.getOrdersList()
@@ -569,13 +590,21 @@ async getOrderList(){
         console.log(error)
       }
     }
-
     for(const order of this.Orders){
-      if (order.OrderStatus!=='In Progress'){
-        var index=this.Orders.indexOf(order);
-        this.Orders.splice(index,1);
+      if (order.OrderStatus==='open' || order.OrderStatus==='In Progress'){
+        this.OrdersInProgress.push(order);
       }
     }
+   /* var testOrder=new OrderCreated();// this is just for the test 
+    testOrder.OrderId='N1229991';
+    testOrder.Created= '2022-03-25 10:32:18';
+    testOrder.OrderItems=[];
+    testOrder.OrderLocationId=1;
+    testOrder.OrderLocationLevelName='floor1',
+    testOrder.OrderLocationName='table1',
+    testOrder.OrderStatus='In progress',
+    testOrder.OrderTotalAmount=0;
+    this.Orders.push(testOrder);*/
    }
 
 getColor(OrderStatus:string){
@@ -625,8 +654,10 @@ TransfertItem(  OrderItems2: {
       ItemName:item.ItemName,
       ItemPrice:item.ItemPrice,
       ItemModels:[{
+        ItemId:item.ItemId,
         Model:item.ItemModel,
-        Price:item.ItemPrice
+        Price:item.ItemPrice,
+        C_UOM_ID:0,
       },],
     }
     };
@@ -635,6 +666,29 @@ TransfertItem(  OrderItems2: {
   //console.log(JSON.stringify(OrderItem));
   return OrderItems1;
 }
+
+  searchItem:Item[]=[];
+  resultOfSearchItem:string='';
+  templateItems:any[]=[];
+  searchInOrderLine(name:string){
+    if(name.length===0){
+      this.templateItems=this.Order.OrderItems;
+      return false
+    }else{
+      this.templateItems=[]
+    }
+    
+    this.resultOfSearchItem=''
+    for (const item of this.Order.OrderItems){
+      if(item.Item.ItemName.toLowerCase().indexOf(name.toLowerCase())>-1){
+        this.templateItems.push(item);
+      }
+    }
+    if(this.templateItems.length=0){
+      this.resultOfSearchItem='Item no found'
+    }
+    console.log(this.templateItems);
+  }
 
   displayDate(datestring:string){
     return this.orderService.displayDate(datestring);  
@@ -695,5 +749,7 @@ TransfertItem(  OrderItems2: {
       }
   
  
-  
+      formatAmout(n) {
+        return this.orderService.formatAmout(n);
+    }
 }

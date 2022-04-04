@@ -57,20 +57,5 @@ ion-spinner{
   -ms-transform:translateX(-50%)
 }
 
-.alert-permission{
-  #changeOk{
-    color:var(--ion-color-success) ! important
-  }
-  .changeRadio[aria-checked="true"]{
-    .alert-radio-label{
-      color:var(--ion-color-success) ! important;
-    }
-    .alert-radio-icon{
-      border-color:var(--ion-color-success) ! important ;
-    } 
-  }
-  .alert-radio-inner{
-    background-color:var(--ion-color-success) ! important;
-  }
-  
-}
+
+
