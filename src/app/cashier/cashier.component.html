@@ -63,7 +63,7 @@
         <div id="menuItems">
           <ion-label id="inuCatalog">{{'Cashier.catalog' | translate:params}}</ion-label>
           <div id="menuIcon"> 
-                <ion-label  *ngIf="currentMenu==='search'" mode="ios" class="search ion-no-padding ion-no-margin" ><ion-searchbar id="search"  placeholder="search" (ionChange)="doSearch()" [(ngModel)]="searchValue"></ion-searchbar> </ion-label>
+                <ion-label  *ngIf="currentMenu==='search'"  mode="ios" class="search ion-no-padding ion-no-margin" ><ion-searchbar id="search"  [placeholder]="searchPlaceholder" (ionChange)="doSearch()" [(ngModel)]="searchValue"></ion-searchbar> </ion-label>
                 <ion-label *ngIf="currentMenu!=='search'" [ngClass]="currentMenu==='search'? 'active' : 'inactive'">
                   <ion-icon  id="searchIcon"  (click)="setMenu('search')" name="search" ></ion-icon>
               </ion-label>
@@ -92,19 +92,20 @@
           </ion-text>
         </div>
         <div id="btScan"  *ngIf="currentMenu==='SCAN'">
-          <div class="div" *ngIf="showscanner" >
-            <div class="scannerIcon">
+          <div class="div" *ngIf="showscanner || showreader" >
+            <div class="scannerIcon" style="border:1px solid red">
               <ion-icon *ngIf="scannerIcon==='good'"  name="checkmark-circle" color="success"></ion-icon>
               <ion-icon *ngIf="scannerIcon==='error'"  name="close-circle-outline" color="danger"></ion-icon>
             </div>
-            <zxing-scanner autofocusEnabled="true"
+            <zxing-scanner autofocusEnabled="true" 
             (scanSuccess)="onCodeResult($event)"
             delayBetweenScanSuccess="2000"
             [formats]="formatsEnabled"
-            *ngIf="showscanner || currentMenu==='SCAN'"></zxing-scanner>
+            *ngIf="showscanner "></zxing-scanner>
           </div>
-          <ion-button  *ngIf="!showscanner" (click)="showScanner()" [disabled]="routerValue==='Order detail' || permission==='cashier'" ><ion-icon name="barcode" ></ion-icon>SCAN</ion-button>
-          <ion-button id="btCloseScan" *ngIf="showscanner" (click)="showScanner()"><ion-icon name="close" ></ion-icon >STOP</ion-button>
+          <ion-button  *ngIf="!showscanner &&  !showreader"  [disabled]="routerValue==='Order detail' || permission==='cashier'" (click)="presentAlert('Please press the button to scan')"><ion-icon name="barcode" ></ion-icon>READER</ion-button>
+          <ion-button  *ngIf="!showscanner && !showreader" (click)="showScanner()" [disabled]="routerValue==='Order detail' || permission==='cashier'" ><ion-icon name="camera" ></ion-icon>CAMERA</ion-button>
+          <ion-button id="btCloseScan" *ngIf="showscanner || showreader" (click)="showScanner(0)"><ion-icon name="close" ></ion-icon >STOP</ion-button>
         </div>
         <div>
           <ion-label id="slideBack" *ngIf="(currentMenu==='grid' || ('no'===noItems && currentMenu==='search')) && 5>noItems.length && template.length>1"  >
@@ -150,11 +151,11 @@
       <div id="orderBlock">
         <div id="orderTitle" >
           <ion-text>{{'Cashier.orderLine' | translate:params}}</ion-text>
-          <ion-label *ngIf="Order.OrderItems.length>0"  mode="ios" class=" ion-no-padding ion-no-margin" ><ion-searchbar   placeholder="search" (ionChange)="searchInOrderLine(searchValue2)"  [(ngModel)]="searchValue2"></ion-searchbar> </ion-label>
+          <ion-label *ngIf="Order.OrderItems.length>0"  mode="ios" class=" ion-no-padding ion-no-margin" ><ion-searchbar   [placeholder]="searchPlaceholder" (ionChange)="searchInOrderLine(searchValue2)"  [(ngModel)]="searchValue2"></ion-searchbar> </ion-label>
           <ion-icon name="ellipsis-vertical"></ion-icon>
         </div>
 
-        <div *ngIf="Order.OrderItems!=null && searchValue2.length===0 " id="orderItemsList" [ngClass]="(currentMenu==='SCAN' && !showscanner)  || (noItems.length>5 && currentMenu==='search') || (noItems.length>5 && currentMenu==='grid')    ? 'orderItemsList1' : 'orderItemsList2'">
+        <div *ngIf="Order.OrderItems!=null && searchValue2.length===0 " id="orderItemsList" [ngClass]="(currentMenu==='SCAN' && !(showscanner || showreader))  || (noItems.length>5 && currentMenu==='search') || (noItems.length>5 && currentMenu==='grid')    ? 'orderItemsList1' : 'orderItemsList2'">
           <div  class="orderItems" *ngFor="let OrderItem of Order.OrderItems;let i= index">
             <ion-label class="orderItemsImg" [id]="'orderItemsImg'+i">
               <img [src]="OrderItem.Item.ItemImage" [alt]="OrderItem.ItemName">
@@ -179,9 +180,9 @@
                     <ion-label [id]="'OrderItemModel'+i" >{{OrderItem.ItemModel}}</ion-label> 
                 </ion-label>
                 <ion-label class="orderItemsButton">
-                  <ion-icon  [id]="'btRemove'+i" [ngClass]="checkDisable(OrderItem) || routerValue!=='Order detail'? 'remove' : 'noremove'"  (click)="decreaseQuantity(OrderItem.Item.ItemId)" name="remove-circle"></ion-icon>
+                  <ion-icon  [id]="'btRemove'+i" [ngClass]="(checkDisable(OrderItem) || routerValue!=='Order detail') && permission !== 'cashier' ? 'remove' : 'noremove'"  (click)="decreaseQuantity(OrderItem.Item.ItemId)" name="remove-circle"></ion-icon>
                   <ion-label   class="qtItem" [id]="'qtItem'+i" ><ion-text>{{OrderItem.ItemQuantity}}</ion-text></ion-label>
-                  <ion-icon class="add" [id]="'btAdd'+i" (click)="increaseQuantity(OrderItem.Item.ItemId)" [ngClass]="routerValue!=='Order detail'?'remove' : 'noremove'" name="add-circle"></ion-icon>
+                  <ion-icon class="add" [id]="'btAdd'+i" (click)="increaseQuantity(OrderItem.Item.ItemId)" [ngClass]="routerValue!=='Order detail' && permission!=='cashier' ?'remove' : 'noremove'" name="add-circle"></ion-icon>
                 </ion-label>
               </div>
             </div>
@@ -199,6 +200,9 @@
           </div>
         </div>
         <div *ngIf=" searchValue2.length>0 " id="orderItemsList" [ngClass]="(currentMenu==='SCAN' && !showscanner)  || (noItems.length>5 && currentMenu==='search') || (noItems.length>5 && currentMenu==='grid')    ? 'orderItemsList1' : 'orderItemsList2'">
+          <div *ngIf="this.templateItems.length===0 " style="text-align:center; margin-top:30px" >
+            {{resultOfSearchItem}}
+          </div>
           <div  class="orderItems" *ngFor="let OrderItem of templateItems;let i= index">
             <ion-label class="orderItemsImg" [id]="'orderItemsImg'+i">
               <img [src]="OrderItem.Item.ItemImage" [alt]="OrderItem.ItemName">
@@ -242,18 +246,17 @@
             </ion-popover>
           </div>
         </div>
-        <div *ngIf="resultOfSearchItem.length>0 " >
-          {{resultOfSearchItem}}
-        </div>
+        
+        <ion-footer *ngIf="(permission==='cashier' && OrderIsSelected===true && Order.OrderStatus !=='paid') || permission==='seller & cashier' " id="footer"  (click)="pay()" >
+          <ion-text id="Total">CFA  <ion-label style="font-weight: bold">{{formatAmout(getTotal())}}</ion-label> </ion-text>
+          <ion-text id="Pay" *ngIf="Order.OrderTotalAmount>0" > <ion-text>{{'Cashier.pay' | translate:params}}</ion-text>  <ion-icon name="chevron-forward" ></ion-icon></ion-text>
+        </ion-footer>
+        <ion-footer *ngIf="permission==='seller' "  id="footer"  (click)="send()" >
+          <ion-text id="Total">CFA  <ion-label style="font-weight: bold">{{formatAmout(getTotal())}}</ion-label> </ion-text>
+          <ion-text id="Pay" *ngIf="Order.OrderTotalAmount>0 && routerValue!=='Order detail' " > <ion-text>{{'Cashier.send' | translate:params}} </ion-text>  <ion-icon name="chevron-forward" ></ion-icon></ion-text>
+        </ion-footer>
       </div>
-      <ion-footer *ngIf="(permission==='cashier' && OrderIsSelected===true) || permission==='seller & cashier' " id="footer"  (click)="pay()" >
-        <ion-text id="Total">CFA  <ion-label style="font-weight: bold">{{formatAmout(getTotal())}}</ion-label> </ion-text>
-        <ion-text id="Pay" *ngIf="Order.OrderTotalAmount>0" > <ion-text>PAY </ion-text>  <ion-icon name="chevron-forward" ></ion-icon></ion-text>
-      </ion-footer>
-      <ion-footer *ngIf="permission==='seller' "  id="footer"  (click)="send()" >
-        <ion-text id="Total">CFA  <ion-label style="font-weight: bold">{{formatAmout(getTotal())}}</ion-label> </ion-text>
-        <ion-text id="Pay" *ngIf="Order.OrderTotalAmount>0 && routerValue!=='Order detail'" > <ion-text>SEND </ion-text>  <ion-icon name="chevron-forward" ></ion-icon></ion-text>
-      </ion-footer>
+      
   
     </div>
 </div>
@@ -299,7 +302,7 @@
           </div>
         </div>
         <ion-icon name="ellipsis-vertical" [id]="odersEllispe+'i'"  ></ion-icon>
-       <!--
+        <!--
         <ion-popover  class="ItemPopOver"  side="right" [trigger]="odersEllispe+'i'"  >
           <ng-template>
             <ion-list >
@@ -307,10 +310,13 @@
                 <ion-item lines="none"><ion-icon name="cash-outline"></ion-icon></ion-item>
                 <ion-item class="ItemDelete"  (click)="PerfomPayment(order)" ><ion-text>Perfom Payment</ion-text></ion-item>
               </div>
+              <div class="deleteOrder"  >
+                <ion-item lines="none"><ion-icon name="cash-outline"></ion-icon></ion-item>
+                <ion-item class="ItemDelete"  (click)="PerfomPayment(order)" ><ion-text>Perfom Payment</ion-text></ion-item>
+              </div>
           </ion-list>
           </ng-template>
-        </ion-popover>
-       --> 
+        </ion-popover>-->
       </div>
     </div>
   </div>

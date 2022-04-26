@@ -5,13 +5,16 @@ import { ComponentCanDeactivate } from '../guard/deactivate-guard.guard';
 import { Router,ActivatedRoute } from '@angular/router';
 import { OrdersService } from '../service/order.service';
 import { Catalog,Item,Order, Slide, ItemModel,OrderCreated, OrderItem } from '../Models';
-import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
 import { BarcodeFormat } from '@zxing/library';
-import { Platform, PopoverController } from '@ionic/angular';
+import { ZXingScannerComponent } from '@zxing/ngx-scanner';
+import { AlertController, Platform, PopoverController } from '@ionic/angular';
 import { IonSlides} from '@ionic/angular';
-import { LoginService } from 'poslibrary';
+import { BluetoothSerial } from '@ionic-native/bluetooth-serial/ngx';
 import { AuthService } from '../guard/auth.service';
-import { NativeAudio } from '@awesome-cordova-plugins/native-audio/ngx';
+import { TranslateService } from '@ngx-translate/core';
+import { Plugins } from '@capacitor/core';
+
+const { App } = Plugins;
 
 @Component({
   selector: 'app-cashier',
@@ -27,7 +30,10 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
   @ViewChild('mySlider')  slides: IonSlides;
   selectedLeave : string = '';
   routerValue='string';
-  title:string;
+  title:string='';
+  title1:string='';
+  title2:string='';
+  title3:string='';
   searchValue:string='';
   searchValue2:string='';
   id:string="1";
@@ -59,16 +65,48 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
   orderFromSeller:boolean;//this property is to handle the pop up of the orders list 
   audio;
   scannerIcon='';
+  searchPlaceholder:'';
+  searchError:string;
+  noItemInCatalog:string;
+  BtDevice:[]
   
-  constructor(private nativeAudio: NativeAudio, private platform: Platform, private authService:AuthService, private barcodeScanner: BarcodeScanner,private router:Router, private orderService:OrdersService,private route:ActivatedRoute,private popoverController:PopoverController, private log: LoginService) {
+  constructor(private alertController:AlertController, private bluetoothSerial: BluetoothSerial,private translate:TranslateService , private platform: Platform, private authService:AuthService,private router:Router, private orderService:OrdersService,private route:ActivatedRoute,private popoverController:PopoverController) {
+      
     this.Order=new Order();
     this.CatalogSelected=new Catalog();
     this.permission=this.authService.permission;
+    this.translate.get('Global.searchPlaceholder').subscribe(data=>{
+      this.searchPlaceholder=data;
+    });
+    this.translate.get('Cashier.newOrder').subscribe(data=>{
+      this.title2=data;
+    });
+    this.translate.get('Cashier.orderDetails').subscribe(data=>{
+      this.title1=data;
+    });
+    this.translate.get('Cashier.cashier').subscribe(data=>{
+      this.title3=data;
+    });
+    this.translate.get('Cashier.searchError').subscribe(data=>{
+      this.searchError=data;
+    });
+    this.translate.get('Cashier.noItemcatalog').subscribe(data=>{
+      this.noItemInCatalog=data;
+    })
 
+    this.platform.backButton.subscribeWithPriority(-1, () => {
+       if(this.permission!=='seller'){
+        App.exitApp();
+       }
+  })
    }
    ngOnInit() {
     this.OrderIsSelected=false;
     this.goToPay=false;
+  }
+
+      presentAlert(string) {
+    this.showreader=true;
   }
   // @HostListener allows us to also guard against browser refresh, close, etc.
   @HostListener('window:beforeunload')
@@ -84,10 +122,65 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
     }
   }
 
+//The variable to use in the Reader of the barcode  
+
+  readerValue='';
+  showreader =false
+  @HostListener('document:keypress', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+      if(this.showreader===true){
+        if(event.keyCode!==13){
+          this.readerValue=this.readerValue+event.key
+      }
+      else{
+        var number =parseInt(this.readerValue,10);
+        this.readerValue='';
+          if(isNaN(number)){
+            this.audio=new Audio('../../assets/sounds/error_beep.mp3');
+            this.audio.play();
+            this.scannerIcon='error';
+            setTimeout(() => {
+              this.scannerIcon='';
+            }, 1000);
+            return false;
+          }
+          this.orderService.getCatalog(0,number).then((data)=>{
+            let catalog:Catalog[];
+            catalog=data;
+              try {
+                    if(catalog[0]!==null){
+                      this.addItem(catalog[0].CatalogItems[0]);
+                      this.audio=new Audio('../../assets/sounds/success_beep.mp3');
+                      this.audio.play();
+                      this.scannerIcon='good';
+                    }else{
+                      this.scannerIcon='error';
+                      this.audio=new Audio('../../assets/sounds/error_beep.mp3');
+                      this.audio.play();
+                    }
+                  }
+              catch (error) {
+                  this.scannerIcon='error';
+                  this.audio=new Audio('../../assets/sounds/error_beep.mp3');
+                  this.audio.play();
+                  console.log(' this scan does\'nt match any product...')
+                }
+              })
+      }
+    }
+}
+
+
+  DisplayDevice(){
+    this.bluetoothSerial.list().then((data)=>{
+      this.BtDevice=data;
+      console.log(JSON.stringify(data));
+
+    })
+  }
+
   async ionViewWillEnter() {
-    
     this.routerValue=this.route.snapshot.routeConfig.path;
-    console.log(this.routerValue);
     this.getOrderList();
     this.Catalog = [];
     await this.initCatalog();
@@ -98,8 +191,12 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
     this.searchValue="";
   }
   
+
+  
   async ionViewWillLeave() {
     this.Order=new Order();
+    this.OrderIsSelected=false;// no order is selected in this view 
+    this.orderFromSeller=false;// no order was selected in the seller view
     this.currentMenu='SCAN';
   }
   
@@ -120,6 +217,14 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
         this.Catalog=this.Catalog.reverse();
     } catch (error) {
       console.log('erreur',error)
+    }
+    this.removeImage()
+  }
+
+
+  removeImage (){// thia function is just to show the image placeholde looks
+    for (const item of this.Catalog[3].CatalogItems){
+          item.ItemImage="../assets/imagePlaceholder.jpg"
     }
   }
 
@@ -154,12 +259,14 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
     if(menuItem==='grid'){
       this.showItem(this.CatalogSelected.CatalogItems,'all categories')
       this.showscanner=false;
+      this.showreader=false;
       if(this.template.length===0){
-        this.noItems='No items avalaible here for now ; you must refresh the stock';
+        this.noItems=this.noItemInCatalog
       }
     }else if(menuItem!=='SCAN'){
       this.noItems='';
       this.showscanner=false;
+      this.showreader=false;
     }
     else{
       await this.initCatalog;
@@ -226,17 +333,16 @@ export class CashierComponent implements ComponentCanDeactivate,OnInit {
  }
 
 async initOrder(){
-  
   var result= this.displayOrderSelectedItems()
   if((this.permission==='seller' || this.permission==='cashier') && this.routerValue==='Order detail'){
-    this.title='Order detail';
+    this.title=this.title1//'Order detail';
     this.OrderIsSelected=true;
     if (result===false){
       this.router.navigate(['/Order'])
     }
   }
   else if(this.permission==='seller'){
-    this.title='New Order ';
+    this.title=this.title2//'New Order ';
     this.Order=new Order();
     try 
     {
@@ -247,7 +353,7 @@ async initOrder(){
     }
   }
   else if (this.permission==='cashier'){
-    this.title='Cashier';
+    this.title=this.title3//'Cashier';
     if(this.orderService.Created){
       this.OrderIsSelected=false;
       this.orderFromSeller=false;
@@ -261,7 +367,7 @@ async initOrder(){
     }
     
   }else{
-    this.title='Cashier';
+    this.title=this.title3;
     if(this.orderService.Created || result === false){
       this.isPaid();
       this.Order= new Order();
@@ -274,14 +380,12 @@ async initOrder(){
     }
     
   }
-  
 }
 
 displayOrderSelectedItems(){
   if(this.orderService.Created===true){
     return false;
   }
-  
   var retrievedObject =localStorage.getItem('Order');
   var order=JSON.parse(retrievedObject)
   if(order===null){
@@ -367,9 +471,11 @@ decreaseQuantity(id:number){
 }
 deleteItem(Item){
   if(this.permission==='cashier' || this.routerValue==='Order detail'){
+    this.ClosePopOver();
     return true;
   }
   if(this.permission==='cashier'){
+    this.ClosePopOver();
     return false;
   }
   let index=-1;
@@ -453,7 +559,7 @@ getTotal(){
       total=total+finalPrice;
       }
       this.Order.OrderTotalAmount=total;
-      return this.Order.OrderTotalAmount;
+      return total;
   } catch (error) {
     return 0
   }
@@ -484,12 +590,11 @@ PerfomPayment(order:Order){
       this.showItem(this.AllCatalog.CatalogItems,'all categories');
       return 0
     }
-    
+    var searchResult:Item[]=[];
     if(this.searchValue.length>0){
-      var searchResult:Item[]=[];
       var AllItem=this.AllCatalog;
         for(const Item of AllItem.CatalogItems){
-          if(Item.ItemName.toLowerCase().indexOf(this.searchValue.toLowerCase())>-1){
+          if(Item.ItemName.toLowerCase().indexOf(this.searchValue.toLowerCase())>-1  || (''+Item.ItemId).toLowerCase().indexOf(this.searchValue.toLowerCase())>-1){
             searchResult.push(Item);
           }
         }
@@ -501,7 +606,7 @@ PerfomPayment(order:Order){
 
       }
       else{
-        this.noItems="no results for your search";
+        this.noItems=this.searchError;
       }
    }
   
@@ -558,19 +663,24 @@ OrderFromSeller(){
   
 pay(){
   this.goToPay=true;
-  localStorage.setItem('Order', JSON.stringify(this.Order));
+  if(this.permission!=='cashier'){
+    localStorage.setItem('Order', JSON.stringify(this.Order));
+  }
   this.Order=new Order()
   this.OrderIsSelected=false;
   this.orderFromSeller=false;
-  this.OrderSelected=new OrderCreated;
+  this.OrderSelected=new OrderCreated();
+  localStorage.setItem('url',this.routerValue)
   this.router.navigate(['Pay']);
  }
+
+
 async send(){
     this.Order.Created=new Date();
     this.Order.OrderLocationId=1;
     this.Order.OrderLocationLevelName='Floor1';
     this.Order.OrderLocationName='Table1';
-    this.Order.OrderStatus='Open';// we will tcheck the good order status after , and a thing to display if the order fall to serve or if there is not connection...
+    this.Order.OrderStatus='In Progress';// we will tcheck the good order status after , and a thing to display if the order fall to serve or if there is not connection...
     const data= await this.orderService.createOrder(this.Order);
        if(typeof(data)==='string'){
          this.orderService.Created=true;
@@ -595,8 +705,8 @@ async getOrderList(){
         this.OrdersInProgress.push(order);
       }
     }
-   /* var testOrder=new OrderCreated();// this is just for the test 
-    testOrder.OrderId='N1229991';
+    var testOrder=new OrderCreated();// this is just for the test 
+  /*testOrder.OrderId='N1229991';
     testOrder.Created= '2022-03-25 10:32:18';
     testOrder.OrderItems=[];
     testOrder.OrderLocationId=1;
@@ -604,14 +714,14 @@ async getOrderList(){
     testOrder.OrderLocationName='table1',
     testOrder.OrderStatus='In progress',
     testOrder.OrderTotalAmount=0;
-    this.Orders.push(testOrder);*/
+    this.OrdersInProgress.push(testOrder);*/
    }
 
 getColor(OrderStatus:string){
     if(OrderStatus==='Draft'){
       return 'medium'
-    }else if(OrderStatus==='Paid'){
-      return 'successs'
+    }else if(OrderStatus==='Paid' || OrderStatus==='paid' ){
+      return 'success'
     }else{
       return 'warning'
     }
@@ -627,6 +737,7 @@ getColor(OrderStatus:string){
     this.Order.OrderStatus=order.OrderStatus,
     this.Order.OrderTotalAmount=order.OrderTotalAmount;
     this.Order.OrderItems=this.TransfertItem(order.OrderItems);
+    localStorage.setItem('Order', JSON.stringify(this.Order));
    //console.log(JSON.stringify(order),'order1');
    //console.log(JSON.stringify(this.Order),'order2');
    this.orderFromSeller=false;
@@ -663,13 +774,14 @@ TransfertItem(  OrderItems2: {
     };
     OrderItems1.push(OrderItem); 
   }
-  //console.log(JSON.stringify(OrderItem));
+  
   return OrderItems1;
 }
 
   searchItem:Item[]=[];
   resultOfSearchItem:string='';
   templateItems:any[]=[];
+
   searchInOrderLine(name:string){
     if(name.length===0){
       this.templateItems=this.Order.OrderItems;
@@ -680,12 +792,12 @@ TransfertItem(  OrderItems2: {
     
     this.resultOfSearchItem=''
     for (const item of this.Order.OrderItems){
-      if(item.Item.ItemName.toLowerCase().indexOf(name.toLowerCase())>-1){
+      if(item.Item.ItemName.toLowerCase().indexOf(name.toLowerCase())>-1 || (''+item.Item.ItemId).toLowerCase().indexOf(name.toLowerCase())>-1){
         this.templateItems.push(item);
       }
     }
-    if(this.templateItems.length=0){
-      this.resultOfSearchItem='Item no found'
+    if(this.templateItems.length===0){
+      this.resultOfSearchItem=this.searchError;
     }
     console.log(this.templateItems);
   }
@@ -700,12 +812,20 @@ TransfertItem(  OrderItems2: {
     BarcodeFormat.EAN_13,
     BarcodeFormat.QR_CODE,
   ];
-   showScanner() {
+
+   showScanner(x=1) {
     if(this.routerValue==='Order detail'){
       return false
     }
-    this.showscanner = !this.showscanner;
+    if(x===0){
+      this.showscanner = false;
+      this.showreader=false;
+    }else{
+      this.showscanner = true;
+      this.showreader=true;
+    }
   }
+ 
 
 
 

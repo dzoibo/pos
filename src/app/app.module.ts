@@ -32,9 +32,11 @@ import { DeactivateGuardGuard } from './guard/deactivate-guard.guard';
 import {OrdersComponent} from  './orders/orders.component';
 import { BlanckPageComponent } from './blanck-page/blanck-page.component';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
-import { Media, MediaObject } from '@awesome-cordova-plugins/media/ngx';
 import { DatePipe } from '@angular/common';
 import { LoginService } from './service/login.service';
+import { ZXingScannerComponent } from '@zxing/ngx-scanner';
+
+
 
 export function LanguageLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -96,6 +98,7 @@ const appRoutes: Routes = [
     DeactivateGuardGuard,
     BarcodeScanner,
     SQLite,
+    ZXingScannerComponent,
     SQLitePorter,
     LoginService,
     OrderService,

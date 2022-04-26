@@ -1,14 +1,14 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Router,NavigationStart, Event as NavigationEvent } from '@angular/router';
+import { Router,NavigationStart, Event as NavigationEvent, ActivatedRoute } from '@angular/router';
 import { AuthService } from './guard/auth.service';
 import { OrdersService } from './service/order.service';
-import { MenuController } from '@ionic/angular';
+import { MenuController,IonRouterOutlet, Platform } from '@ionic/angular';
 import { User } from './Models';
 import { CookieService } from 'ngx-cookie-service';
 import { TranslateConfigService } from './service/translate-config.service';
-import { Platform } from '@ionic/angular';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
-import { Subject } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+
 
 
 
@@ -25,10 +25,13 @@ export class AppComponent implements OnDestroy,OnDestroy {
   User=new User;
   selectedLanguage;
   event$;
-  permission:string;
+  permission:string='';
+  role;
+  
 
-  constructor(private auth:AuthService, private screenOrientation:ScreenOrientation, private platform: Platform ,public translateConfigService:TranslateConfigService,public menuCtrl: MenuController,private cookieService:CookieService, private authService:AuthService, private router:Router,private orderService:OrdersService) {
+  constructor( private route: ActivatedRoute, private translate:TranslateService, private auth:AuthService, private screenOrientation:ScreenOrientation, private platform: Platform ,public translateConfigService:TranslateConfigService,public menuCtrl: MenuController,private cookieService:CookieService, private authService:AuthService, private router:Router,private orderService:OrdersService) {
     this.permission=this.auth.permission;
+   
     if((this.platform.is('mobile')||this.platform.is('mobileweb'))&& !this.platform.is('tablet')){
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
     }
@@ -48,7 +51,25 @@ export class AppComponent implements OnDestroy,OnDestroy {
     this.authService.languageChange.subscribe((value) => {
       this.ChangeLanguage(value);
   });
+
+    if(this.permission==='seller'){
+      console.log(this.permission);
+      this.translate.get('Global.permission2').subscribe(data=>{
+        this.role=data;
+      })
+    }else if(this.permission==='cashier'){
+      this.translate.get('Global.permission3').subscribe(data=>{
+        this.role=data;
+      })
+    }else{
+      this.translate.get('Global.permission1').subscribe(data=>{
+        this.role=data;
+      })
+    }
   }
+
+  
+
    async signOut(){
     this.authService.signOut();
     this.status=this.authService.isAuth;
@@ -59,21 +80,22 @@ export class AppComponent implements OnDestroy,OnDestroy {
     this.cookieService.delete('userImage');
     this.cookieService.delete('userParner');
     this.cookieService.delete('permission');
-    window.location.reload();
+    this.router.navigate(['/home']);
   }
 
   setItem(item:string){
     if(this.permission==='seller & cashier'){
       this.router.navigate(['/Cashier']);
       this.closeMenu();
-      return false
+    }else{
+      this.currentLink=item;
+      setTimeout(() => {
+        this.closeMenu();
+        this.router.navigate(['/'+item]);
+  
+      }, 300);
     }
-    this.currentLink=item;
-    setTimeout(() => {
-      this.closeMenu();
-      this.router.navigate(['/'+item]);
-
-    }, 300);
+    
   }
 
 
@@ -104,6 +126,7 @@ export class AppComponent implements OnDestroy,OnDestroy {
   }
   ngOnDestroy() {
     this.event$.unsubscribe();
+    this.authService.languageChange.unsubscribe();
   }
   ChangeLanguage(lang){// this function will be call by the function calling when we have to save this in cookies;
     if(lang==='fr_FR'){

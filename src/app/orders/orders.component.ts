@@ -18,6 +18,7 @@ export class OrdersComponent implements OnInit {
   testOrder;
   constructor( private popoverController:PopoverController, private authService:AuthService,private orderService:OrdersService,private router:Router,private route:ActivatedRoute) {
     this.permission=this.authService.permission;
+    
   }
 
   async ngOnInit() {
@@ -31,7 +32,7 @@ ionViewDidEnter(){
 
   async ionViewWillEnter(){
     this.Created=false;
-
+    localStorage.removeItem('Order');
     if(this.permission==='seller'){
       this.isCreated();
     }
@@ -76,6 +77,7 @@ ionViewDidEnter(){
     order=data;
     if(order!==null){
       this.Orders=order;
+      console.log(JSON.stringify(this.Orders));
     }
   }
 
@@ -91,7 +93,7 @@ ionViewDidEnter(){
     if(OrderStatus==='Draft'){
       return 'medium'
     }else if(OrderStatus==='Paid' || OrderStatus==='paid'){
-      return 'successs'
+      return 'success'
     }else{
       return 'warning'
     }

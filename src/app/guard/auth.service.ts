@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
-import { BehaviorSubject, firstValueFrom, Subject } from 'rxjs';
+import { BehaviorSubject, firstValueFrom} from 'rxjs';
 import { User } from '../Models';
 import { Platform } from '@ionic/angular';
 import { LoginService } from '../service/login.service';
@@ -23,8 +23,11 @@ export class AuthService {
       }else{
         this.language='en_US'
       }
-     this.languageChange= new BehaviorSubject<string>(this.language);
     }
+    else{
+      this.language='en_US';
+    }
+    this.languageChange= new BehaviorSubject<string>(this.language);
     if(cookieService.check('userId')&&cookieService.check('userName')&&cookieService.check('userImage')&&cookieService.check('userParner')){
       try {
         this.User.userId=parseInt(this.decryptData(cookieService.get('userId')));
@@ -41,8 +44,8 @@ export class AuthService {
 
 
   async GetUser(userName:string,passWord:string,language:string='en_US'):Promise<any> {
-    //, '1000116', '1011698'
     this.language=language;
+    console.log('lang',this.language);
     const data: any = await firstValueFrom(this.loginService.authenticateUser(userName, passWord,language));
     console.log('daataaa',JSON.stringify(data) , data.WindowTabData);
       if(data.WindowTabData.Error){
@@ -73,24 +76,22 @@ export class AuthService {
     this.cookieService.set('userImage', this.encryptData(this.User.userImage),{ expires: timeOut });
     this.cookieService.set('userParner', this.encryptData(this.User.userParner),{ expires: timeOut });
     this.cookieService.set('permission', this.encryptData(this.permission),{ expires: timeOut });
-    this.cookieService.set('language', this.encryptData(this.language),{ expires: 0});
+    this.cookieService.set('language', this.encryptData(this.language),{ expires: 10000000000000000000});
   }
   encryptData(text:string){
     var CryptoJS = require("crypto-js");
-    var encryptText = CryptoJS.AES.encrypt(text, 'RanitesP2022').toString();
-    return encryptText; 
+    return CryptoJS.AES.encrypt(text, 'RanitesP2022').toString(); 
   }
   
   decryptData(encryptText){
     var CryptoJS = require("crypto-js");
     var bytes  = CryptoJS.AES.decrypt(encryptText, 'RanitesP2022');
-    var originalText = bytes.toString(CryptoJS.enc.Utf8);
-    return originalText
+    return bytes.toString(CryptoJS.enc.Utf8);
   }
 
   signIn() {
       return new Promise(
-      (resolve, reject) => {
+      (resolve) => {
           setTimeout(
           () => {
               this.isAuth = true;

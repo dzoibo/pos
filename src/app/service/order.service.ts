@@ -70,6 +70,11 @@ export class OrdersService implements OnInit,OnDestroy {
     return data
   }
 
+  async updateOrder(order:Order){
+    const data=await this.orderService.updateOrder(order.OrderId,order.OrderStatus,order.OrderTotalAmount);
+    return data
+  }
+
   async Printer(id:string){
     try {
       const data=await this.orderService.getPrintData(id);

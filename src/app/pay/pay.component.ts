@@ -8,7 +8,7 @@ import { BluetoothSerial } from '@ionic-native/bluetooth-serial/ngx';
 import { PrintService } from '../service/print';
 import { CookieService } from 'ngx-cookie-service';
 import { AuthService } from '../guard/auth.service';
-import { runInThisContext } from 'vm';
+import { TranslateService } from '@ngx-translate/core';
 
 
 
@@ -39,12 +39,20 @@ export class PayComponent implements OnInit {
   macAddress: any;
   permission:string;
   exactAmount:boolean;
+  alert1;
+  alert2;
   
 
 
-  constructor(private cookies:CookieService,private authService: AuthService, private printService:PrintService, private bluetoothSerial: BluetoothSerial,private router:Router,private alertController:AlertController,private orderService:OrdersService) {
+  constructor(private translate:TranslateService, private cookies:CookieService,private authService: AuthService, private printService:PrintService, private bluetoothSerial: BluetoothSerial,private router:Router,private alertController:AlertController,private orderService:OrdersService) {
    this.permission=this.authService.permission;
    this.Order=new Order();
+   this.translate.get('Pay.alertAmount').subscribe((data)=>{
+     this.alert1=data;
+   })
+   this.translate.get('Pay.alertError').subscribe((data)=>{
+    this.alert2=data;
+  })
   }
 
 
@@ -128,7 +136,7 @@ return OrderItems1;
     this.Pay=action;
    }
    Cancel(){
-    this.router.navigate(['Cashier'])
+    this.router.navigate([localStorage.getItem('url')])
   }
   
   
@@ -171,12 +179,12 @@ return OrderItems1;
    }
 
    
-   async presentAlert() {
+   async presentAlert(string) {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Alert',
       //subHeader: 'Subtitle', this is not relevant for us now
-      message: 'Payment is not suffisant',
+      message: string,
       buttons: ['OK']
     });
 
@@ -184,6 +192,7 @@ return OrderItems1;
 
     const { role } = await alert.onDidDismiss();
   }
+
   scan() {
     this.printService.searchBluetoothPrinter()
     .then(resp => {
@@ -205,8 +214,7 @@ return OrderItems1;
   }
    async Valid(){
      if(this.Payment-this.Order.OrderTotalAmount<0){
-      await this.presentAlert()
-      //we display the alert message with the message "payment is not suffisant"
+      await this.presentAlert(this.alert1)
      }else{//Maybe we can add a spinner here...
        console.log(this.Order.OrderId);
        this.Order.Created= new Date ('23.01.2022 12:55:35')
@@ -214,9 +222,14 @@ return OrderItems1;
        this.Order.OrderLocationLevelName='Floor1';
        this.Order.OrderLocationName='Table1';
        console.log(this.Order);
-       this.Order.OrderStatus='Paid';// we will tcheck the good order status after , and a thing to display if the order fall to serve or if there is not connection...
-       const data= await this.orderService.createOrder(this.Order);
-          if(typeof(data)==='string'){
+       this.Order.OrderStatus='paid';// we will tcheck the good order status after , and a thing to display if the order fall to serve or if there is not connection...
+       var data;
+       if(this.permission==='cashier'){
+         data= await this.orderService.updateOrder(this.Order);
+       }else{
+        data= await this.orderService.createOrder(this.Order);
+       }
+          if(typeof(data)!==undefined){
             this.Pay='Valid';
             this.orderService.Created=true;
             console.log(data);
@@ -230,6 +243,8 @@ return OrderItems1;
           }else{
             this.Pay='Error'// we display the error icon and the error message in red
             console.log('error');
+            console.log(JSON.stringify(data));
+            this.presentAlert(this.alert2);
           }
      }
    }

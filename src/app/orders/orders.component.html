@@ -1,14 +1,13 @@
 <ion-header #header>
     <ion-toolbar>
       <ion-menu-button id="btMenu" slot="start"></ion-menu-button>
-      <ion-title  >Orders </ion-title>
-      
+      <ion-title  >{{'Order.order' | translate:params }} </ion-title>
     </ion-toolbar>
   </ion-header>
   <ion-content>
       <div id="globalOrder">
           <div id="noOrder" *ngIf="Orders.length===0 && Created===false">
-              <ion-text>No order available</ion-text>
+              <ion-text>{{'Order.noOrder' | translate:params }}</ion-text>
           </div>
           <ion-fab  *ngIf="permission==='seller' && Created===false" vertical="bottom" horizontal="end" (click)="newOrder()" >
             <ion-fab-button color="success" >
@@ -18,7 +17,7 @@
 
           <div id="orderCreated" *ngIf="Created===true">
             <ion-label id="successPayIcon"><ion-icon   name="checkmark-circle" color="success"></ion-icon></ion-label>
-            <ion-text>Order created</ion-text>
+            <ion-text>{{ 'Order.orderCreated' | translate:params }}</ion-text>
           </div>
           <div id="orderBlock">
             <div *ngIf="Created===false">
@@ -30,8 +29,8 @@
                         <ion-text  class="idOrder" >{{order.OrderId}}</ion-text>
                         <ion-text class="orderItemsDesc" >
                           <strong>{{order.OrderItems.length}} </strong>
-                           <ion-text *ngIf="order.OrderItems.length>1">items</ion-text> 
-                           <ion-text *ngIf="order.OrderItems.length<=1">item</ion-text> 
+                           <ion-text *ngIf="order.OrderItems.length>1">{{ 'Order.items' | translate:params }}</ion-text> 
+                           <ion-text *ngIf="order.OrderItems.length<=1">{{ 'Order.item' | translate:params }}</ion-text> 
                         </ion-text>
                       </ion-text> 
                     </ion-label>
@@ -57,21 +56,22 @@
                     </ion-label>
                   </div>
                 </div>
-                <ion-icon name="ellipsis-vertical" [id]="'odersEllispe'+i"  ></ion-icon>
+                <ion-icon *ngIf="order.OrderStatus !=='paid'" name="ellipsis-vertical" [id]="'odersEllispe'+i"   ></ion-icon>
+                <ion-icon *ngIf="order.OrderStatus ==='paid'" (click)="ShowDetails(order)" name="ellipsis-vertical"  ></ion-icon>
                 <ion-popover alignment="end"  class="ItemPopOver"  side="right" [trigger]="'odersEllispe'+ i" 	dismissOnSelect="true">
                   <ng-template>
                     <ion-list >
                       <div class="deleteOrder">
                         <ion-item lines="none"><ion-icon name="information-circle-outline"></ion-icon> </ion-item>
-                        <ion-item class="ItemDelete"  (click)="ShowDetails(order)" ><ion-text> Show Details</ion-text></ion-item>
+                        <ion-item class="ItemDelete"  (click)="ShowDetails(order)" ><ion-text>{{ 'Order.SDetails' | translate:params }} </ion-text></ion-item>
                       </div>
                       <div class="deleteOrder" [ngClass]="permission==='seller'? 'disabled' : 'nothing'" >
                         <ion-item lines="none"><ion-icon name="cash-outline"></ion-icon></ion-item>
-                        <ion-item class="ItemDelete"  (click)="PerfomPayment(order)" ><ion-text>Perfom Payment</ion-text></ion-item>
+                        <ion-item class="ItemDelete"  (click)="PerfomPayment(order)" ><ion-text>{{ 'Order.perfom' | translate:params }}</ion-text></ion-item>
                       </div>
                       <div class="deleteOrder disabled">
                         <ion-item lines="none"><ion-icon name="trash-outline"  ></ion-icon> </ion-item>
-                        <ion-item class="ItemDelete"  (click)="deleteOrder(order)" ><ion-text> delete</ion-text></ion-item>
+                        <ion-item class="ItemDelete"  (click)="deleteOrder(order)" ><ion-text>{{ 'Global.delete' | translate:params }}</ion-text></ion-item>
                       </div>
                   </ion-list>
                   </ng-template>

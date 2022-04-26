@@ -6,6 +6,7 @@ import { AlertController, MenuController } from '@ionic/angular';
 import { User } from '../Models';
 import { CookieService } from 'ngx-cookie-service';
 import { CashierPage } from 'e2e/src/Cashier/cashier.po';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-blanck-page',
@@ -17,35 +18,57 @@ export class BlanckPageComponent implements OnInit {
   User:User;
   permission:string;
   spinner=false;
-  constructor(private cookieService:CookieService, public menuCtrl: MenuController, private router:Router, private alertController:AlertController,private authService:AuthService,private orderService:OrdersService) {
+  permission1;
+  permission2;
+  permission3;
+  message;
+  constructor(private translate:TranslateService,private cookieService:CookieService, public menuCtrl: MenuController, private router:Router, private alertController:AlertController,private authService:AuthService,private orderService:OrdersService) {
     this.User=new User;
+    
    }
 
   ngOnInit() {
-    this.presentAlertPrompt()
+    this.translate.get('Global.permission1').subscribe(data=>{
+      this.permission1=data;
+    })
+    this.translate.get('Global.permission2').subscribe(data=>{
+      this.permission2=data;
+    })
+    this.translate.get('Global.permission3').subscribe(data=>{
+      this.permission3=data;
+    });
+     this.translate.get('Global.message').subscribe(data=>{
+      this.message=data;
+    })
+    if(this.cookieService.check('permission')){
+      this.router.navigate(['/Order']);
+      }else{
+        this.presentAlertPrompt()
+      }
+      
   }
   async presentAlertPrompt() {
     const alert = await this.alertController.create({
       cssClass: 'alert-permission',
-      header: 'Please select the role you want to use',
+      header:this.message ,
       backdropDismiss:false,
       inputs: [
         {
           type: 'radio',
-          label: 'Seller',
+          label: this.permission2,
           value: 'seller',
           cssClass:'changeRadio',
         
         },
         {
           type: 'radio',
-          label: 'Cashier',
+          label: this.permission3,
           value: 'cashier',
           cssClass:'changeRadio',
         },
         {
           type: 'radio',
-          label: 'Seller & Cashier',
+          label: this.permission1,
           value: 'seller & cashier',
           cssClass:'changeRadio',
           checked:true,

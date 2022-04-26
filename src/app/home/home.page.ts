@@ -3,17 +3,19 @@ import { AuthService } from '../guard/auth.service';
 import { FormBuilder, FormGroup,Validators } from '@angular/forms';
 import{ User} from '../Models';
 import { Router } from '@angular/router';
-import {  MenuController } from '@ionic/angular';
+import {  MenuController,Platform } from '@ionic/angular';
 import { LoginService } from 'poslibrary';
 import { TranslateConfigService } from '../service/translate-config.service';
-
+import { TranslateService } from '@ngx-translate/core';
+import { Plugins } from '@capacitor/core';
+const { App } = Plugins;
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage {
+export class HomePage implements OnInit {
   NameError!:string;
   PasswordError!:string;
   LoginError=" ";
@@ -24,17 +26,43 @@ export class HomePage {
   showPassword:boolean=false;
   spinner=false;
   selectedLanguage:string;
+  title:string;
   permission:string='cashierOnly';
+  identification:string;
+  min;
+  error1;
+  error2;
+  error3
   customAlertOptions: any = {
     cssClass: 'customAlertCss',
 
   };
   @ViewChild('loginName') inputName  ;
   @ViewChild('loginPassword') inputPassword ;
-  constructor( private translateConfigService:TranslateConfigService, public loginService:LoginService, public menuCtrl: MenuController,private formBuilder:FormBuilder,private router:Router, private authService:AuthService) {
-   this.User=new User;
+  constructor(private platform:Platform, private translateConfigService:TranslateConfigService,private translate:TranslateService, public loginService:LoginService, public menuCtrl: MenuController,private formBuilder:FormBuilder,private router:Router, private authService:AuthService) {
+  
+    this.platform.backButton.subscribeWithPriority(-1, () => {
+      App.exitApp();
+  });
+  
+    this.User=new User;
    this.selectedLanguage=this.authService.language;
-   this.ChangeLanguage(this.selectedLanguage)
+   this.ChangeLanguage(this.selectedLanguage);
+   this.translate.get('HOME.identification').subscribe(data=>{
+     this.identification=data;
+   })
+   this.translate.get('HOME.min').subscribe(data=>{
+    this.min=data
+  })
+  this.translate.get('HOME.noConnection').subscribe(data=>{
+    this.error1=data;
+  })
+  this.translate.get('HOME.server').subscribe(data=>{
+    this.error2=data;
+  })
+  this.translate.get('HOME.invalid').subscribe(data=>{
+    this.error3=data;
+  })
   }
   
   ngOnInit(){
@@ -88,7 +116,7 @@ export class HomePage {
         let login: any;
 
         if(!this.online){
-          this.LoginError='No connection';
+          this.LoginError=this.error1;  //'No connection';
           return false;
         }else{
           this.spinner=true;
@@ -99,7 +127,7 @@ export class HomePage {
 
           } catch (error) {
             this.spinner=false;
-            this.LoginError='Server error please try again';
+            this.LoginError= this.error2, //'Server error please try again';
             console.log('erroooor', error, JSON.stringify(error), formValue['Name'], formValue['Password'],formValue['Language']);
             return false;
           }
@@ -126,7 +154,7 @@ export class HomePage {
           ); 
         }
         else{
-          this.LoginError='Invalid Password or Username';
+          this.LoginError=this.error3 //'Invalid Password or Username';
         }
       }
       

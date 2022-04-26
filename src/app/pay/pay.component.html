@@ -101,7 +101,7 @@
           </ion-label>
           <ion-label id="keyEnter" class="col2" (click)="Valid()" >
             <ion-text>
-               {{ 'Pay.enter' | translate:params }}
+               {{ 'Global.enter' | translate:params }}
             </ion-text>
           </ion-label>
        </ion-label>
@@ -114,7 +114,7 @@
           <ion-label id="successReceipt"><ion-text>{{ 'Pay.payPrinted' | translate:params }}</ion-text></ion-label>
         </ion-label>
         <ion-button id="btCancel" *ngIf="Pay==='Pay'" color="medium"  (click)="Cancel()">
-          <ion-icon name="Close-Circle-outline" ></ion-icon> <ion-text>{{ 'Pay.cancel' | translate:params }}</ion-text>
+          <ion-icon name="Close-Circle-outline" ></ion-icon> <ion-text>{{ 'Global.cancel' | translate:params }}</ion-text>
       </ion-button>
     </div>
   </ion-content>

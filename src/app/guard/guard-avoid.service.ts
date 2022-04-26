@@ -19,7 +19,7 @@ canActivate ( next:ActivatedRouteSnapshot,state:RouterStateSnapshot): Observable
     if(this.authService.isAuth===false) {
       return true;
     } else {
-      this.router.navigate(['/Order']);
+      this.router.navigate(['/Cashier']);
       return false;
     }
   }

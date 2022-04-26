@@ -13,17 +13,31 @@
         "passWord": "Mot de Passe",
         "forgot":"Mot de passe oublié?",
         "login":"Se Connecter",
-        "error":"//for now we don't know how to handle it"
+        "error":"//for now we don't know how to handle it",
+        "identification":"Identifiant ou Numéro de Telephone",
+        "min":"Au moins 6 caractères",
+        "language":"Langue",
+        "french":"Français",
+        "english":"Anglais",
+        "noConnection":"Pas de connection",
+        "server":"Erreur de serveur veuillez reéssayer",
+        "invalid":"Identifiant ou mot de passe invalide"
+        
     },
     "Cashier":{
-        "title":"Caissier",
+        "cashier":"Caissier",
         "divers":"Divers",
         "delete":"Supprimer",
-        "SDetails":"afficher details",
+        "SDetails":"Afficher details",
         "edit":"Modifier",
         "orderLine":"Ligne de Commande",
-        "pay":"PAY",
-        "catalog":"Catalogue"
+        "pay":"Payer",
+        "catalog":"Catalogue",
+        "send":"Envoyer",
+        "newOrder":"Nouvelle commande",
+        "orderDetails":"Details de la commande",
+        "searchError":"Produit non trouvé",
+        "noItemcatalog":"Aucun produit disponible pour l'instant; vous devez renouvellez le stock"
     },
     "Pay":{
         "title":"Caissier",
@@ -32,12 +46,30 @@
          "payment":"Paiement",
          "change":"Reste",
          "exactAmount":"MONTANT EXACT",
-         "enter":"ENTRER",
-         "cancel":"ANNULER",
          "paySuccess":"Paiement réussi",
          "payPrinted":"Reçu en cours d'impression",
-         "Total":"Total"
-     }
-     
+         "Total":"Total",
+         "alertAmount":"Paiement insuffisant",
+         "alertError":"Erreur veuillez reéssayer..."
+     },
+     "Order":{
+        "order":"Commandes",
+        "noOrder":"Aucune commande disponible",
+        "orderCreated":"Commande créée",
+        "items":"produits",
+        "item":"produit",
+        "SDetails":"Afficher details",
+        "perfom":"Passer au paiement"
+     },
+     "Global":{
+        "permission1":"Vendeur & Caissier",
+        "permission2":"Vendeur",
+        "permission3":"Caissier",
+        "enter":"ENTRER",
+        "cancel":"ANNULER",
+        "searchPlaceholder":"rechercher",
+        "message":"veuillez selectionner votre role",
+        "delete":"Supprimer"
+    }
 
 }

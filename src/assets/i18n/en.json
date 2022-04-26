@@ -4,17 +4,30 @@
         "passWord": "Password",
         "forgot":"Forgot Password?",
         "error":"for now we don't know how to handle it",
-        "login":"Login"
+        "login":"Login",
+        "identification":"Identification or Phone Number",
+        "min":"At lest 6 characters",
+        "language":"Language",
+        "french":"French",
+        "english":"English",
+        "noConnection":"No connection",
+        "server":"Server error please try again",
+        "invalid":"Invalid Password or Username"
     },
     "Cashier":{
-        "title":"Cashier",
+        "cashier":"Cashier",
         "divers":"Divers",
         "delete":"Delete",
-        "SDetails":"show details",
+        "SDetails":"Show details",
         "edit":"Edit",
         "orderLine":"Order Line",
         "catalog":"Catalog",
-        "pay":"PAY"
+        "pay":"Pay",
+        "send":"Send",
+        "newOrder":"New order",
+        "orderDetails":"Order details",
+        "searchError":"Item not found",
+        "noItemcatalog":"No items avalaible here for now ; you must refresh the stock"
 
     },
     "Menu":{
@@ -32,11 +45,33 @@
          "payment":"Payment",
          "change":"Change",
          "exactAmount":"EXACT AMOUNT",
-         "enter":"ENTER",
-         "cancel":"CANCEL",
          "paySuccess":"Payment succesful",
          "payPrinted":"Receipt is being printed",
-         "Total":"Total"
+         "Total":"Total",
+         "alertAmount":"Payment is insufficient",
+         "alertError":"Error please try again..."
 
+     },
+     "Order":{
+        "order":"Orders",
+        "noOrder":"No order available",
+        "orderCreated":"Order created",
+        "items":"items",
+        "item":"item",
+        "SDetails":"Show details",
+        "perfom":"Perfom Payment"
+     },
+     "Global":{
+         "permission3":"Cashier",
+         "permission1":"Seller & Cashier",
+         "permission2":"Seller",
+         "enter":"ENTER",
+         "cancel":"CANCEL",
+         "searchPlaceholder":"search",
+         "message":"Please select the role you want to use",
+         "delete":"Delete"
      }
+
+
+     
 }

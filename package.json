@@ -9,7 +9,8 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "appium": "appium --chromedriver-executable e2e/chromedriver"
   },
   "private": true,
   "dependencies": {
@@ -22,7 +23,8 @@
     "@angular/platform-browser-dynamic": "~13.0.0",
     "@angular/router": "~13.0.0",
     "@awesome-cordova-plugins/barcode-scanner": "^5.40.0",
-    "@awesome-cordova-plugins/bluetooth-serial": "^5.40.0",
+    "@awesome-cordova-plugins/bluetooth-le": "^5.41.0",
+    "@awesome-cordova-plugins/bluetooth-serial": "^5.41.0",
     "@awesome-cordova-plugins/media": "^5.40.0",
     "@awesome-cordova-plugins/native-audio": "^5.40.0",
     "@awesome-cordova-plugins/screen-orientation": "^5.40.0",
@@ -48,6 +50,7 @@
     "animation": "^0.1.3",
     "bootstrap": "^5.1.3",
     "cordova-plugin-bluetooth-serial": "^0.4.7",
+    "cordova-plugin-bluetoothle": "^6.6.2",
     "cordova-plugin-media": "^5.0.4",
     "cordova-plugin-nativeaudio": "^3.0.9",
     "cordova-plugin-screen-orientation": "^3.0.2",
@@ -83,6 +86,7 @@
     "@types/node": "^12.11.1",
     "@typescript-eslint/eslint-plugin": "5.3.0",
     "@typescript-eslint/parser": "5.3.0",
+    "appium": "^1.22.3",
     "eslint": "^7.6.0",
     "eslint-plugin-import": "2.22.1",
     "eslint-plugin-jsdoc": "30.7.6",

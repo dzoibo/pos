@@ -18,24 +18,24 @@
               {{ 'HOME.userName' | translate:params }}
             </ion-text>
             <ion-item  lines="none"  >
-              <ion-input  placeholder="Identification or Phone Number" type="text"  id="loginName" #loginName formControlName="Name" ></ion-input>
+              <ion-input  [placeholder]="identification" type="text"  id="loginName" #loginName formControlName="Name" ></ion-input>
             </ion-item>
 
             <ion-text>
               {{ 'HOME.passWord' | translate:params }}
             </ion-text>
             <ion-item lines="none">
-              <ion-input placeholder="At lest 6 characters" #loginPassword  id="loginPassword" formControlName="Password" [type]="showPassword ? 'text' : 'password'" clearOnEdit="false">
+              <ion-input [placeholder]="min" #loginPassword  id="loginPassword" formControlName="Password" [type]="showPassword ? 'text' : 'password'" clearOnEdit="false">
               </ion-input>
               <div (click)="onPasswordToggle()" ion-button fill="clear" size="small">
                <ion-icon slot="icon-only" color="medium" [name]="showPassword ? 'eye-off' : 'eye'"></ion-icon> 
               </div>
             </ion-item>
             <ion-item>
-              <ion-label color ='dark'  position="floating" >Language</ion-label>
+              <ion-label color ='dark'  position="floating" >{{ 'HOME.language' | translate:params }}</ion-label>
               <ion-select [interfaceOptions]="customAlertOptions" value="" (ionChange)="ChangeLanguage($event.target.value)" interface="popover" formControlName="Language"	ok-text="Ok" cancel-text="Cancel"  >
-                <ion-select-option  value="fr_FR">French</ion-select-option>
-                <ion-select-option value="en_US">English</ion-select-option>
+                <ion-select-option  value="fr_FR">{{ 'HOME.french' | translate:params }}</ion-select-option>
+                <ion-select-option value="en_US">{{ 'HOME.english' | translate:params }}</ion-select-option>
               </ion-select>
             </ion-item>
             
